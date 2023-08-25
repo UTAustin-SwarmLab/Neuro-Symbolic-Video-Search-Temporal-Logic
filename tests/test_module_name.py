@@ -1,0 +1,1 @@
+"""test script of module."""
