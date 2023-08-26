@@ -1,0 +1,14 @@
+VERSION_AND_PATH:
+  ROOT_PATH: ""
+  ARTIFACTS_PATH: ""
+  SUPERVISION_VERSION: "0.6.0"
+  SAM_ENCODER_VERSION: "vit_h" # do not change
+  SAM_CHECKPOINT_PATH: # if empty, will automatically loaded from config loader
+  GROUNDING_DINO_CONFIG_PATH: # if empty, will automatically loaded from config loader
+  GROUNDING_DINO_CHECKPOINT_PATH: # if empty, will automatically loaded from config loader
+
+GROUNDING_DINO:
+  GROUNDING_DINO_CONFIG_PATH: # if empty, will automatically loaded from config loader
+  GROUNDING_DINO_CHECKPOINT_PATH: # if empty, will automatically loaded from config loader
+  BOX_TRESHOLD: 0.4
+  TEXT_TRESHOLD: 0.25
