@@ -1,0 +1,3 @@
+[submodule "video_to_automaton/GroundingDINO"]
+	path = video_to_automaton/GroundingDINO
+	url = https://github.com/IDEA-Research/GroundingDINO.git
