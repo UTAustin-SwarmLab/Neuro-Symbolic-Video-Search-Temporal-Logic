@@ -2,13 +2,19 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["video_to_automaton"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["artifacts"]  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
 [project]
-name = "your_project_name"
+name = "video-to-automaton"
 version = "0.0.1"
 authors = [
-  { name="Example Author", email="author@example.com" },
+  { name="Minkyu Choi", email="minkyu.choi@utexas.edu" },
 ]
-description = "A small example package"
+description = "The pipeline to convert video to automaton"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -17,14 +23,19 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "ipykernel",
+    "omegaconf",
     "numpy==1.22.0",
-    "pandas"
+    "pandas",
+    "supervision==0.6.0",
+    "roboflow",
+    "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
+    # "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251"
+    # -> we used git submodule to add this repo (GroundingDINO API Structure Issue)
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/UTAustin-SwarmLab/Python-Project-Template"
-"Bug Tracker" = "https://github.com/UTAustin-SwarmLab/Python-Project-Template/issues"
+"Homepage" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
+"Bug Tracker" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
 
 [project.optional-dependencies]
 dev = ["black", "ruff", "mypy"]
@@ -47,3 +58,9 @@ extend-exclude = [".venv", "venv", "vscode"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+# [tool.poetry.dependencies]
+# We need further investigation on the following dependencies and how to use poetry
+# python = "^3.8"
+# segment-anything = { git = "https://github.com/facebookresearch/segment-anything.git" }
+# GroundingDINO = { path = "video_to_automaton/GrundingDINO", develop = false }
