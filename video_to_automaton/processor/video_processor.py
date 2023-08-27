@@ -37,7 +37,7 @@ class VideoFrameProcessor(VideoProcessor):
         self,
         frame_scale: int = 5,
         second_per_frame: int = 2,
-        return_format: str = "npndarray",
+        return_format: str = "ndarray",
     ) -> np.ndarray | list:
         """Get video frames by frame_scale and second_per_frame.
 
