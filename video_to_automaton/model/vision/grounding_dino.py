@@ -2,18 +2,23 @@ from __future__ import annotations
 
 import warnings
 
-from _base import ComputerVisionDetector
 from groundingdino.util import inference
 from omegaconf import DictConfig
 
+from video_to_automaton.model.vision._base import ComputerVisionDetector
+
 warnings.filterwarnings("ignore")
+import numpy as np
 
 
 class GroundingDino(ComputerVisionDetector):
     """Grounding Dino."""
 
     def __init__(
-        self, weight_path: str, config_path: str, config: DictConfig
+        self,
+        config: DictConfig,
+        weight_path: str,
+        config_path: str,
     ) -> None:
         self.model = self.load_model(weight_path, config_path)
         self._config = config
@@ -33,7 +38,7 @@ class GroundingDino(ComputerVisionDetector):
             model_config_path=config_path, model_checkpoint_path=weight_path
         )
 
-    def _parse_class_name(class_names: list[str]) -> list[str]:
+    def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Parse class name.
 
         Args:
@@ -44,7 +49,7 @@ class GroundingDino(ComputerVisionDetector):
         """
         return [f"all {class_name}s" for class_name in class_names]
 
-    def detect(self, frame_img, classes) -> any:
+    def detect(self, frame_img: np.ndarray, classes: list) -> any:
         """Detect object in frame.
 
         Args:
