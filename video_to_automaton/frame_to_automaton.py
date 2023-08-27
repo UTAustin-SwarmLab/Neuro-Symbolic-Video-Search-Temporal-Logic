@@ -54,6 +54,8 @@ if __name__ == "__main__":
 
     config = load_config()
 
+    print(config)
+
     frame2automaton = FrametoAutomaton(
         detector=GroundingDino(
             config=config.GROUNDING_DINO,
