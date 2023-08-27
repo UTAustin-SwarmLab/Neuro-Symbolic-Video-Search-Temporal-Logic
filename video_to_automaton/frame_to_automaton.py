@@ -44,10 +44,9 @@ class FrametoAutomaton:
     def build_automaton(self):
         video_frames = self._video_processor.get_video_by_frame()
         for proposition in self.proposition_set:
-            trajectory = self.get_trajectory_from_video(
+            self.get_trajectory_from_video(
                 proposition=proposition, video_frames=video_frames
             )
-            print(trajectory)
 
 
 if __name__ == "__main__":
