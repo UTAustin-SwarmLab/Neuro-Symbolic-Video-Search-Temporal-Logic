@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import warnings
 
-from groundingdino.util import inference
 from omegaconf import DictConfig
 
+from video_to_automaton.GroundingDINO.groundingdino.util.inference import Model
 from video_to_automaton.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
@@ -23,7 +23,7 @@ class GroundingDino(ComputerVisionDetector):
         self.model = self.load_model(weight_path, config_path)
         self._config = config
 
-    def load_model(self, weight_path, config_path) -> inference.Model:
+    def load_model(self, weight_path, config_path) -> Model:
         """Load weight.
 
         Args:
@@ -34,7 +34,7 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             None
         """
-        return inference.Model(
+        return Model(
             model_config_path=config_path, model_checkpoint_path=weight_path
         )
 
