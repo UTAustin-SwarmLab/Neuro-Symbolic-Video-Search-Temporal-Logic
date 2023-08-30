@@ -23,8 +23,6 @@ def load_config():
     config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH = os.path.join(
         config.VERSION_AND_PATH.ROOT_PATH,
         "video_to_automaton",
-        "GroundingDINO",
-        "groundingdino",
         "config",
         "GroundingDINO_SwinT_OGC.py",
     )
