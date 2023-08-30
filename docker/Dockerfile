@@ -1,4 +1,4 @@
-ARG BASE_IMG=nvidia/cuda:12.2.0-devel-ubuntu20.04
+ARG BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
 FROM $BASE_IMG as dev
 
@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 #----------------------------------------------#
 # Install project dependent system dependencies
+
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 RUN apt-get install -y \
     python3-pip python3.8-venv \
@@ -22,7 +23,7 @@ RUN apt-get install -y \
 
 # # Python
 RUN python3 -m pip install --upgrade pip build
-RUN python3 -m pip install torch
+RUN pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118
 
 #----------------------------------------------#
 WORKDIR /opt/Video-to-Automoton
