@@ -1,11 +1,11 @@
 # Makefile
 # IMPORTANT: Please find the right cuda dev container for your environment
 SHELL := /bin/bash
-BASE_IMG=nvidia/cuda:12.2.0-devel-ubuntu20.04
 
-# USER INPUT (PLEASE MODIFY)
-CODE_PATH := /Users/minkyuchoi/repos/SwarmLab/Video-to-Automaton
+BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
+# USER INPUT (TODO: PLEASE MODIFY)
+CODE_PATH := /home/mc76728/repos/Video-to-Automaton/
 
 # Custom Image
 MY_DOCKER_IMG := ${user}video_to_automaton
@@ -27,6 +27,22 @@ run_docker_container:
 			   --volume ${CODE_PATH}:/opt/Video-to-Automoton \
 			   ${MY_DOCKER_IMG}:${TAG} \
 			   /bin/bash
+
+run_docker_container_gpu:
+	docker run --interactive \
+			   --detach \
+			   --tty \
+			   --name ${MY_DOCKER_IMG} \
+			   --gpus=all \
+			   --runtime=nvidia \
+			   --cap-add=SYS_PTRACE \
+			   --ulimit core=0:0 \
+			   --volume ${CODE_PATH}:/opt/Video-to-Automoton \
+			   ${MY_DOCKER_IMG}:${TAG} \
+			   /bin/bash
+
+exec:
+	docker exec -it ${MY_DOCKER_IMG} /bin/bash
 
 stop_docker_container:
 	docker stop $(MY_DOCKER_IMG)
