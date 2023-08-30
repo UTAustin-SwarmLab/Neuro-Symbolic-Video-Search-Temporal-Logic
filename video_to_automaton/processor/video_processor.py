@@ -23,15 +23,16 @@ class VideoFrameProcessor(VideoProcessor):
             video_path (str): Path to video file.
         """
         self._video_path = video_path
+        self._processed_frames = None
         self.import_video(video_path)
 
     def import_video(self, video_path):
         """Read video from video_path."""
         self._cap = cv2.VideoCapture(video_path)
-        self.video_height = self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        self.video_width = self._cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-        self.vidoe_fps = self._cap.get(cv2.CAP_PROP_FPS)
-        self.frame_count = self._cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.original_video_height = self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.original_video_width = self._cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        self.original_vidoe_fps = self._cap.get(cv2.CAP_PROP_FPS)
+        self.original_frame_count = self._cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
     def get_video_by_frame(
         self,
@@ -51,7 +52,7 @@ class VideoFrameProcessor(VideoProcessor):
         """
         frames = list()
         frame_counter = 0
-        frame_per_sec = int(round(self.vidoe_fps)) * second_per_frame
+        frame_per_sec = int(round(self.original_vidoe_fps)) * second_per_frame
         while self._cap.isOpened():
             ret, frame_img = self._cap.read()
             if not ret:
@@ -60,8 +61,8 @@ class VideoFrameProcessor(VideoProcessor):
                 frame_img = cv2.resize(
                     frame_img,
                     (
-                        int(self.video_width / frame_scale),
-                        int(self.video_height / frame_scale),
+                        int(self.original_video_width / frame_scale),
+                        int(self.original_video_height / frame_scale),
                     ),
                 )
                 frames.append(frame_img)
@@ -71,6 +72,16 @@ class VideoFrameProcessor(VideoProcessor):
         self._cap.release()
         cv2.destroyAllWindows()
         if return_format == "npndarray":
+            self._processed_frames = np.array(frames)
             return np.array(frames)
         else:
+            self._processed_frames = frames
             return frames
+
+    @property
+    def number_of_frames(self):
+        """Get number of frames in video."""
+        if self._processed_frames is None:
+            return self.original_frame_count
+        else:
+            return len(self._processed_frames)
