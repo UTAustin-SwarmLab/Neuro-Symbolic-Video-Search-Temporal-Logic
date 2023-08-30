@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import warnings
 
+from groundingdino.util.inference import Model
 from omegaconf import DictConfig
 
-from video_to_automaton.GroundingDINO.groundingdino.util.inference import Model
 from video_to_automaton.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
