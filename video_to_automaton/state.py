@@ -15,10 +15,10 @@ class State:
         self.probability = 1
 
     def __repr__(self):
-        return f"{self.state_index} {self.label_list}"
+        return f"{self.state_index} {self.proposition_true_label_list} {self.frame_index} {self.probability}"
 
     def __str__(self):
-        return f"{self.__repr__()} {self.frame_index} {self.probability}"
+        return f"{self.__repr__()}"
 
     def _build_label_list(self, label):
         labels = []
@@ -26,6 +26,16 @@ class State:
             if label[i] == "T":
                 labels.append(self.proposition_set[i])
         return labels
+
+    def update(self, frame_index, proposition_status_set):
+        self.frame_index = frame_index
+        self.proposition_status_set = (
+            proposition_status_set  # TTT, TFT, FTT, etc.
+        )
+        self.proposition_true_label_list = self._build_label_list(
+            label=proposition_status_set
+        )
+        self.probability = 1
 
     def compute_probability(self, probabilities):
         """Compute probability of the state given the probabilities of the propositions.
