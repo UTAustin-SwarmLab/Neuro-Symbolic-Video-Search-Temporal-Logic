@@ -23,5 +23,7 @@ if __name__ == "__main__":
         video_processor=VideoFrameProcessor(video_path=sample_video_path),
         proposition_set=["clap", "face", "baby"],
     )
-    frame2automaton.build_automaton(is_annotation=False)
+    states, transitions, prev_states = frame2automaton.build_automaton(
+        is_annotation=False
+    )
     print("Development is in progress.")

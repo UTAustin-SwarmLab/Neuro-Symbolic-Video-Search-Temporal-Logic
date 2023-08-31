@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import copy
+
 import numpy as np
 import supervision as sv
 
@@ -142,20 +144,22 @@ class VideotoAutomaton:
 
     def _build_state(self, video_traj_probability: list):
         states = list()
-        initial_state = State(0, -1, "initial", self.proposition_set)
-        states.append(initial_state)
+        state_idx = 0
+        state = State(state_idx, -1, "initial", self.proposition_set)
+        states.append(copy.deepcopy(state))
+        # idx = 1
         for frame_idx in range(self._video_processor.number_of_frames):
             for proposition_status in self.proposition_status_combinations:
-                state = State(
-                    index=0,
+                state.update(
                     frame_index=frame_idx,
                     proposition_status_set=proposition_status,
-                    proposition_set=self.proposition_set,
                 )
                 state.compute_probability(probabilities=video_traj_probability)
+                print(state)
                 if state.probability > 0:
                     state.state_index += 1
-                    states.append(state)
+                    # idx += 1
+                    states.append(copy.deepcopy(state))
         return states
 
     def _build_transition(self, states: list):
