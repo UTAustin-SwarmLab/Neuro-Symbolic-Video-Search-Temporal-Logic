@@ -9,7 +9,7 @@ exclude = ["artifacts, docker"]  # exclude packages matching these glob patterns
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [project]
-name = "video-to-automaton"
+name = "ns-vfs"
 version = "0.0.1"
 authors = [
   { name="Minkyu Choi", email="minkyu.choi@utexas.edu" },

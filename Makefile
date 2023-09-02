@@ -8,7 +8,7 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 CODE_PATH := /home/mc76728/repos/Video-to-Automaton/
 
 # Custom Image
-MY_DOCKER_IMG := ${user}video_to_automaton
+MY_DOCKER_IMG := ${user}video_to_automaton_test
 TAG := latest
 
 pull_docker_image:

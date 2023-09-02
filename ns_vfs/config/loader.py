@@ -2,7 +2,7 @@ import os
 
 import supervision as sv
 
-from video_to_automaton.config import config
+from ns_vfs.config import config
 
 assert (
     config.VERSION_AND_PATH.SUPERVISION_VERSION == sv.__version__
