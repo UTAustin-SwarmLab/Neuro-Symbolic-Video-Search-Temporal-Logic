@@ -2,9 +2,7 @@ import os
 
 from ns_vfs.common import omegaconf
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__)).split(
-    "video_to_automaton"
-)[0]
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__)).split("ns_vfs")[0]
 
 config_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "config.yaml"
