@@ -1,6 +1,6 @@
 import os
 
-from video_to_automaton.common import omegaconf
+from ns_vfs.common import omegaconf
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)).split(
     "video_to_automaton"

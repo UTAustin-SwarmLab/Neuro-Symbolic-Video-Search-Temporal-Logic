@@ -5,11 +5,11 @@ import copy
 import numpy as np
 import supervision as sv
 
-from video_to_automaton.model.vision._base import ComputerVisionDetector
-from video_to_automaton.processor.video_processor import (
+from ns_vfs.model.vision._base import ComputerVisionDetector
+from ns_vfs.processor.video_processor import (
     VideoProcessor,
 )
-from video_to_automaton.state import State
+from ns_vfs.state import State
 
 
 class VideotoAutomaton:
