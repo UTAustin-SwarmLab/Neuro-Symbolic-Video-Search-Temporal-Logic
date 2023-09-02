@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from video_to_automaton.config.loader import load_config
-from video_to_automaton.model.vision.grounding_dino import GroundingDino
-from video_to_automaton.processor.video_processor import (
+from ns_vfs.config.loader import load_config
+from ns_vfs.model.vision.grounding_dino import GroundingDino
+from ns_vfs.processor.video_processor import (
     VideoFrameProcessor,
 )
-from video_to_automaton.video_to_automaton import VideotoAutomaton
+from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
     sample_video_path = "/opt/Video-to-Automoton/artifacts/data/hmdb51/clap/Applauding_Abby_clap_u_nm_np1_fr_med_1.avi"
