@@ -24,7 +24,7 @@ run_docker_container:
 			   --name ${MY_DOCKER_IMG} \
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
-			   --volume ${CODE_PATH}:/opt/ns_vfs  \
+			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
 			   ${MY_DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
@@ -37,9 +37,9 @@ run_docker_container_gpu:
 			   --runtime=nvidia \
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
-			   --volume ${CODE_PATH}:/opt/ns_vfs  \
+			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
 			   ${MY_DOCKER_IMG}:${TAG} \
-			   /bin/bash
+			   /bin/bashd
 
 exec_docker_container:
 	docker exec -it ${MY_DOCKER_IMG} /bin/bash

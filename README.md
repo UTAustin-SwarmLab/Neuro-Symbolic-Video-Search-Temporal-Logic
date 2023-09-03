@@ -1,22 +1,27 @@
 # Neuro Symbolic Video Frame Search
 
 ## Installation Guid
-**Requirement** <br>
-If you have a UT Swarm Lab cluster, don't worry about the requirement below.
+**Prerequisites** <br>
+No need to worry about the prerequisites below if you are using a UT Swarm Lab cluster.
 
-* CUDA Driver: >11.8.0
+* CUDA Driver: Version 11.8.0 or higher
 * Docker: Nvidia Driver
+D
+**evelopment Environment Setup**
 
-**Set up development environment**
-1. clone this repo
-2. go to make file and change a user input section <br>
-e.g: `CODE_PATH := /home/repos/Neuro-Symbolic-Video-Frame-Search/`
-3. make pull_docker_image
-4. make build_docker_image
-5. make run_docker_container_gpu
-6. make exec_docker_container
-7. (in container) `cd /opt/ns_vfs`
-8. (in container) `bash install.sh`
+1. Clone this repository.
+2. Navigate to the makefile and modify the user input section.
 
-**Enjoy your development in the container** <br>
-Please do not stop and rm container. Otherwise, you need to you install dependencies. If your container is stopped or removed, repeat step 5 - 8.
+    For example: `CODE_PATH := /home/repos/Neuro-Symbolic-Video-Frame-Search/`
+
+3. Execute `make pull_docker_image`
+4. Execute `make build_docker_image`
+5. Execute `make run_docker_container_gpu`
+6. Execute `make exec_docker_container`
+7. Inside the container, navigate to `/opt/Neuro-Symbolic-Video-Frame-Search` 
+8. Inside the container, execute `bash install.sh`
+
+**Development Inside the Container** <br>
+Enjoy your development environment inside the container!
+
+Please avoid stopping and removing the container, as you will need to reinstall the dependencies. If the container is stopped or removed, repeat steps 5 to 8.
