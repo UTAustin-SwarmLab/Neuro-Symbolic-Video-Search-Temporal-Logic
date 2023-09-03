@@ -8,7 +8,7 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 CODE_PATH := /home/mc76728/repos/Video-to-Automaton/
 
 # Custom Image
-MY_DOCKER_IMG := ${user}video_to_automaton_test
+MY_DOCKER_IMG := ${user}ns_vfs
 TAG := latest
 
 pull_docker_image:
@@ -24,7 +24,7 @@ run_docker_container:
 			   --name ${MY_DOCKER_IMG} \
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
-			   --volume ${CODE_PATH}:/opt/Video-to-Automoton \
+			   --volume ${CODE_PATH}:/opt/ns_vfs  \
 			   ${MY_DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
@@ -37,11 +37,11 @@ run_docker_container_gpu:
 			   --runtime=nvidia \
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
-			   --volume ${CODE_PATH}:/opt/Video-to-Automoton \
+			   --volume ${CODE_PATH}:/opt/ns_vfs  \
 			   ${MY_DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
-exec:
+exec_docker_container:
 	docker exec -it ${MY_DOCKER_IMG} /bin/bash
 
 stop_docker_container:
