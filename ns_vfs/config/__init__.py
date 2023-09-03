@@ -10,5 +10,5 @@ config_path = os.path.join(
 
 config = omegaconf.load_config_from_yaml(config_path)
 
-config.VERSION_AND_PATH.ROOT_PATH = ROOT_DIR
+config.VERSION_AND_PATH.ROOT_PATH = os.path.join(ROOT_DIR)
 config.VERSION_AND_PATH.ARTIFACTS_PATH = os.path.join(ROOT_DIR, "artifacts")

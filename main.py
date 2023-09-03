@@ -26,4 +26,6 @@ if __name__ == "__main__":
     states, transitions, prev_states = frame2automaton.build_automaton(
         is_annotation=False
     )
+    print(states)
+    print(transitions)
     print("Development is in progress.")
