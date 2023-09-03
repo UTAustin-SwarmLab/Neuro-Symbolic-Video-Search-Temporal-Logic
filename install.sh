@@ -15,14 +15,6 @@ elif [[ ! -d $WEIGHT_DIR ]]; then
     echo "$WEIGHT_DIR already exists but is not a directory" 1>&2
 fi
 
-# # -- Installing GroundingDINO -- #
-# echo "Installing GroundingDINO"
-# git submodule init
-# git submodule update
-
-# cd $ROOT_DIR/video_to_automaton/GroundingDINO
-# git checkout -q 57535c5a79791cb76e36fdb64975271354f10251
-
 # -- Installing video_to_automaton -- #
 echo "Installing video_to_automaton"
 cd $ROOT_DIR
