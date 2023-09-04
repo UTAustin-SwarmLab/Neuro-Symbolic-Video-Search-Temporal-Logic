@@ -5,6 +5,7 @@ import copy
 import numpy as np
 import supervision as sv
 
+from ns_vfs.data.frame import Frame
 from ns_vfs.model.vision._base import ComputerVisionDetector
 from ns_vfs.processor.video_processor import (
     VideoProcessor,
@@ -68,21 +69,16 @@ class VideotoAutomaton:
 
     def _mapping_probability(
         self,
-        confidence_per_video: list,
+        confidence_per_video: float,
         true_threshold=0.66,
         false_threshold=0.38,
     ):
-        probs = []
-        for confidence_per_frame in confidence_per_video:
-            if confidence_per_frame >= true_threshold:
-                probs.append(1)
-            elif confidence_per_frame <= false_threshold:
-                probs.append(0)
-            else:
-                probs.append(
-                    round(self._sigmoid(confidence_per_frame, k=50, x0=0.56), 2)
-                )
-        return probs
+        if confidence_per_video >= true_threshold:
+            return 1
+        elif confidence_per_video <= false_threshold:
+            return 0
+        else:
+            return round(self._sigmoid(confidence_per_video, k=50, x0=0.56), 2)
 
     def get_probabilistic_trajectory(self, propositional_confidence_map: list):
         probability = list()
@@ -107,40 +103,87 @@ class VideotoAutomaton:
                     proposition=[proposition],
                     is_annotation=is_annotation,
                 )
-            return np.round(np.max(detected_obj.confidence), 2)
+            # TODO: mapping here
+            return self._mapping_probability(
+                np.round(np.max(detected_obj.confidence), 2)
+            )
             # probability of the object in the frame
         else:
             return 0  # probability of the object in the frame is 0
 
-    def get_probabilistic_confidence_from_video(
-        self, proposition: str, video_frames: np.ndarray, is_annotation: bool
+    def calculate_confidence_of_proposition(
+        self,
+        proposition: str,
+        frame_img: np.ndarray,
+        is_annotation: bool = False,
+    ):
+        propositional_probability_on_frame = (
+            self.get_probabilistic_proposition_from_frame(
+                proposition=proposition,
+                frame_img=frame_img,
+                is_annotation=is_annotation,
+            )
+        )
+
+        return propositional_probability_on_frame
+
+    def get_probabilistic_confidence_from_frame(
+        self,
+        proposition: str,
+        video_frames: np.ndarray | dict,
+        is_annotation: bool,
     ):
         trajectories = list()
-        for video_frame in video_frames:
-            propositional_probability_on_frame = (
-                self.get_probabilistic_proposition_from_frame(
-                    proposition=proposition,
-                    frame_img=video_frame,
-                    is_annotation=is_annotation,
+        if isinstance(video_frames, dict):
+            # Frames are in sliding window format
+            for idx in range(len(video_frames.keys()) - 1):
+                image_set = video_frames[idx].frame_image_set
+                for i, frame in enumerate(image_set):
+                    frame: Frame  # TODO: assert?
+                    propositional_probability_on_frame = (
+                        self.get_probabilistic_proposition_from_frame(
+                            proposition=proposition,
+                            frame_img=frame.frame_image,
+                            is_annotation=is_annotation,
+                        )
+                    )
+                    frame.propositional_probability[
+                        str(proposition)
+                    ] = propositional_probability_on_frame
+                    image_set[i] = frame
+                video_frames[idx].frame_image_set = image_set
+            return video_frames
+        else:
+            for video_frame in video_frames:
+                propositional_probability_on_frame = (
+                    self.get_probabilistic_proposition_from_frame(
+                        proposition=proposition,
+                        frame_img=video_frame,
+                        is_annotation=is_annotation,
+                    )
                 )
-            )
-            trajectories.append(propositional_probability_on_frame)
-        return trajectories
+                trajectories.append(propositional_probability_on_frame)
+            return trajectories
 
     def get_probability_of_trajectory(self, is_annotation: bool):
-        video_frames = self._video_processor.get_video_by_frame()
-        confidence = list()
-        for proposition in self.proposition_set:
-            confidence.append(
-                self.get_probabilistic_confidence_from_video(
-                    proposition=proposition,
-                    video_frames=video_frames,
-                    is_annotation=is_annotation,
-                )
-            )
-        return self.get_probabilistic_trajectory(
-            propositional_confidence_map=confidence
+        video_frames = self._video_processor.get_synchronous_frame(
+            proposition_set=self.proposition_set,
+            calculate_propositional_confidence=self.calculate_confidence_of_proposition,
         )
+        return video_frames
+
+        # video_frames = self._video_processor.get_frame_by_sliding_window()
+        # for proposition in self.proposition_set:
+        #     video_frames = self.get_probabilistic_confidence_from_frame(
+        #         proposition=proposition,
+        #         video_frames=video_frames,
+        #         is_annotation=is_annotation,
+        #     )
+        # return video_frames
+
+        # video_frames = self._video_processor.get_frame()
+
+    def buil
 
     def _build_state(self, video_traj_probability: list):
         states = list()

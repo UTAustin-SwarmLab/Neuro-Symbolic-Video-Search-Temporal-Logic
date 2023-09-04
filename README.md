@@ -25,3 +25,8 @@ D
 Enjoy your development environment inside the container!
 
 Please avoid stopping and removing the container, as you will need to reinstall the dependencies. If the container is stopped or removed, repeat steps 5 to 8.
+
+## Dataset
+[The VIRAT Video Dataset](https://viratdata.org/#getting-data): The VIRAT Video Dataset is designed to be realistic, natural and challenging for video surveillance domains in terms of its resolution, background clutter, diversity in scenes, and human activity/event categories than existing action recognition datasets. It has become a benchmark dataset for the computer vision community.
+
+[NuScenes](https://www.nuscenes.org/nuimages#download): A public large-scale dataset for autonomous driving
