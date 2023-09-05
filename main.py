@@ -24,11 +24,10 @@ if __name__ == "__main__":
             video_path=sample_video_path,
             artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
         ),
-        proposition_set=["face", "baby"],
+        proposition_set=["face", "person", "car"],
+        artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
     )
-    states, transitions, prev_states = frame2automaton.build_automaton(
-        is_annotation=False
-    )
-    print(states)
-    print(transitions)
+
+    frame_window_automata = frame2automaton.start()
+
     print("Development is in progress.")

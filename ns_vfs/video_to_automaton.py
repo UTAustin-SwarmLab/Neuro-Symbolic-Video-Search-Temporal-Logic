@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import copy
+import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import supervision as sv
 
+from ns_vfs.common.utility import get_filename_with_datetime
 from ns_vfs.data.frame import Frame
 from ns_vfs.model.vision._base import ComputerVisionDetector
 from ns_vfs.processor.video_processor import (
@@ -19,19 +22,25 @@ class VideotoAutomaton:
         proposition_set: list,
         detector: ComputerVisionDetector,
         video_processor: VideoProcessor,
+        artifact_dir: str,
     ):
         self.proposition_set = proposition_set
-        self.proposition_status_combinations = self._create_proposition_status(
+        self.proposition_combinations = self._create_proposition_status(
             len(proposition_set)
         )
         self._detector = detector
         self._video_processor = video_processor
+        self._artifact_dir = artifact_dir
 
     def _sigmoid(self, x, k=1, x0=0):
         return 1 / (1 + np.exp(-k * (x - x0)))
 
     def _annotate_frame(
-        frame_img: np.ndarray, proposition: list, detected_obj: any
+        self,
+        frame_img: np.ndarray,
+        proposition: list,
+        detected_obj: any,
+        output_dir: str | None = None,
     ):
         box_annotator = sv.BoxAnnotator()
         labels = [
@@ -44,6 +53,15 @@ class VideotoAutomaton:
         )
 
         sv.plot_image(annotated_frame, (16, 16))
+
+        if output_dir is None:
+            path = os.path.join(self._artifact_dir, "annotated_frame")
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        filename = get_filename_with_datetime("annotated_frame.png")
+        plt.savefig(os.path.join(path, filename))
 
     def _create_proposition_status(self, num_props):
         """Create all possible combinations of T and F for the number of propositions.
@@ -80,19 +98,11 @@ class VideotoAutomaton:
         else:
             return round(self._sigmoid(confidence_per_video, k=50, x0=0.56), 2)
 
-    def get_probabilistic_trajectory(self, propositional_confidence_map: list):
-        probability = list()
-        for conf_over_video in propositional_confidence_map:
-            probability.append(
-                self._mapping_probability(confidence_per_video=conf_over_video)
-            )
-        return probability
-
     def get_probabilistic_proposition_from_frame(
         self,
         proposition: str,
         frame_img: np.ndarray,
-        is_annotation: bool = True,
+        is_annotation: bool = False,
     ):
         detected_obj = self._detector.detect(frame_img, [proposition])
         if len(detected_obj) > 0:
@@ -101,7 +111,6 @@ class VideotoAutomaton:
                     frame_img=frame_img,
                     detected_obj=detected_obj,
                     proposition=[proposition],
-                    is_annotation=is_annotation,
                 )
             # TODO: mapping here
             return self._mapping_probability(
@@ -127,112 +136,57 @@ class VideotoAutomaton:
 
         return propositional_probability_on_frame
 
-    def get_probabilistic_confidence_from_frame(
+    def build_automaton(
         self,
-        proposition: str,
-        video_frames: np.ndarray | dict,
-        is_annotation: bool,
+        frame_set: list[Frame],
+        propositional_confidence: list[list[float]],
     ):
-        trajectories = list()
-        if isinstance(video_frames, dict):
-            # Frames are in sliding window format
-            for idx in range(len(video_frames.keys()) - 1):
-                image_set = video_frames[idx].frame_image_set
-                for i, frame in enumerate(image_set):
-                    frame: Frame  # TODO: assert?
-                    propositional_probability_on_frame = (
-                        self.get_probabilistic_proposition_from_frame(
-                            proposition=proposition,
-                            frame_img=frame.frame_image,
-                            is_annotation=is_annotation,
-                        )
-                    )
-                    frame.propositional_probability[
-                        str(proposition)
-                    ] = propositional_probability_on_frame
-                    image_set[i] = frame
-                video_frames[idx].frame_image_set = image_set
-            return video_frames
-        else:
-            for video_frame in video_frames:
-                propositional_probability_on_frame = (
-                    self.get_probabilistic_proposition_from_frame(
-                        proposition=proposition,
-                        frame_img=video_frame,
-                        is_annotation=is_annotation,
-                    )
-                )
-                trajectories.append(propositional_probability_on_frame)
-            return trajectories
+        state_idx = 0
+        states = list()
+        transitions = list()
 
-    def get_probability_of_trajectory(self, is_annotation: bool):
-        video_frames = self._video_processor.get_synchronous_frame(
+        state = State(state_idx, -1, "initial", self.proposition_set)
+        states.append(copy.deepcopy(state))
+
+        prev_states = [copy.deepcopy(state)]
+
+        for i in range(len(frame_set)):
+            frame_set[i]
+            current_state = list()
+            for prop_comb in self.proposition_combinations:
+                state.update(
+                    frame_index=i,
+                    proposition_combinations=prop_comb,
+                )
+                state.compute_probability(
+                    probabilities=propositional_confidence
+                )
+                if state.probability > 0:
+                    state.state_index += 1
+                    states.append(copy.deepcopy(state))
+                    current_state.append(copy.deepcopy(state))
+
+            # Transition
+            for cur_state in current_state:
+                for prev_state in prev_states:
+                    transition = (
+                        prev_state.state_index,
+                        cur_state.state_index,
+                        cur_state.probability,
+                    )
+                    transitions.append(transition)
+            prev_states = current_state.copy()
+
+        return states, transitions
+
+    def build_video_frame(self):
+        video_frames = self._video_processor.build_frame_synchronously(
             proposition_set=self.proposition_set,
             calculate_propositional_confidence=self.calculate_confidence_of_proposition,
+            build_automaton=self.build_automaton,
+            save_image=False,
         )
         return video_frames
 
-        # video_frames = self._video_processor.get_frame_by_sliding_window()
-        # for proposition in self.proposition_set:
-        #     video_frames = self.get_probabilistic_confidence_from_frame(
-        #         proposition=proposition,
-        #         video_frames=video_frames,
-        #         is_annotation=is_annotation,
-        #     )
-        # return video_frames
-
-        # video_frames = self._video_processor.get_frame()
-
-    def buil
-
-    def _build_state(self, video_traj_probability: list):
-        states = list()
-        state_idx = 0
-        state = State(state_idx, -1, "initial", self.proposition_set)
-        states.append(copy.deepcopy(state))
-        # idx = 1
-        for frame_idx in range(self._video_processor.number_of_frames):
-            for proposition_status in self.proposition_status_combinations:
-                state.update(
-                    frame_index=frame_idx,
-                    proposition_status_set=proposition_status,
-                )
-                state.compute_probability(probabilities=video_traj_probability)
-                print(state)
-                if state.probability > 0:
-                    state.state_index += 1
-                    # idx += 1
-                    states.append(copy.deepcopy(state))
-        return states
-
-    def _build_transition(self, states: list):
-        transitions = list()
-        prev_states = [State(0, -1, "initial", self.proposition_set)]
-
-        for frame_idx in range(self._video_processor.number_of_frames):
-            current_states = list()
-            for state in states:
-                if state.frame_index == frame_idx:
-                    current_states.append(state)
-            for curr_state in current_states:
-                for prev_state in prev_states:
-                    transitions.append(
-                        (
-                            prev_state.state_index,
-                            curr_state.state_index,
-                            curr_state.probability,
-                        )
-                    )
-            prev_states = current_states.copy()
-        return transitions, prev_states
-
-    def build_automaton(self, is_annotation: bool):
-        video_traj_probability = self.get_probability_of_trajectory(
-            is_annotation=is_annotation
-        )
-
-        states = self._build_state(
-            video_traj_probability=video_traj_probability
-        )
-        transitions, prev_states = self._build_transition(states=states)
-        return states, transitions, prev_states
+    def start(self):
+        return self.build_video_frame()

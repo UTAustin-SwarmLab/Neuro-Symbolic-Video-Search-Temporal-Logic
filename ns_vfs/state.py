@@ -6,34 +6,34 @@ class State:
         self.state_index = index
         self.frame_index = frame_index
         self.proposition_set = proposition_set
-        self.proposition_status_set = (
-            proposition_status_set  # TTT, TFT, FTT, etc.
+        self.current_proposition_combination = (
+            proposition_status_set  # "initial", TTT, TFT, FTT, etc.
         )
-        self.proposition_true_label_list = self._build_label_list(
+        self.current_descriptive_label = self._get_descriptive_label(
             label=proposition_status_set
         )
         self.probability = 1
 
     def __repr__(self):
-        return f"{self.state_index} {self.proposition_true_label_list} {self.frame_index} {self.probability}"
+        return f"{self.state_index} {self.current_descriptive_label} {self.frame_index} {self.probability}"
 
     def __str__(self):
         return f"{self.__repr__()}"
 
-    def _build_label_list(self, label):
+    def _get_descriptive_label(self, label):
         labels = []
         for i in range(len(self.proposition_set)):
             if label[i] == "T":
                 labels.append(self.proposition_set[i])
         return labels
 
-    def update(self, frame_index, proposition_status_set):
+    def update(self, frame_index, proposition_combinations):
         self.frame_index = frame_index
-        self.proposition_status_set = (
-            proposition_status_set  # TTT, TFT, FTT, etc.
+        self.current_proposition_combination = (
+            proposition_combinations  # TTT, TFT, FTT, etc.
         )
-        self.proposition_true_label_list = self._build_label_list(
-            label=proposition_status_set
+        self.current_descriptive_label = self._get_descriptive_label(
+            label=proposition_combinations
         )
         self.probability = 1
 
@@ -46,8 +46,8 @@ class State:
                 -> [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]].
         """
         probability = 1
-        for i in range(len(self.proposition_status_set)):
-            if self.proposition_status_set[i] == "T":
+        for i in range(len(self.current_proposition_combination)):
+            if self.current_proposition_combination[i] == "T":
                 probability *= probabilities[i][self.frame_index]
             else:
                 probability *= 1 - probabilities[i][self.frame_index]
