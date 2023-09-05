@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ns_vfs.data.frame import Frame, FrameWindow
+from ns_vfs.verification import build_label_func, build_trans_matrix
 
 
 class VideoProcessor(abc.ABC):
@@ -50,20 +51,22 @@ class VideoFrameProcessor(VideoProcessor):
             ),
         )
 
-    def get_synchronous_frame(
+    def build_frame_synchronously(
         self,
         proposition_set: list,
         calculate_propositional_confidence: callable,
+        build_automaton: callable,
         frame_duration_sec: int = 2,
         frame_scale: int | None = None,
         sliding_window_size: int = 5,
+        save_image: bool = False,
     ):
         frame_window_idx = 0
         frame_counter = 0
         frame_idx = 0
         # Calculate the frame skip rate
         frame_window = dict(frame_window_idx=0)
-        frame_set = list()
+        temp_frame_set = list()
 
         while self._cap.isOpened():
             ret, frame_img = self._cap.read()
@@ -84,21 +87,50 @@ class VideoFrameProcessor(VideoProcessor):
                 )
                 # Calculate propositional confidence
                 for proposition in proposition_set:
+                    propositional_confidence = (
+                        calculate_propositional_confidence(
+                            proposition=proposition,
+                            frame_img=frame_img,
+                            is_annotation=save_image,
+                        )
+                    )
                     frame.propositional_probability[
                         str(proposition)
-                    ] = calculate_propositional_confidence(
-                        proposition=proposition, frame_img=frame_img
-                    )
-                # Build State
+                    ] = propositional_confidence
+                temp_frame_set.append(frame)
 
-                frame_set.append(frame)
-                if len(frame_set) == sliding_window_size:
+                if len(temp_frame_set) == sliding_window_size:
+                    if save_image:
+                        self.replay_and_save(frames=temp_frame_set)
+
+                    # Process frame window
+                    frame_set = temp_frame_set.copy()
                     frame_window[frame_window_idx] = FrameWindow(
                         frame_window_idx=frame_window_idx,
-                        frame_image_set=frame_set.copy(),
+                        frame_image_set=frame_set,
                     )
+
+                    propositional_confidence = frame_window[
+                        frame_window_idx
+                    ].get_propositional_confidence()
+
+                    # Build State & Compute Probability
+                    states, transitions = build_automaton(
+                        frame_set, propositional_confidence
+                    )
+                    frame_window[frame_window_idx].states = states
+                    frame_window[frame_window_idx].transitions = transitions
+
+                    # Verification - Build Transition Matrix
+                    transition_matrix = build_trans_matrix(
+                        transitions=transitions, states=states
+                    )
+                    state_labeling = build_label_func(states, proposition_set)
+                    transition_matrix
+                    state_labeling
+
                     frame_window_idx += 1
-                    frame_set.pop(0)
+                    temp_frame_set.pop(0)
 
                 frame_idx += 1
             frame_counter += 1
@@ -118,7 +150,7 @@ class VideoFrameProcessor(VideoProcessor):
         frame_idx = 0
         # Calculate the frame skip rate
         frame_window = dict(frame_window_idx=0)
-        frame_set = list()
+        temp_frame_set = list()
 
         while self._cap.isOpened():
             ret, frame_img = self._cap.read()
@@ -132,16 +164,16 @@ class VideoFrameProcessor(VideoProcessor):
                 if frame_scale is not None:
                     frame_img = self._resize_frame(frame_img, frame_scale)
                 Frame
-                frame_set.append(
+                temp_frame_set.append(
                     Frame(frame_index=frame_idx, frame_image=frame_img)
                 )
-                if len(frame_set) == sliding_window_size:
+                if len(temp_frame_set) == sliding_window_size:
                     frame_window[frame_window_idx] = FrameWindow(
                         frame_window_idx=frame_window_idx,
-                        frame_image_set=frame_set.copy(),
+                        frame_image_set=temp_frame_set.copy(),
                     )
                     frame_window_idx += 1
-                    frame_set.pop(0)
+                    temp_frame_set.pop(0)
 
                 frame_idx += 1
             frame_counter += 1
@@ -192,7 +224,7 @@ class VideoFrameProcessor(VideoProcessor):
 
     def replay_and_save(
         self,
-        frames: list[np.ndarray],
+        frames: list[Frame],
         frame_rate=2,
         is_imshow: bool = False,
         output_dir: str | None = None,
@@ -206,7 +238,7 @@ class VideoFrameProcessor(VideoProcessor):
             shutil.rmtree(output_dir)
             os.makedirs(output_dir)
         for idx, frame in enumerate(frames):
-            plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            plt.imshow(cv2.cvtColor(frame.frame_image, cv2.COLOR_BGR2RGB))
             plt.axis("off")  # hide the axis values
             plt.savefig(os.path.join(output_dir, f"frame_{idx}.png"))
             if is_imshow:
