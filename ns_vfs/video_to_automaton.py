@@ -207,7 +207,7 @@ class VideotoAutomaton:
         states = list()
         transitions = list()
 
-        state = State(state_idx, -1, "initial", self.proposition_set)
+        state = State(state_idx, -1, "init", self.proposition_set)
         states.append(copy.deepcopy(state))
 
         prev_states = [copy.deepcopy(state)]
