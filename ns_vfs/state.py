@@ -1,26 +1,37 @@
 class State:
     # label is a string with characters T or F indicating True or False
-    def __init__(
-        self, index, frame_index, proposition_status_set, proposition_set
-    ):
+    def __init__(self, index, frame_index, proposition_status_set, proposition_set) -> None:
+        """State class.
+
+        Args:
+            index (int): Index.
+            frame_index (int): Frame index.
+            proposition_status_set (str): Proposition status set.
+        proposition_set (list[str]): Proposition set.
+        """
         self.state_index = index
         self.frame_index = frame_index
         self.proposition_set = proposition_set
         self.current_proposition_combination = (
             proposition_status_set  # "initial", TTT, TFT, FTT, etc.
         )
-        self.current_descriptive_label = self._get_descriptive_label(
-            label=proposition_status_set
-        )
+        self.current_descriptive_label = self._get_descriptive_label(label=proposition_status_set)
         self.probability = 1
 
     def __repr__(self):
+        """Representation of state."""
         return f"{self.state_index} {self.current_descriptive_label} {self.frame_index} {self.probability}"
 
     def __str__(self):
+        """String of state."""
         return f"{self.__repr__()}"
 
     def _get_descriptive_label(self, label):
+        """Get descriptive label.
+
+        Args:
+        label (str): Label.
+        """
         labels = []
         for i in range(len(self.proposition_set)):
             if label[i] == "T":
@@ -28,13 +39,15 @@ class State:
         return labels
 
     def update(self, frame_index, proposition_combinations):
+        """Update state.
+
+        Args:
+            frame_index (int): Frame index.
+        proposition_combinations (str): Proposition combinations.
+        """
         self.frame_index = frame_index
-        self.current_proposition_combination = (
-            proposition_combinations  # TTT, TFT, FTT, etc.
-        )
-        self.current_descriptive_label = self._get_descriptive_label(
-            label=proposition_combinations
-        )
+        self.current_proposition_combination = proposition_combinations  # TTT, TFT, FTT, etc.
+        self.current_descriptive_label = self._get_descriptive_label(label=proposition_combinations)
         self.probability = 1
 
     def compute_probability(self, probabilities):
