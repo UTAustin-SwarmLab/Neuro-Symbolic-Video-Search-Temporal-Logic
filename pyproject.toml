@@ -42,7 +42,7 @@ dev = ["black", "ruff", "mypy"]
 test = ["pytest", "pytest-cov", "pytest-mock"]
 
 [tool.black]
-line-length = 80
+line-length = 100
 
 [tool.ruff]
 select = [
