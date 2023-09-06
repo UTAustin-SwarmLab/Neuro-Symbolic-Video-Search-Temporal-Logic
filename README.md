@@ -1,6 +1,6 @@
 # Neuro Symbolic Video Frame Search
 
-## Installation Guid
+## Installation Guide
 **Prerequisites** <br>
 No need to worry about the prerequisites below if you are using a UT Swarm Lab cluster.
 
