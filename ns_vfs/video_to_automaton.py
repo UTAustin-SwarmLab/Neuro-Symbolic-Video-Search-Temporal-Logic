@@ -20,11 +20,13 @@ from ns_vfs.state import State
 class VideotoAutomaton:
     def __init__(
         self,
-        proposition_set: list,
+        proposition_set: list[str],
         detector: ComputerVisionDetector,
         video_processor: VideoProcessor,
         artifact_dir: str,
+        ltl_formula: str,
         is_annotation: bool = False,
+        save_image: bool = False,
     ) -> None:
         """Initialize Video to Automaton.
 
@@ -33,7 +35,9 @@ class VideotoAutomaton:
             detector (ComputerVisionDetector): Computer Vision Detector.
             video_processor (VideoProcessor): Video Processor.
             artifact_dir (str): Path to artifact directory.
+            ltl_formula (str): LTL formula.
             is_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
+            save_image (bool, optional): Whether to save image. Defaults to False.
         """
         self.proposition_set = proposition_set
         self.proposition_combinations = self._create_proposition_status(len(proposition_set))
@@ -41,6 +45,8 @@ class VideotoAutomaton:
         self._video_processor = video_processor
         self._artifact_dir = artifact_dir
         self._is_annotation = is_annotation
+        self._ltl_formula = ltl_formula
+        self._save_image = save_image
 
     def _sigmoid(self, x, k=1, x0=0) -> float:
         """Sigmoid function.
@@ -245,8 +251,12 @@ class VideotoAutomaton:
             proposition_set=self.proposition_set,
             calculate_propositional_confidence=self.calculate_confidence_of_proposition,
             build_automaton=self.build_automaton,
-            save_image=False,
+            ltl_formula=self._ltl_formula,
+            save_image=self._save_image,
+            is_annotation=self._is_annotation,
         )
+        path = os.path.join(self._artifact_dir, "frame_window_automata.npy")
+        np.save(path, video_frames_automaton)
         return video_frames_automaton
 
     def build_frame_automaton(self) -> dict:
