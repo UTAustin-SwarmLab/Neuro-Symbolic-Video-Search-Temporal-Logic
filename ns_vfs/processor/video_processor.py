@@ -34,9 +34,7 @@ class VideoFrameProcessor(VideoProcessor):
         self._frame_window = None
         self.import_video(video_path)
 
-    def _resize_frame(
-        self, frame_img: np.ndarray, frame_scale: int
-    ) -> np.ndarray:
+    def _resize_frame(self, frame_img: np.ndarray, frame_scale: int) -> np.ndarray:
         """Resize frame image.
 
         Args:
@@ -129,10 +127,12 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
         proposition_set: list,
         calculate_propositional_confidence: callable,
         build_automaton: callable,
+        ltl_formula: str,
         frame_duration_sec: int = 2,
         frame_scale: int | None = None,
         sliding_window_size: int = 5,
         save_image: bool = False,
+        is_annotation: bool = False,
     ) -> None:
         """Build frame window synchronously.
 
@@ -147,24 +147,22 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
             frame_scale (int | None, optional): Scale of frame. Defaults to None.
             sliding_window_size (int, optional): Size of sliding window. Defaults to 5.
             save_image (bool, optional): Save image. Defaults to False.
+            is_annotation (bool, optional): Annotate frame. Defaults to False.
+            ltl_formula (str): LTL formula.
         """
         frame_window_idx = 0
         frame_counter = 0
         frame_idx = 0
 
         # Calculate the frame skip rate
-        frame_window = dict(frame_window_idx=0)
+        frame_window = {}
         temp_frame_set = list()
 
         while self._cap.isOpened():
             ret, frame_img = self._cap.read()
             if not ret:
                 break
-            if (
-                frame_counter
-                % int(frame_duration_sec * self.original_vidoe_fps)
-                == 0
-            ):
+            if frame_counter % int(frame_duration_sec * self.original_vidoe_fps) == 0:
                 if frame_scale is not None:
                     frame_img = self._resize_frame(frame_img, frame_scale)
                 # --------------- frame image imported above --------------- #
@@ -175,16 +173,12 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
                 )
                 # Calculate propositional confidence
                 for proposition in proposition_set:
-                    propositional_confidence = (
-                        calculate_propositional_confidence(
-                            proposition=proposition,
-                            frame_img=frame_img,
-                            is_annotation=save_image,
-                        )
+                    propositional_confidence = calculate_propositional_confidence(
+                        proposition=proposition,
+                        frame_img=frame_img,
+                        is_annotation=is_annotation,
                     )
-                    frame.propositional_probability[
-                        str(proposition)
-                    ] = propositional_confidence
+                    frame.propositional_probability[str(proposition)] = propositional_confidence
                 temp_frame_set.append(frame)
 
                 if len(temp_frame_set) == sliding_window_size:
@@ -203,22 +197,18 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
                     ].get_propositional_confidence()
 
                     # Build State & Compute Probability
-                    states, transitions = build_automaton(
-                        frame_set, propositional_confidence
-                    )
+                    states, transitions = build_automaton(frame_set, propositional_confidence)
 
                     # Verification - Build Transition Matrix
                     verification_result = check_automaton(
                         transitions=transitions,
                         states=states,
                         proposition_set=proposition_set,
+                        ltl_formula=ltl_formula,
                     )
                     frame_window[frame_window_idx].states = states
                     frame_window[frame_window_idx].transitions = transitions
-                    frame_window[
-                        frame_window_idx
-                    ].verification_result = verification_result
-
+                    frame_window[frame_window_idx].verification_result = str(verification_result)
                     frame_window_idx += 1
                     temp_frame_set.pop(0)
 
@@ -258,7 +248,5 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
             plt.savefig(os.path.join(output_dir, f"frame_{idx}.png"))
             if is_imshow:
                 plt.show()
-            cv2.waitKey(
-                int(1000 / frame_rate)
-            )  # wait for specified milliseconds
+            cv2.waitKey(int(1000 / frame_rate))  # wait for specified milliseconds
         cv2.destroyAllWindows
