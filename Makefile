@@ -8,14 +8,15 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 CODE_PATH := /home/mc76728/repos/Video-to-Automaton/
 
 # Custom Image
-MY_DOCKER_IMG := ${user}ns_vfs
+DOCKER_IMG := ns_vfs
+MY_DOCKER_IMG := ${USER}_ns_vfs
 TAG := latest
 
 pull_docker_image:
 	docker pull ${BASE_IMG}
 
 build_docker_image:
-	docker build --build-arg BASE_IMG=${BASE_IMG} . -f docker/Dockerfile --network=host --tag ${MY_DOCKER_IMG}:${TAG}
+	docker build --build-arg BASE_IMG=${BASE_IMG} . -f docker/Dockerfile --network=host --tag ${DOCKER_IMG}:${TAG}
 
 run_docker_container:
 	docker run --interactive \
@@ -25,7 +26,7 @@ run_docker_container:
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
-			   ${MY_DOCKER_IMG}:${TAG} \
+			   ${DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
 run_docker_container_gpu:
@@ -38,7 +39,7 @@ run_docker_container_gpu:
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
-			   ${MY_DOCKER_IMG}:${TAG} \
+			   ${DOCKER_IMG}:${TAG} \
 			   /bin/bashd
 
 exec_docker_container:
