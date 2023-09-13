@@ -8,7 +8,10 @@ from ns_vfs.state import State
 
 
 def check_automaton(
-    transitions: list[tuple[int, int, float]], states: list[State], proposition_set: list[str]
+    transitions: list[tuple[int, int, float]],
+    states: list[State],
+    proposition_set: list[str],
+    ltl_formula: str,
 ) -> any:
     """Check automaton.
 
@@ -16,6 +19,7 @@ def check_automaton(
         transitions (list[tuple[int, int, float]]): List of transitions.
         states (list[State]): List of states.
         proposition_set (list[str]): List of propositions.
+        ltl_formula (str): LTL formula.
     """
     transition_matrix = build_trans_matrix(transitions=transitions, states=states)
 
@@ -32,7 +36,7 @@ def check_automaton(
 
     # Markov Automaton
     markov_automata = stormpy.storage.SparseMA(components)
-    formula_str = 'P>=.60 [F "drink"]'
+    formula_str = ltl_formula
 
     # Check the model (Markov Automata)
     return model_checking(markov_automata, formula_str)
