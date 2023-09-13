@@ -40,7 +40,7 @@ run_docker_container_gpu:
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
 			   ${DOCKER_IMG}:${TAG} \
-			   /bin/bashd
+			   /bin/bash
 
 exec_docker_container:
 	docker exec -it ${MY_DOCKER_IMG} /bin/bash
