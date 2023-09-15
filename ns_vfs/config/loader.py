@@ -26,4 +26,9 @@ def load_config():
         "config",
         "GroundingDINO_SwinT_OGC.py",
     )
+    config.YOLO.YOLO_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "yolov8n.pt",
+    )
     return config
