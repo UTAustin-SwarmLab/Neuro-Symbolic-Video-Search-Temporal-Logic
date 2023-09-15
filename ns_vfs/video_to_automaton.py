@@ -158,6 +158,7 @@ class VideotoAutomaton:
         Returns:
             float: Probabilistic proposition from frame.
         """
+        print('here')
         detected_obj = self._detector.detect(frame_img, [proposition])
         if len(detected_obj) > 0:
             if is_annotation:
