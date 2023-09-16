@@ -8,11 +8,11 @@ from ns_vfs.processor.video_processor import (
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
-    sample_video_path = "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/summer_event/bali_beach_club_pt1_720p.mp4"
+    sample_video_path = (
+        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/nyc_street/nyc_street_footage.mp4"
+    )
 
     config = load_config()
-
-    print(config)
 
     frame2automaton = VideotoAutomaton(
         detector=GroundingDino(
@@ -24,10 +24,11 @@ if __name__ == "__main__":
             video_path=sample_video_path,
             artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
         ),
-        proposition_set=["person", "drink"],
         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        proposition_set=["person", "car", "traffic_light"],
+        is_annotation=False,  # TODO: Debug only
+        save_image=False,  # TODO: Debug only
+        ltl_formula='P>=0.99 [F "person" U "car"]',  # 'P>=0.99 [F "person"]'
     )
 
     frame_window_automata = frame2automaton.run()
-
-    print("Development is in progress.")
