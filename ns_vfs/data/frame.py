@@ -9,6 +9,7 @@ class Frame:
 
     frame_index: int
     frame_image: np.ndarray
+    object_detection: dict = dataclasses.field(default_factory=dict)
     propositional_probability: dict = dataclasses.field(default_factory=dict)
 
 
