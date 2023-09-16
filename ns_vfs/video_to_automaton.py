@@ -157,6 +157,7 @@ class VideotoAutomaton:
 
         Returns:
             float: Probabilistic proposition from frame.
+            detected_obj (any): Detected object.
         """
         detected_obj = self._detector.detect(frame_img, [proposition])
         if len(detected_obj) > 0:
@@ -166,10 +167,13 @@ class VideotoAutomaton:
                     detected_obj=detected_obj,
                     proposition=[proposition],
                 )
-            return self._mapping_probability(np.round(np.max(detected_obj.confidence), 2))
+            return (
+                self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
+                detected_obj,
+            )
             # probability of the object in the frame
         else:
-            return 0  # probability of the object in the frame is 0
+            return 0, None  # probability of the object in the frame is 0
 
     def calculate_confidence_of_proposition(
         self,
@@ -187,12 +191,12 @@ class VideotoAutomaton:
         Returns:
             float: Confidence of proposition.
         """
-        propositional_probability_on_frame = self.get_probabilistic_proposition_from_frame(
+        propositional_probability_on_frame, _ = self.get_probabilistic_proposition_from_frame(
             proposition=proposition,
             frame_img=frame_img,
             is_annotation=is_annotation,
         )
-        return propositional_probability_on_frame
+        return propositional_probability_on_frame, _
 
     def build_automaton(
         self,
@@ -257,6 +261,7 @@ class VideotoAutomaton:
         )
         path = os.path.join(self._artifact_dir, "frame_window_automata.npy")
         np.save(path, video_frames_automaton)
+        print(f"frame_window_automata saved to {path}")
         return video_frames_automaton
 
     def build_frame_automaton(self) -> dict:

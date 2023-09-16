@@ -30,3 +30,10 @@ Please avoid stopping and removing the container, as you will need to reinstall 
 [The VIRAT Video Dataset](https://viratdata.org/#getting-data): The VIRAT Video Dataset is designed to be realistic, natural and challenging for video surveillance domains in terms of its resolution, background clutter, diversity in scenes, and human activity/event categories than existing action recognition datasets. It has become a benchmark dataset for the computer vision community.
 
 [NuScenes](https://www.nuscenes.org/nuimages#download): A public large-scale dataset for autonomous driving
+
+## Linear Temporal Logitics
+Confiremd Examples:
+- 'P{op}probability [F "proposition"]'
+- 'P{op}probability [G "proposition"]'
+- 'P{op}probability [F "proposition1" | "proposition2"]'
+- 'P{op}probability [F "proposition1" & "proposition2"]'

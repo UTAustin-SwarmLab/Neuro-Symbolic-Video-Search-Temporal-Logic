@@ -28,7 +28,7 @@ if __name__ == "__main__":
         proposition_set=["person", "car", "traffic_light"],
         is_annotation=False,  # TODO: Debug only
         save_image=False,  # TODO: Debug only
-        ltl_formula='P>=0.99 [F "person"]',
+        ltl_formula='P>=0.99 [F "person" U "car"]',  # 'P>=0.99 [F "person"]'
     )
 
     frame_window_automata = frame2automaton.run()

@@ -173,11 +173,12 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
                 )
                 # Calculate propositional confidence
                 for proposition in proposition_set:
-                    propositional_confidence = calculate_propositional_confidence(
+                    propositional_confidence, detected_obj = calculate_propositional_confidence(
                         proposition=proposition,
                         frame_img=frame_img,
                         is_annotation=is_annotation,
                     )
+                    frame.object_detection[str(proposition)] = detected_obj
                     frame.propositional_probability[str(proposition)] = propositional_confidence
                 temp_frame_set.append(frame)
 
