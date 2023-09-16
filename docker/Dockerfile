@@ -44,12 +44,15 @@ RUN git clone -b stable https://github.com/moves-rwth/storm.git
 RUN git clone -b stable https://github.com/moves-rwth/stormpy.git
 # INSTALL CARL STORM
 WORKDIR /opt/carl-storm
-RUN mkdir build && cd build && cmake ../ && make lib_carl -j 2
+RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSE_CLN_NUMBERS=ON -DUSE_GINAC=ON -DTHREAD_SAFE=ON 
+WORKDIR /opt/carl-storm/build
+RUN make lib_carl -j 1
 # INSTALL STORM
 WORKDIR /opt/storm
-ENV STORM_HOME=/opt/storm
-RUN mkdir build && cd build && cmake ../ && make
-RUN export PATH=$PATH:$STORM_DIR/build/bin
+RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DSTORM_DEVELOPER=OFF -DSTORM_LOG_DISABLE_DEBUG=ON -DSTORM_PORTABLE=ON -DSTORM_USE_SPOT_SHIPPED=ON 
+WORKDIR /opt/storm/build
+RUN make resources -j 1 && make storm -j 1 && make binaries -j 1
+RUN export PATH=$PATH:/opt/storm/build/bin
 # INSTALL STORMPY
 WORKDIR /opt/stormpy
 RUN python3 -m pip install -ve .
