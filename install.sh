@@ -15,6 +15,13 @@ elif [[ ! -d $WEIGHT_DIR ]]; then
     echo "$WEIGHT_DIR already exists but is not a directory" 1>&2
 fi
 
+# -- Installing Dependencies which can't be installed via toml -- #
+python3 -m pip install -e "git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
+
+# -- Stable Diffusion -- #
+cd /opt/Neuro-Symbolic-Video-Frame-Search/ns_vfs/model/diffusion/stable_diffusion
+python3 -m pip install -e .
+
 # -- Installing video_to_automaton -- #
 echo "Installing video_to_automaton"
 cd $ROOT_DIR
