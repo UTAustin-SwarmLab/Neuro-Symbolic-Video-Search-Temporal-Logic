@@ -44,7 +44,9 @@ RUN git clone -b stable https://github.com/moves-rwth/storm.git
 RUN git clone -b stable https://github.com/moves-rwth/stormpy.git
 # INSTALL CARL STORM
 WORKDIR /opt/carl-storm
-RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSE_CLN_NUMBERS=ON -DUSE_GINAC=ON -DTHREAD_SAFE=ON && make lib_carl -j 1
+RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSE_CLN_NUMBERS=ON -DUSE_GINAC=ON -DTHREAD_SAFE=ON 
+WORKDIR /opt/carl-storm/build
+RUN make lib_carl -j 1
 # INSTALL STORM
 WORKDIR /opt/storm
 RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DSTORM_DEVELOPER=OFF -DSTORM_LOG_DISABLE_DEBUG=ON -DSTORM_PORTABLE=ON -DSTORM_USE_SPOT_SHIPPED=ON 
