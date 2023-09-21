@@ -4,7 +4,7 @@ import abc
 import random
 
 from ns_vfs.data.frame import BenchmarkLTLFrame
-from ns_vfs.loader.benchmark_image import BenchmarkImageLoader, Cifar10ImageLoader
+from ns_vfs.loader.benchmark_image import BenchmarkImageLoader
 
 
 class DataGenerator(abc.ABC):
@@ -110,14 +110,3 @@ class BenchmarkVideoGenerator(DataGenerator):
         )
 
         return ltl_frame
-
-
-if __name__ == "__main__":
-    cifar_dir = (
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/benchmark_image_dataset/cifar-10-batches-py"
-    )
-    cifar_video_generator = BenchmarkVideoGenerator(
-        image_data_loader=Cifar10ImageLoader(cifar_dir_path=cifar_dir)
-    )
-    cifar_video_generator.generate(max_number_frame=50)
-    print("Hello World!")

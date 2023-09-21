@@ -11,6 +11,8 @@ from ._base import DataLoader
 
 
 class BenchmarkImageLoader(DataLoader):
+    """Benchmark image loader."""
+
     class_labels: list
     data: BenchmarkRawImage
 
@@ -81,6 +83,7 @@ class Cifar10ImageLoader(DataLoader):
         return data
 
     def unpickle(self, file):
+        """Unpickle CIFAR image data."""
         import pickle
 
         with open(file, "rb") as fo:

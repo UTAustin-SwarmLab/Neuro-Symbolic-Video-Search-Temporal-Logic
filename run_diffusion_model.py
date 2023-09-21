@@ -24,9 +24,7 @@ if __name__ == "__main__":
 
     pix_2_pix = PixToPix(config=config)
 
-    loaded_data = np.load(
-        os.path.join(artifact_path, "frame_window_automata.npy"), allow_pickle=True
-    ).item()
+    loaded_data = np.load(os.path.join(artifact_path, "frame_window_automata.npy"), allow_pickle=True).item()
     i = 0
     for key, value in loaded_data.items():
         if value.verification_result == "true":
