@@ -207,6 +207,8 @@ class VideoFrameWindowProcessor(VideoFrameProcessor):
                         proposition_set=proposition_set,
                         ltl_formula=ltl_formula,
                     )
+                    debug = str(verification_result)
+                    debug
                     frame_window[frame_window_idx].states = states
                     frame_window[frame_window_idx].transitions = transitions
                     frame_window[frame_window_idx].verification_result = str(verification_result)
