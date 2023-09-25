@@ -77,13 +77,16 @@ class VideotoAutomaton:
             output_dir (str | None, optional): Output directory. Defaults to None.
         """
         box_annotator = sv.BoxAnnotator()
-        labels = [
-            f"{proposition[class_id] if class_id is not None else None} {confidence:0.2f}"
-            for _, _, confidence, class_id, _ in detected_obj
-        ]
+        labels = []
+        for i in range(len(detected_obj[0].boxes)):
+            class_id = int(detected_obj[0].boxes.cls[i])
+            confidence = float(detected_obj[0].boxes.conf[i])
+            labels.append(f"{detected_obj[0].names[class_id] if class_id is not None else None} {confidence:0.2f}")
+
+        detections = sv.Detections(xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy())
 
         annotated_frame = box_annotator.annotate(
-            scene=frame_img.copy(), detections=detected_obj, labels=labels
+            scene=frame_img.copy(), detections=detections, labels=labels
         )
 
         sv.plot_image(annotated_frame, (16, 16))
@@ -158,16 +161,15 @@ class VideotoAutomaton:
         Returns:
             float: Probabilistic proposition from frame.
         """
-        print('here')
         detected_obj = self._detector.detect(frame_img, [proposition])
-        if len(detected_obj) > 0:
+        if len(detected_obj[0].boxes) > 0:
             if is_annotation:
                 self._annotate_frame(
                     frame_img=frame_img,
                     detected_obj=detected_obj,
                     proposition=[proposition],
                 )
-            return self._mapping_probability(np.round(np.max(detected_obj.confidence), 2))
+            return self._mapping_probability(np.round(np.max(detected_obj[0].boxes.conf.cpu().detach().numpy()), 2))
             # probability of the object in the frame
         else:
             return 0  # probability of the object in the frame is 0

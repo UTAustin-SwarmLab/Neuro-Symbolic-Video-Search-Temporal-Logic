@@ -56,13 +56,11 @@ class Yolo(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        print("here")
-        print(frame_img)
-        print(classes)
+        classes_reversed = {v:k for k, v in self.model.names.items()}
+        class_ids = [classes_reversed[c] for c in classes]
         detections = self.model.predict(
             source=frame_img,
-            classes=classes,
-            save=True
+            classes=class_ids
         )
 
         return detections
