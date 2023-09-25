@@ -9,7 +9,7 @@ from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
     sample_video_path = (
-        "/home/ss96869/Neuro-Symbolic-Video-Frame-Search/VIRAT_S_050201_05_000890_000944.mp4"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/nyc_street/nyc_street_footage.mp4"
     )
 
     config = load_config()
