@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 
-from ns_vfs.common.utility import save_dict_to_pickle, save_frames
+from ns_vfs.common.utility import save_frames
 from ns_vfs.config.loader import load_config
-from ns_vfs.data.frame import BenchmarkLTLFrame
+from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
 from ns_vfs.frame_searcher import FrameSearcher
 from ns_vfs.model.vision.grounding_dino import GroundingDino
 from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
@@ -30,57 +31,71 @@ def get_frames(frames_of_interest: list, benchmark_video: BenchmarkLTLFrame):
 def evaluate_frame_of_interest(
     benchmark_video_file: str,
     benchmark_video: BenchmarkLTLFrame,
-    frame_of_interest: list,
+    frame_of_interest: FramesofInterest,
     directory_path: str,
 ):
     result = dict()
     dir_path = Path(directory_path) / benchmark_video_file.name.split(".pkl")[0]
     dir_path.mkdir(parents=True, exist_ok=True)
 
-    true_list = benchmark_video.frames_of_interest
-    matching_sublists = sum(1 for a, b in zip(true_list, frame_of_interest) if a == b)
-    total_sublists = len(true_list)
-    exact_frame_accuracy = matching_sublists / total_sublists
+    true_foi_list = benchmark_video.frames_of_interest
+    total_num_true_foi = len(true_foi_list)
+
+    num_of_mathching_frame_set = sum(1 for a, b in zip(true_foi_list, frame_of_interest.foi_list) if a == b)
+    frame_set_accuracy = num_of_mathching_frame_set / total_num_true_foi
 
     # matching_accuracy
-    flattened_true_set = set([item for sublist in true_list for item in sublist])
-    flattened_predict_set = set([item for sublist in frame_of_interest for item in sublist])
-    common_elements = flattened_true_set.intersection(flattened_predict_set)
-    fail_to_predict = flattened_predict_set.difference(flattened_true_set)
+    flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
+    flattened_predicted_foi = set([item for sublist in frame_of_interest.foi_list for item in sublist])
+    true_positive_set = flattened_true_foi.intersection(flattened_predicted_foi)
+    false_positive_set = flattened_predicted_foi.difference(flattened_true_foi)
+    false_negatives = flattened_true_foi.difference(flattened_predicted_foi)
 
     # filename = benchmark_video_file.name.split("_ltl_")[-1].split("_")[0]
     dir_path / benchmark_video_file.name.split(".pkl")[0] / ".json"
 
-    result["exact_frame_accuracy"] = exact_frame_accuracy
-    result["num_true_positive"] = len(common_elements)
-    result["ratio_true_positive"] = len(common_elements) / len(flattened_true_set)
-    result["num_false_positive"] = len(fail_to_predict)
-    result["ratio_false_positive"] = len(fail_to_predict) / len(flattened_predict_set)
     result["ltl_formula"] = benchmark_video.ltl_formula
+    result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
+    result["exact_frame_accuracy"] = frame_set_accuracy
+    result["num_true_positive"] = len(true_positive_set)
+    result["num_false_positive"] = len(false_positive_set)
+    result["precision"] = len(true_positive_set) / len(true_positive_set) + len(false_positive_set)
+    result["recall"] = len(true_positive_set) / len(true_positive_set) + len(false_negatives)
+
     result["groud_truth_frame"] = benchmark_video.frames_of_interest
-    result["predicted_frame"] = frame_of_interest
-    result["groud_truth_img"] = get_frames(benchmark_video.frames_of_interest, benchmark_video)
-    result["predicted_img"] = get_frames(frame_of_interest, benchmark_video)
+    result["predicted_frame"] = frame_of_interest.foi_list
+
     result["total_number_of_framer_of_interest"] = len(benchmark_video.frames_of_interest)
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
 
     i = 0
-    for fram_img_set in result["predicted_img"]:
+    for frame_image_set in get_frames(frame_of_interest.foi_list, benchmark_video):
         path = Path(directory_path) / benchmark_video_file.name.split(".pkl")[0] / f"video_frame_{i}"
-        save_frames(frames=fram_img_set, path=path, file_label="predicted_frame")
+        save_frames(frames=frame_image_set, path=path, file_label="predicted_frame")
         i += 1
 
-    save_dict_to_pickle(
-        path=Path(directory_path) / benchmark_video_file.name.split(".pkl")[0],
-        dict_obj=result,
-        file_name="result.pkl",
-    )
+    # save_dict_to_pickle(
+    #     path=Path(directory_path) / benchmark_video_file.name.split(".pkl")[0],
+    #     dict_obj=result,
+    #     file_name="result.pkl",
+    # )
+    # Specifying the file name
+    csv_file_name = Path(directory_path) / "data.csv"
+
+    with open(csv_file_name, mode="a", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=result.keys())
+
+        if not csv_file_name.exists():
+            # If file does not exist, write header
+            writer.writeheader()
+        writer.writerow(result)
 
     acc_file = Path(directory_path) / "accuracy.txt"
     with acc_file.open("a") as f:
         f.write(
-            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]} 
-            num_true_positive: {result["num_true_positive"]}, ratio_true_positive: {result["ratio_true_positive"]} num_false_positive: {result["num_false_positive"]} ratio_false_positive: {result["ratio_false_positive"]}\n"""
+            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]}
+            num_true_positive: {result["num_true_positive"]}, num_false_positive: {result["num_false_positive"]} ,
+            precision: {result["precision"]} recall: {result["recall"]}\n"""
         )
 
 
@@ -144,5 +159,5 @@ if __name__ == "__main__":
                         benchmark_video_file=benchmark_video_file,
                         benchmark_video=benchmark_img_frame,
                         frame_of_interest=frame_of_interest,
-                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video/results",
+                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_eval_results",
                     )

@@ -27,9 +27,9 @@ if __name__ == "__main__":
         video_processor=video_processor,
         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
         proposition_set=["dog"],
-        save_annotation=False,  # TODO: Debug only
+        save_annotation=True,  # TODO: Debug only
         save_image=False,  # TODO: Debug only
-        ltl_formula='P>=0.90 [F "dog"]',  # 'P>=0.99 [F "person"]' P>=0.99 [F ("person" U "car")] P>=0.99 [F "person" U "car"]
+        ltl_formula='P>=0.90 [G "dog"]',  # 'P>=0.99 [F "person"]' P>=0.99 [F ("person" U "car")] P>=0.99 [F "person" U "car"]
     )
 
     frame_sercher = FrameSearcher(
@@ -37,5 +37,6 @@ if __name__ == "__main__":
     )
 
     frame_of_interest = frame_sercher.search()
-    print(frame_of_interest)
+    frame_of_interest.save_frames("/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/tmp_1")
+    # print(frame_of_interest)
     print("Done!")

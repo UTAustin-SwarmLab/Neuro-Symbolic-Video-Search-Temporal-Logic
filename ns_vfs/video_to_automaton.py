@@ -129,7 +129,7 @@ class VideotoAutomaton:
         self,
         confidence_per_video: float,
         true_threshold=0.66,
-        false_threshold=0.60,
+        false_threshold=0.50,
     ) -> float:
         """Mapping probability.
 

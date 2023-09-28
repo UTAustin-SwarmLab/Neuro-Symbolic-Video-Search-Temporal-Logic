@@ -141,10 +141,10 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
             # somefunction(frame, proposition_set)
             # Calculate propositional confidence
             for proposition in proposition_set:
-                propositional_confidence, detected_obj = calculate_propositional_confidence(
+                propositional_confidence, detected_obj, _ = calculate_propositional_confidence(
                     proposition=proposition,
                     frame_img=frame_img,
-                    is_annotation=is_annotation,
+                    save_annotation=is_annotation,
                 )
                 # --------------------------------------------------- #
                 if manual_confidence_probability is not None:
