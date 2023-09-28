@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -94,8 +95,11 @@ class VideotoAutomaton:
         if output_dir is None:
             path = os.path.join(self._artifact_dir, "annotated_frame")
 
-        if not os.path.exists(path):
-            os.makedirs(path)
+        if os.path.exists(path):
+            # If it exists, remove it (and all its contents)
+            shutil.rmtree(path)
+        # Then, create the directory again
+        os.makedirs(path)
 
         filename = get_filename_with_datetime("annotated_frame.png")
         plt.savefig(os.path.join(path, filename))
