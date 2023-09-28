@@ -68,6 +68,8 @@ class FrameSearcher:
     ):
         if "!" in ltl_formula:
             reverse_search = True
+        else:
+            reverse_search = False
         states, transitions = self._video_automata_builder.build_automaton(
             frame_set, interim_confidence_set, include_initial_state=include_initial_state
         )
@@ -111,6 +113,14 @@ class FrameSearcher:
         return frame_of_interest
 
     def search(self):
+        # return self._video_processor.get_frame_of_interest(
+        #     proposition_set=self._video_automata_builder.proposition_set,
+        #     calculate_propositional_confidence=self._video_automata_builder.calculate_confidence_of_proposition,
+        #     build_automaton=self._video_automata_builder.build_automaton,
+        #     ltl_formula=self._video_automata_builder.ltl_formula,
+        #     manual_confidence_probability=self._video_automata_builder._manual_confidence_probability,
+        #     verbose=True,
+        # )
         return self._video_processor.process_and_get_frame_of_interest(
             ltl_formula=self._video_automata_builder.ltl_formula,
             proposition_set=self._video_automata_builder.proposition_set,

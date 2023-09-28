@@ -105,7 +105,7 @@ class VideoFrameProcessor(VideoProcessor):
             ret, frame_img = self._cap.read()
             if not ret:
                 break
-            if self.frame_scale is not None:
+            if self._frame_scale is not None:
                 frame_img = self._resize_frame(frame_img, self.frame_scale)
             # --------------- frame image imported above --------------- #
             frame: Frame = Frame(frame_index=frame_idx, frame_image=frame_img, real_frame_idx=real_frame_idx)
