@@ -1,8 +1,11 @@
 import dataclasses  # noqa: D100
 import random
-from typing import List, Optional
+from pathlib import Path
+from typing import Dict, List, Optional
 
 import numpy as np
+
+from ns_vfs.common.frame_grouping import combine_consecutive_lists
 
 
 @dataclasses.dataclass
@@ -11,39 +14,59 @@ class Frame:
 
     frame_index: int
     frame_image: np.ndarray
+    annotated_image: Dict[str, np.ndarray] = dataclasses.field(default_factory=dict)
+    real_frame_idx: Optional[int] = None
     object_detection: dict = dataclasses.field(default_factory=dict)
     propositional_probability: dict = dataclasses.field(default_factory=dict)
 
+    @property
+    def propositional_confidence(self):
+        """Get propositional confidence."""
+        return list(self.propositional_probability.values())
+
 
 @dataclasses.dataclass
-class FrameWindow:
-    """Frame window class."""
+class FramesofInterest:
+    """Frame class."""
 
-    frame_window_idx: int
-    frame_image_set: list = dataclasses.field(default_factory=list)
-    states: list = dataclasses.field(default_factory=list)
-    transitions: list = dataclasses.field(default_factory=list)
-    verification_result: bool = False
+    ltl_formula: str
+    foi_list: List[List[int]] = dataclasses.field(default_factory=list)
+    frame_images: List[np.ndarray] = dataclasses.field(default_factory=list)
+    annotated_images: List[np.ndarray] = dataclasses.field(default_factory=list)
+    frame_idx_to_real_idx: dict = dataclasses.field(default_factory=dict)
 
-    def get_propositional_confidence(self):
-        """Get propositional confidence."""
-        propositional_confidence = [
-            [] for i in range(len(self.frame_image_set[0].propositional_probability.keys()))
-        ]
-        propositional_confidence
-        for frame in self.frame_image_set:
-            frame: Frame
-            idx = 0
-            for prop in frame.propositional_probability.keys():
-                propositional_confidence[idx].append(frame.propositional_probability[prop])
-                idx += 1
-        self.propositional_confidence = propositional_confidence
-        return propositional_confidence
+    def __post_init__(self):
+        if "!" in self.ltl_formula:
+            self._reverse_search = True
+        else:
+            self._reverse_search = False
 
-    def update_states(self, states):
-        """Update states."""
-        self.states = states
-        return states
+    def save_annotated_images(self, annotated_image: Dict[str, np.ndarray]):
+        for a_img in list(annotated_image.values()):
+            self.annotated_images.append(a_img)
+
+    def reorder_frame_of_interest(self):
+        if self._reverse_search:
+            flattened_list = [item for sublist in self.foi_list for item in sublist]
+            self.foi_list = [x for x in range(len(self.frame_images)) if x not in flattened_list]
+        self.foi_list = combine_consecutive_lists(self.foi_list)
+
+    def save_frames(self, path):
+        from PIL import Image
+
+        root_path = Path(path)
+        frame_path = root_path / "frame"
+        annotation_path = root_path / "annotation"
+
+        frame_path.mkdir(parents=True, exist_ok=True)
+        annotation_path.mkdir(parents=True, exist_ok=True)
+
+        for idx, img in enumerate(self.frame_images):
+            Image.fromarray(img).save(f"{frame_path}/{idx}.png")
+            if self.annotated_image_images[idx] is not None:
+                Image.fromarray(self.annotated_image_images[idx]).save(
+                    f"{annotation_path}/{idx}_annotated.png"
+                )
 
 
 @dataclasses.dataclass
@@ -102,36 +125,23 @@ class BenchmarkLTLFrame:
 
     def __post_init__(self):
         """Post init."""
-        self.frames_of_interest = self.group_consecutive_indices(data=self.labels_of_frames)
+        self.frames_of_interest = combine_consecutive_lists(data=self.frames_of_interest)
 
-    def group_consecutive_indices(self, data) -> list:
-        """Group consecutive indices.
-
-        Args:
-        data (list): List of data.
-        """
-        groups = []
-        group = []
-
-        for i, v in enumerate(data):
-            if v is not None:
-                if not group or i - 1 == group[-1]:
-                    group.append(i)
-                else:
-                    groups.append(group)
-                    group = [i]
-        if group:
-            groups.append(group)
-
-        return groups
-
-    def save_image(self, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts") -> None:
+    def save_frames(self, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts") -> None:
         """Save image to path.
 
         Args:
-        path (str, optional): Path to save image. Defaults to "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts".
+        path (str, optional): Path to save image.
         """
         from PIL import Image
 
         for idx, img in enumerate(self.images_of_frames):
             Image.fromarray(img).save(f"{path}/{idx}.png")
+
+    def save(self, save_path: str = "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts") -> None:
+        """Save the current instance to a pickle file."""
+        import pickle
+
+        """Save the current instance to a pickle file."""
+        with open(save_path, "wb") as f:
+            pickle.dump(self, f)

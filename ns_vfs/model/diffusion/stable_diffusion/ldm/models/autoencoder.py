@@ -47,9 +47,7 @@ class VQModel(pl.LightningModule):
             self.monitor = monitor
         self.batch_resize_range = batch_resize_range
         if self.batch_resize_range is not None:
-            print(
-                f"{self.__class__.__name__}: Using per-batch resizing in range {batch_resize_range}."
-            )
+            print(f"{self.__class__.__name__}: Using per-batch resizing in range {batch_resize_range}.")
 
         self.use_ema = use_ema
         if self.use_ema:
@@ -85,9 +83,7 @@ class VQModel(pl.LightningModule):
                     print(f"Deleting key {k} from state_dict.")
                     del sd[k]
         missing, unexpected = self.load_state_dict(sd, strict=False)
-        print(
-            f"Restored from {path} with {len(missing)} missing and {len(unexpected)} unexpected keys"
-        )
+        print(f"Restored from {path} with {len(missing)} missing and {len(unexpected)} unexpected keys")
         if len(missing) > 0:
             print(f"Missing Keys: {missing}")
             print(f"Unexpected Keys: {unexpected}")
@@ -498,9 +494,7 @@ class AutoencoderKL(pl.LightningModule):
 
 class IdentityFirstStage(torch.nn.Module):
     def __init__(self, *args, vq_interface=False, **kwargs):
-        self.vq_interface = (
-            vq_interface  # TODO: Should be true by default but check to not break older stuff
-        )
+        self.vq_interface = vq_interface  # TODO: Should be true by default but check to not break older stuff
         super().__init__()
 
     def encode(self, x, *args, **kwargs):
