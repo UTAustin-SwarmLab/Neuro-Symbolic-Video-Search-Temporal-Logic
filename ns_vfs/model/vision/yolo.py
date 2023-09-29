@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import warnings
-
-from ultralytics import YOLO
 from omegaconf import DictConfig
+from ultralytics import YOLO
+import supervision as sv
+import numpy as np
+import warnings
 
 from ns_vfs.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
-import numpy as np
 
 
 class Yolo(ComputerVisionDetector):
@@ -58,9 +58,21 @@ class Yolo(ComputerVisionDetector):
         """
         classes_reversed = {v:k for k, v in self.model.names.items()}
         class_ids = [classes_reversed[c] for c in classes]
-        detections = self.model.predict(
+        detected_obj = self.model.predict(
             source=frame_img,
             classes=class_ids
         )
 
-        return detections
+        self._labels = []
+        for i in range(len(detected_obj[0].boxes)):
+            class_id = int(detected_obj[0].boxes.cls[i])
+            confidence = float(detected_obj[0].boxes.conf[i])
+            self._labels.append(f"{detected_obj[0].names[class_id] if class_id is not None else None} {confidence:0.2f}")
+
+        self._detections = sv.Detections(xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy())
+
+        self._confidence = detected_obj[0].boxes.conf.cpu().detach().numpy()
+
+        self._size = len(detected_obj[0].boxes)
+
+        return detected_obj

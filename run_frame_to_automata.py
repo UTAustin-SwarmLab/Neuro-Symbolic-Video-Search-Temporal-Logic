@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from ns_vfs.config.loader import load_config
+from ns_vfs.model.vision.grounding_dino import GroundingDino
 from ns_vfs.model.vision.yolo import Yolo
-from ns_vfs.processor.video_processor import (
-    VideoFrameWindowProcessor,
-)
+from ns_vfs.processor.video_processor import VideoFrameWindowProcessor
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
@@ -15,9 +14,14 @@ if __name__ == "__main__":
     config = load_config()
 
     frame2automaton = VideotoAutomaton(
-        detector=Yolo(
-            config=config.YOLO,
-            weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
+        # detector=Yolo(
+        #     config=config.YOLO,
+        #     weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
+        # ),
+        detector=GroundingDino(
+            config=config.GROUNDING_DINO,
+            weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
+            config_path=config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH,
         ),
         video_processor=VideoFrameWindowProcessor(
             video_path=sample_video_path,
