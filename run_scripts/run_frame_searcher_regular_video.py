@@ -9,7 +9,9 @@ from ns_vfs.processor.video_processor import (
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
-    sample_video_path = "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/nyc_street/nyc_stree_53sec.mp4"
+    sample_video_path = (
+        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/man_woman/man_woman_original_720_low.mp4"
+    )
 
     config = load_config()
 
@@ -26,10 +28,10 @@ if __name__ == "__main__":
         ),
         video_processor=video_processor,
         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
-        proposition_set=["dog"],
+        proposition_set=["kitchen", "bed"],
         save_annotation=True,  # TODO: Debug only
         save_image=False,  # TODO: Debug only
-        ltl_formula='P>=0.90 [G "dog"]',  # 'P>=0.99 [F "person"]' P>=0.99 [F ("person" U "car")] P>=0.99 [F "person" U "car"]
+        ltl_formula='P>=0.90 ["kitchen" U "bed"]',  # 'P>=0.99 [F "person"]' P>=0.99 [F ("person" U "car")] P>=0.99 [F "person" U "car"]
     )
 
     frame_sercher = FrameSearcher(
@@ -37,6 +39,6 @@ if __name__ == "__main__":
     )
 
     frame_of_interest = frame_sercher.search()
-    frame_of_interest.save_frames("/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/tmp_1")
+    frame_of_interest.save_frames("/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/tmp_2")
     # print(frame_of_interest)
     print("Done!")

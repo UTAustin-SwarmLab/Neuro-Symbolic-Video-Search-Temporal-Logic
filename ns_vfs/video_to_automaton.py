@@ -51,6 +51,13 @@ class VideotoAutomaton:
         self._save_image = save_image
         self._verbose = verbose
         self._manual_confidence_probability = manual_confidence_probability
+        if self._save_annotation:
+            self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
+            if os.path.exists(self._annotated_frame_path):
+                # If it exists, remove it (and all its contents)
+                shutil.rmtree(self._annotated_frame_path)
+            # Then, create the directory again
+            os.makedirs(self._annotated_frame_path)
 
     def _sigmoid(self, x, k=1, x0=0) -> float:
         """Sigmoid function.
@@ -70,7 +77,7 @@ class VideotoAutomaton:
         frame_img: np.ndarray,
         proposition: list,
         detected_obj: any,
-        output_dir: str | None = None,
+        output_dir: str,
     ) -> None:
         """Annotate frame with bounding box.
 
@@ -92,19 +99,10 @@ class VideotoAutomaton:
 
         sv.plot_image(annotated_frame, (16, 16))
 
-        if output_dir is None:
-            path = os.path.join(self._artifact_dir, "annotated_frame")
-
-        if os.path.exists(path):
-            # If it exists, remove it (and all its contents)
-            shutil.rmtree(path)
-        # Then, create the directory again
-        os.makedirs(path)
-
         filename = get_filename_with_datetime("annotated_frame.png")
-        plt.savefig(os.path.join(path, filename))
+        plt.savefig(os.path.join(output_dir, filename))
 
-        image = Image.open(os.path.join(path, filename))
+        image = Image.open(os.path.join(output_dir, filename))
         return np.array(image)
 
     def _create_proposition_status(self, num_props):
@@ -176,6 +174,7 @@ class VideotoAutomaton:
                     frame_img=frame_img,
                     detected_obj=detected_obj,
                     proposition=[proposition],
+                    output_dir=self._annotated_frame_path,
                 )
                 return (
                     self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
