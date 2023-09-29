@@ -6,11 +6,7 @@ USER root
 #----------------------------------------------#
 # Install Default System Dependencies for Debian
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y \
-    ffmpeg git vim libglew-dev libglfw3-dev libglm-dev \
-    tmux wget unzip unrar curl \ 
-    x11-xserver-utils xvfb \
-    make cmake 
+RUN apt-get update && apt-get install -y ffmpeg git vim libglew-dev libglfw3-dev libglm-dev tmux wget unzip unrar curl x11-xserver-utils xvfb make cmake 
 
 # RUN apt-get apt-get install -y \
 #         gcc g++ 
@@ -19,12 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-RUN apt-get install -y \
-    python3-pip python3.8-venv \
-    build-essential libboost-all-dev libcln-dev \
-    libgmp-dev libginac-dev automake libglpk-dev \
-    libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev \
-    software-properties-common 
+RUN apt-get install -y python3-pip python3.8-venv build-essential libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev software-properties-common 
 
 # FOR GROUNDING DINO
 RUN apt-get install -y \
@@ -39,8 +30,9 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 \
                          --slave /usr/bin/g++ g++ /usr/bin/g++-11
 # GIT CLONE
 WORKDIR /opt
-RUN git clone -b stable https://github.com/moves-rwth/carl-storm
+RUN git clone -b stable https://github.com/moves-rwth/carl-storm.git
 RUN git clone -b stable https://github.com/moves-rwth/storm.git
+RUN git clone -b master https://github.com/moves-rwth/pycarl.git
 RUN git clone -b stable https://github.com/moves-rwth/stormpy.git
 # INSTALL CARL STORM
 WORKDIR /opt/carl-storm
@@ -53,6 +45,9 @@ RUN mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DSTORM_DEVE
 WORKDIR /opt/storm/build
 RUN make resources -j 1 && make storm -j 1 && make binaries -j 1
 RUN export PATH=$PATH:/opt/storm/build/bin
+# INSTALL PYCARL
+WORKDIR /opt/pycarl
+RUN python3 -m pip install -ve .
 # INSTALL STORMPY
 WORKDIR /opt/stormpy
 RUN python3 -m pip install -ve .
