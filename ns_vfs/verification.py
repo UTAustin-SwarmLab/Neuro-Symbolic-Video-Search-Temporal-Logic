@@ -49,7 +49,7 @@ def check_automaton(
     return model_checking(markov_automata, formula_str)
 
 
-def model_checking(model: stormpy.storage.SparseMA, formula_str: str) -> any:
+def model_checking(model: stormpy.storage.SparseMA, formula_str: str, is_filter: bool = False) -> any:
     """Model checking.
 
     Args:
@@ -68,8 +68,11 @@ def model_checking(model: stormpy.storage.SparseMA, formula_str: str) -> any:
 
     # Get Result and Filter it
     result = stormpy.model_checking(model, properties[0])
-    # filter = stormpy.create_filter_initial_states_sparse(model)
-    # result.filter(filter)
+
+    if is_filter:
+        filter = stormpy.create_filter_initial_states_sparse(model)
+        result.filter(filter)
+
     return result
 
 
