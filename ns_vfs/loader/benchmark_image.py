@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import abc
 from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 
-from ns_vfs.data.frame import BenchmarkRawImage
+from ns_vfs.data.frame import BenchmarkRawImage, BenchmarkRawImageDataset
 
 from ._base import DataLoader
 
+import torchvision
+
+from torchvision import datasets
+import json
 
 class BenchmarkImageLoader(DataLoader):
     """Benchmark image loader."""
@@ -89,3 +94,39 @@ class Cifar10ImageLoader(DataLoader):
         with open(file, "rb") as fo:
             dict = pickle.load(fo, encoding="bytes")
         return dict
+
+
+class ImageNetDataloader(BenchmarkImageLoader):
+    def __init__(
+        self,
+        imagenet_dir_path: str,
+        batch_id: int | str = 1,
+    ):
+        # Create an imagenet dataset
+        self.imagenet = datasets.ImageFolder(imagenet_dir_path)
+
+        # Get text labels from metadata
+        self.class_labels_dict = json.load(open("imagenet_class_index.txt"))
+        self.class_labels = list(self.class_labels_dict.values())
+        self.data: BenchmarkRawImageDataset = self.process_data(
+            raw_data=self.load_data()
+        )
+
+    def load_data(self) -> dict:
+        """Load the labels of the data
+        Returns:
+        any: dataset
+        """
+        labels = [self.imagenet[idx][1] for idx in range(len(self.imagenet))]
+        mapped_labels = list(map(lambda x: self.class_labels[x],labels))
+        data = {
+            'dataset': self.imagenet,
+            'labels': mapped_labels
+        }
+        return data
+    
+    def process_data(self, raw_data) -> any:
+        """Process raw data to BenchmarkRawImage Data Class."""
+        return BenchmarkRawImageDataset(unique_labels=self.class_labels, 
+                                        labels=raw_data['labels'],
+                                        dataset=raw_data['dataset'])
