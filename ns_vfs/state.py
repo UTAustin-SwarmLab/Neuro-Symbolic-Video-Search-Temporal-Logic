@@ -12,9 +12,7 @@ class State:
         self.state_index = index
         self.frame_index = frame_index
         self.proposition_set = proposition_set
-        self.current_proposition_combination = (
-            proposition_status_set  # "initial", TTT, TFT, FTT, etc.
-        )
+        self.current_proposition_combination = proposition_status_set  # "initial", TTT, TFT, FTT, etc.
         self.current_descriptive_label = self._get_descriptive_label(label=proposition_status_set)
         self.probability = 1
 
@@ -36,6 +34,8 @@ class State:
         for i in range(len(self.proposition_set)):
             if label[i] == "T":
                 labels.append(self.proposition_set[i])
+        if self.state_index == 0 and len(labels) == 0:
+            labels.append("init")
         return labels
 
     def update(self, frame_index, proposition_combinations):

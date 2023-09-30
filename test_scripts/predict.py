@@ -1,12 +1,13 @@
 from PIL import Image
 from ultralytics import YOLO
 
+
 def predict():
-    model = YOLO('../artifacts/weights/yolov8n.pt')
-    source = 'frame_3.png'
+    model = YOLO("../artifacts/weights/yolov8n.pt")
+    source = "data/yolo_test_image.jpg"
     print(model.names)
 
-    results = model.predict(source, save=True, classes=[0, 2, 9]) # 0-person, 2-car, 9-trafficlight
+    results = model.predict(source, save=True, classes=[0, 2, 9])  # 0-person, 2-car, 9-trafficlight
     print(results[0])
     print(results[0].boxes.conf)
     print(results[0].boxes.cls)
@@ -19,5 +20,6 @@ def predict():
         im = Image.fromarray(im_array[..., ::-1])
         im.show()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     predict()
