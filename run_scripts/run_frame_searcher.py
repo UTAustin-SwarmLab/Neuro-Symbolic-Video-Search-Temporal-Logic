@@ -26,7 +26,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--proposition_set",
         type=str,
-        default="bicycle, car",
+        default="bicycle,car",
+        help="No space between propositions, separated by comma",
     )
     parser.add_argument(
         "--ltl_formula",
