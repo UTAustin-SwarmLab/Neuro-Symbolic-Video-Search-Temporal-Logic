@@ -1,12 +1,15 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["video_to_automaton"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["artifacts, docker"]  # exclude packages matching these glob patterns (empty by default)
+include = ["ns_vfs"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["artifacts, docker, experiments"]  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+[tool.my-tool]
+submodule_path = "ns_vfs/model/diffusion/stable_diffusion"
 
 [project]
 name = "ns-vfs"
@@ -28,8 +31,13 @@ dependencies = [
     "pandas",
     "supervision==0.6.0",
     "roboflow",
+    "einops",
+    "pytorch-lightning==1.4.2",
+    "torchmetrics==0.5",
+    "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
     "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
-    "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251"
+    "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251",
+    "taming-transformers@git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
     # -> we used git submodule to add this repo (GroundingDINO API Structure Issue)
 ]
 
@@ -42,7 +50,7 @@ dev = ["black", "ruff", "mypy"]
 test = ["pytest", "pytest-cov", "pytest-mock"]
 
 [tool.black]
-line-length = 100
+line-length = 110
 
 [tool.ruff]
 select = [
@@ -51,8 +59,9 @@ select = [
   "UP",  # pyupgrade
   "D",   # pydocstyle
 ]
+line-length = 110
 
-ignore = ["ANN101", "ANN102"]
+ignore = ["ANN101", "ANN102", "D100"]
 
 extend-exclude = [".venv", "venv", "vscode"]
 
