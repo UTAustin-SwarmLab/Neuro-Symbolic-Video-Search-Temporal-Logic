@@ -75,26 +75,20 @@ class VideotoAutomaton:
     def _annotate_frame(
         self,
         frame_img: np.ndarray,
-        proposition: list,
-        detected_obj: any,
         output_dir: str,
     ) -> None:
         """Annotate frame with bounding box.
 
         Args:
             frame_img (np.ndarray): Frame image.
-            proposition (list): List of propositions.
-            detected_obj (any): Detected object.
             output_dir (str | None, optional): Output directory. Defaults to None.
         """
         box_annotator = sv.BoxAnnotator()
-        labels = [
-            f"{proposition[class_id] if class_id is not None else None} {confidence:0.2f}"
-            for _, _, confidence, class_id, _ in detected_obj
-        ]
 
         annotated_frame = box_annotator.annotate(
-            scene=frame_img.copy(), detections=detected_obj, labels=labels
+            scene=frame_img.copy(),
+            detections=self._detector.get_detections(),
+            labels=self._detector.get_labels(),
         )
 
         sv.plot_image(annotated_frame, (16, 16))
@@ -167,26 +161,13 @@ class VideotoAutomaton:
             float: Probabilistic proposition from frame.
             detected_obj (any): Detected object.
         """
-        detected_obj = self._detector.detect(frame_img, [proposition])
-        if len(detected_obj) > 0:
-            if save_annotation:
-                annotated_img = self._annotate_frame(
+        self._detector.detect(frame_img, [proposition])
+        if self._detector.get_size() > 0:
+            if is_annotation:
+                self._annotate_frame(
                     frame_img=frame_img,
-                    detected_obj=detected_obj,
-                    proposition=[proposition],
-                    output_dir=self._annotated_frame_path,
                 )
-                return (
-                    self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
-                    detected_obj,
-                    annotated_img,
-                )
-            else:
-                return (
-                    self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
-                    detected_obj,
-                    None,
-                )
+            return self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2))
             # probability of the object in the frame
         else:
             return 0, None, None  # probability of the object in the frame is 0
