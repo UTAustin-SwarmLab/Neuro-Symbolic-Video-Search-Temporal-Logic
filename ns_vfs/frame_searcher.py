@@ -65,6 +65,7 @@ class FrameSearcher:
         ltl_formula: str,
         include_initial_state=False,
         verbose=False,
+        is_filter=False,
     ):
         if "!" in ltl_formula:
             reverse_search = True
@@ -79,12 +80,13 @@ class FrameSearcher:
             proposition_set=proposition_set,
             ltl_formula=ltl_formula,
             verbose=verbose,
+            is_filter=is_filter,
         )
         verification_result_str = str(verification_result)
 
         string_result = verification_result_str.split("{")[-1].split("}")[0]
 
-        if string_result[0] == "t":
+        if string_result[0] == "t":  # 0,6
             result = True
         else:
             result = False
@@ -113,14 +115,6 @@ class FrameSearcher:
         return frame_of_interest
 
     def search(self):
-        # return self._video_processor.get_frame_of_interest(
-        #     proposition_set=self._video_automata_builder.proposition_set,
-        #     calculate_propositional_confidence=self._video_automata_builder.calculate_confidence_of_proposition,
-        #     build_automaton=self._video_automata_builder.build_automaton,
-        #     ltl_formula=self._video_automata_builder.ltl_formula,
-        #     manual_confidence_probability=self._video_automata_builder._manual_confidence_probability,
-        #     verbose=True,
-        # )
         return self._video_processor.process_and_get_frame_of_interest(
             ltl_formula=self._video_automata_builder.ltl_formula,
             proposition_set=self._video_automata_builder.proposition_set,
