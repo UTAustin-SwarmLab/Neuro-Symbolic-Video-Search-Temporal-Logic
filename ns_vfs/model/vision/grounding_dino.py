@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import warnings
-
 from groundingdino.util.inference import Model
 from omegaconf import DictConfig
+import numpy as np
+import warnings
 
 from ns_vfs.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
-import numpy as np
 
 
 class GroundingDino(ComputerVisionDetector):
@@ -59,11 +58,22 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        detections = self.model.predict_with_classes(
+        detected_obj = self.model.predict_with_classes(
             image=frame_img,
             classes=self._parse_class_name(class_names=classes),
             box_threshold=self._config.BOX_TRESHOLD,
             text_threshold=self._config.TEXT_TRESHOLD,
         )
 
-        return detections
+        self._labels = [
+            f"{classes[class_id] if class_id is not None else None} {confidence:0.2f}"
+            for _, _, confidence, class_id, _ in detected_obj
+        ]
+
+        self._detections = detected_obj
+
+        self._confidence = detected_obj.confidence
+
+        self._size = len(detected_obj)
+
+        return detected_obj

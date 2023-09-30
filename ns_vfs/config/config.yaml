@@ -12,3 +12,6 @@ GROUNDING_DINO:
   GROUNDING_DINO_CHECKPOINT_PATH: # if empty, will automatically loaded from config loader
   BOX_TRESHOLD: 0.4
   TEXT_TRESHOLD: 0.25
+
+YOLO:
+  YOLO_CHECKPOINT_PATH:

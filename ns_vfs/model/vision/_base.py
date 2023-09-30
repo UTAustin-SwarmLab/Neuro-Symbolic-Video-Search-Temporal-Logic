@@ -1,3 +1,5 @@
+import supervision as sv
+import numpy as np
 import abc
 
 
@@ -26,6 +28,20 @@ class ComputerVisionDetector(ComputerVisionModel):
     def get_weight(self):
         """Get weight."""
         return self._weight
+
+    def get_labels(self) -> list:
+        """Return sv.Detections"""
+        return self._labels
+    
+    def get_detections(self) -> sv.Detections:
+        """Return sv.Detections"""
+        return self._detection
+
+    def get_confidence(self) -> np.ndarray:
+        return self._confidence
+    
+    def get_size(self) -> int:
+        return self._size
 
     @abc.abstractmethod
     def detect(self, frame) -> any:
