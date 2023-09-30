@@ -2,17 +2,16 @@ from __future__ import annotations
 
 import abc
 import os
-import shutil
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 
-from ns_vfs.data.frame import Frame, FrameWindow
-from ns_vfs.verification import check_automaton
+from ns_vfs.data.frame import Frame, FramesofInterest
 
 
 class VideoProcessor(abc.ABC):
+    """Video Processor."""
+
     @abc.abstractmethod
     def import_video(self, video_path) -> any:
         """Read video from video_path."""
@@ -21,7 +20,14 @@ class VideoProcessor(abc.ABC):
 class VideoFrameProcessor(VideoProcessor):
     """Video Frame Processor."""
 
-    def __init__(self, video_path: str, artifact_dir: str) -> None:
+    def __init__(
+        self,
+        video_path: str,
+        artifact_dir: str,
+        frame_duration_sec: int = 1,
+        frame_scale: int | None = None,
+        is_auto_import: bool = True,
+    ) -> None:
         """Video Frame Processor.
 
         Args:
@@ -31,8 +37,10 @@ class VideoFrameProcessor(VideoProcessor):
         self._video_path = video_path
         self._artifact_dir = os.path.join(artifact_dir, "video_frame_processor")
         self._processed_frames = None
-        self._frame_window = None
-        self.import_video(video_path)
+        self._frame_duration_sec = frame_duration_sec
+        self._frame_scale = frame_scale
+        if is_auto_import:
+            self.import_video(video_path)
 
     def _resize_frame(self, frame_img: np.ndarray, frame_scale: int) -> np.ndarray:
         """Resize frame image.
@@ -53,6 +61,19 @@ class VideoFrameProcessor(VideoProcessor):
             ),
         )
 
+    def _reset_frame_set_and_confidence(self, proposition_set: list) -> tuple[list, list]:
+        """Reset frame set and confidence.
+
+        Args:
+            proposition_set (list): List of propositions.
+
+        Returns:
+            tuple[list, list]: Frame set and confidence.
+        """
+        frame_set = list()
+        interim_confidence_set = [[] for _ in range(len(proposition_set))]
+        return frame_set, interim_confidence_set
+
     def import_video(self, video_path: str) -> None:
         """Read video from video_path.
 
@@ -65,6 +86,174 @@ class VideoFrameProcessor(VideoProcessor):
         self.original_vidoe_fps = self._cap.get(cv2.CAP_PROP_FPS)
         self.original_frame_count = self._cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
+    def process_and_get_frame_of_interest(
+        self,
+        ltl_formula: str = "",
+        proposition_set: list = None,
+        get_propositional_confidence_per_frame: callable = None,
+        validate_propositional_confidence: callable = None,
+        build_and_check_automaton: callable = None,
+        update_frame_of_interest: callable = None,
+    ) -> FramesofInterest:
+        frame_idx = 0
+        frame_set, interim_confidence_set = self._reset_frame_set_and_confidence(proposition_set)
+        frame_of_interest = FramesofInterest(ltl_formula=ltl_formula)
+
+        frame_step = int(self.original_vidoe_fps * self._frame_duration_sec)
+        for real_frame_idx in range(0, int(self.original_frame_count), int(frame_step)):
+            self._cap.set(cv2.CAP_PROP_POS_FRAMES, real_frame_idx)
+            ret, frame_img = self._cap.read()
+            if not ret:
+                break
+            if self._frame_scale is not None:
+                frame_img = self._resize_frame(frame_img, self.frame_scale)
+            # --------------- frame image imported above --------------- #
+            frame: Frame = Frame(frame_index=frame_idx, frame_image=frame_img, real_frame_idx=real_frame_idx)
+
+            frame = get_propositional_confidence_per_frame(frame=frame, proposition_set=proposition_set)
+
+            frame_set, interim_confidence_set = validate_propositional_confidence(
+                frame_set=frame_set,
+                frame=frame,
+                proposition_set=proposition_set,
+                interim_confidence_set=interim_confidence_set,
+            )
+
+            if len(frame_set) > 0:  # propositions in frame
+                result = build_and_check_automaton(
+                    frame_set=frame_set,
+                    interim_confidence_set=interim_confidence_set,
+                    include_initial_state=False,
+                    proposition_set=proposition_set,
+                    ltl_formula=ltl_formula,
+                    verbose=False,
+                )
+                # if we uncomment below prop1 U porp2 won't work, need validation
+                # if result == "False":  # propositions in frame but doesn't meet the initial ltl condition
+                # frame_set, interim_confidence_set = self._reset_frame_set_and_confidence(proposition_set)
+                # else:
+                #   # Some Code
+                if result:
+                    # 2.1 Save result
+                    frame_of_interest = update_frame_of_interest(
+                        frame_set=frame_set, frame_of_interest=frame_of_interest
+                    )
+                    # 2.2 Reset frame set
+                    frame_set, interim_confidence_set = self._reset_frame_set_and_confidence(proposition_set)
+            frame_idx += 1
+        frame_of_interest.reorder_frame_of_interest()
+        return frame_of_interest
+
+    # def get_frame_of_interest(
+    #     self,
+    #     proposition_set: list,
+    #     calculate_propositional_confidence: callable,
+    #     build_automaton: callable,
+    #     ltl_formula: str,
+    #     save_image: bool = False,
+    #     is_annotation: bool = False,
+    #     manual_confidence_probability: float | None = None,
+    #     verbose: bool = False,
+    # ) -> None:
+    #     frame_idx = 0
+    #     temp_frame_set = list()
+    #     temp_confidence_set = [[] for _ in range(len(proposition_set))]
+    #     frame_of_interest = list()
+    #     reverse_search = False
+    #     frame_of_interest_obj = FramesofInterest(ltl_formula=ltl_formula)
+    #     if "!" in ltl_formula:
+    #         reverse_search = True
+
+    #     frame_step = int(self.original_vidoe_fps * frame_duration_sec)
+
+    #     for real_frame_idx in range(0, int(self.original_frame_count), int(frame_step)):
+    #         self._cap.set(cv2.CAP_PROP_POS_FRAMES, real_frame_idx)
+    #         ret, frame_img = self._cap.read()
+    #         if not ret:
+    #             break
+
+    #         if frame_scale is not None:
+    #             frame_img = self._resize_frame(frame_img, frame_scale)
+    #         # --------------- frame image imported above --------------- #
+    #         # Initialize frame
+    #         frame: Frame = Frame(frame_index=frame_idx, frame_image=frame_img, real_frame_idx=real_frame_idx)
+    #         # Calculate propositional confidence
+    #         for proposition in proposition_set:
+    #             propositional_confidence, detected_obj, annotated_img = calculate_propositional_confidence(
+    #                 proposition=proposition,
+    #                 frame_img=frame_img,
+    #                 is_annotation=is_annotation,
+    #             )
+    #             frame.object_detection[str(proposition)] = detected_obj
+    #             frame.propositional_probability[str(proposition)] = propositional_confidence
+    #             if annotated_img is not None:
+    #                 frame.annotated_image.append(annotated_img)
+
+    #         # 1. If Propositional Confidence is True
+    #         propositional_confidence_of_frame = frame.propositional_confidence
+    #         proposition_condition = sum(propositional_confidence_of_frame)
+    #         if proposition_condition > 0:
+    #             temp_frame_set.append(frame)
+    #             for i in range(len(proposition_set)):
+    #                 temp_confidence_set[i].append(propositional_confidence_of_frame[i])
+
+    #             frame_set = temp_frame_set.copy()
+    #             states, transitions = build_automaton(
+    #                 frame_set, temp_confidence_set, include_initial_state=False
+    #             )
+    #             verification_result = check_automaton(
+    #                 transitions=transitions,
+    #                 states=states,
+    #                 proposition_set=proposition_set,
+    #                 ltl_formula=ltl_formula,
+    #                 verbose=verbose,
+    #             )
+    #             verification_result_str = str(verification_result)
+    #             string_result = verification_result_str.split("{")[-1].split("}")[0]
+    #             if string_result[0] == "t":
+    #                 result = True
+    #             else:
+    #                 result = False
+    #                 temp_frame_set = list()
+    #                 temp_confidence_set = [[] for _ in range(len(proposition_set))]
+    #                 if reverse_search:
+    #                     result = True
+
+    #             # 2. If Verification Result is True
+    #             if result:
+    #                 # 2.1 Save result
+    #                 if len(temp_frame_set) > 1:
+    #                     for frame in temp_frame_set:
+    #                         frame_of_interest.append([frame.frame_index])
+    #                         frame_of_interest_obj.frame_idx_to_real_idx[
+    #                             frame.frame_index
+    #                         ] = frame.real_frame_idx
+    #                         frame_of_interest_obj.frame_images.append(frame.frame_image)
+    #                         for j in frame.annotated_image:
+    #                             frame_of_interest_obj.annotated_image_images.append(j)
+
+    #                 else:
+    #                     for frame in temp_frame_set:
+    #                         frame_of_interest.append([frame.frame_index])
+    #                         frame_of_interest_obj.frame_idx_to_real_idx[
+    #                             frame.frame_index
+    #                         ] = frame.real_frame_idx
+    #                         frame_of_interest_obj.frame_idx_to_real_idx
+    #                         frame_of_interest_obj.frame_images.append(frame.frame_image)
+    #                         for j in frame.annotated_image:
+    #                             frame_of_interest_obj.annotated_image_images.append(j)
+    #                 # 2.2 Reset frame set
+    #                 temp_frame_set = list()
+    #                 temp_confidence_set = [[] for _ in range(len(proposition_set))]
+
+    #         frame_idx += 1
+    #     if reverse_search:
+    #         flattened_list = [item for sublist in frame_of_interest for item in sublist]
+    #         frame_of_interest = [x for x in range(frame_idx) if x not in flattened_list]
+    #     frame_of_interest = combine_consecutive_lists(frame_of_interest)
+    #     frame_of_interest_obj.frame_of_interest = frame_of_interest
+    #     return frame_of_interest_obj
+
     def get_video_by_frame(
         self,
         frame_scale: int = 5,
@@ -75,7 +264,7 @@ class VideoFrameProcessor(VideoProcessor):
 
         Args:
             frame_scale (int, optional): Scale of frame. Defaults to 5.
-            second_per_frame (int, optional): Second per frame. Defaults to 2.
+            frame_duration_sec (int, optional): Second per frame. Defaults to 2.
             return_format (str, optional): Return format. Defaults to "npndarray".
 
         Returns:
@@ -104,149 +293,3 @@ class VideoFrameProcessor(VideoProcessor):
         else:
             self._processed_frames = frames
             return frames
-
-
-class VideoFrameWindowProcessor(VideoFrameProcessor):
-    """Video Frame Window Processor.
-
-    It processes video frame, build automaton and verification
-    concurretnly by sliding window.
-    """
-
-    def __init__(self, video_path: str, artifact_dir: str) -> None:
-        """Video Frame Processor.
-
-        Args:
-            video_path (str): Path to video file.
-            artifact_dir (str): Path to artifact directory.
-        """
-        super().__init__(video_path, artifact_dir)
-
-    def build_frame_window_synchronously(
-        self,
-        proposition_set: list,
-        calculate_propositional_confidence: callable,
-        build_automaton: callable,
-        ltl_formula: str,
-        frame_duration_sec: int = 2,
-        frame_scale: int | None = None,
-        sliding_window_size: int = 5,
-        save_image: bool = False,
-        is_annotation: bool = False,
-    ) -> None:
-        """Build frame window synchronously.
-
-        It processes video frame, build automaton and verification
-        concurrently by sliding window.
-
-        Args:
-            proposition_set (list): List of propositions.
-            calculate_propositional_confidence (callable): Calculate propositional confidence.
-            build_automaton (callable): Build automaton.
-            frame_duration_sec (int, optional): Second per frame. Defaults to 2.
-            frame_scale (int | None, optional): Scale of frame. Defaults to None.
-            sliding_window_size (int, optional): Size of sliding window. Defaults to 5.
-            save_image (bool, optional): Save image. Defaults to False.
-            is_annotation (bool, optional): Annotate frame. Defaults to False.
-            ltl_formula (str): LTL formula.
-        """
-        frame_window_idx = 0
-        frame_counter = 0
-        frame_idx = 0
-
-        # Calculate the frame skip rate
-        frame_window = {}
-        temp_frame_set = list()
-
-        while self._cap.isOpened():
-            ret, frame_img = self._cap.read()
-            if not ret:
-                break
-            if frame_counter % int(frame_duration_sec * self.original_vidoe_fps) == 0:
-                if frame_scale is not None:
-                    frame_img = self._resize_frame(frame_img, frame_scale)
-                # --------------- frame image imported above --------------- #
-                # Initialize frame
-                frame: Frame = Frame(
-                    frame_index=frame_idx,
-                    frame_image=frame_img,
-                )
-                # Calculate propositional confidence
-                for proposition in proposition_set:
-                    propositional_confidence = calculate_propositional_confidence(
-                        proposition=proposition,
-                        frame_img=frame_img,
-                        is_annotation=is_annotation,
-                    )
-                    frame.propositional_probability[str(proposition)] = propositional_confidence
-                temp_frame_set.append(frame)
-
-                if len(temp_frame_set) == sliding_window_size:
-                    if save_image:
-                        self.replay_and_save(frames=temp_frame_set)
-
-                    # Process frame window
-                    frame_set = temp_frame_set.copy()
-                    frame_window[frame_window_idx] = FrameWindow(
-                        frame_window_idx=frame_window_idx,
-                        frame_image_set=frame_set,
-                    )
-
-                    propositional_confidence = frame_window[
-                        frame_window_idx
-                    ].get_propositional_confidence()
-
-                    # Build State & Compute Probability
-                    states, transitions = build_automaton(frame_set, propositional_confidence)
-
-                    # Verification - Build Transition Matrix
-                    verification_result = check_automaton(
-                        transitions=transitions,
-                        states=states,
-                        proposition_set=proposition_set,
-                        ltl_formula=ltl_formula,
-                    )
-                    frame_window[frame_window_idx].states = states
-                    frame_window[frame_window_idx].transitions = transitions
-                    frame_window[frame_window_idx].verification_result = str(verification_result)
-                    frame_window_idx += 1
-                    temp_frame_set.pop(0)
-
-                frame_idx += 1
-            frame_counter += 1
-
-        self._cap.release()
-        self._frame_window = frame_window
-        return frame_window
-
-    def replay_and_save(
-        self,
-        frames: list[Frame],
-        frame_rate=2,
-        is_imshow: bool = False,
-        output_dir: str | None = None,
-    ) -> None:
-        """Replay and save frames.
-
-        Args:
-            frames (list[Frame]): List of frames.
-            frame_rate (int, optional): Frame rate. Defaults to 2.
-            is_imshow (bool, optional): Show image. Defaults to False.
-            output_dir (str | None, optional): Output directory. Defaults to None.
-        """
-        if output_dir is None:
-            output_dir = os.path.join(self._artifact_dir, "replay_frames")
-
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        else:
-            shutil.rmtree(output_dir)
-            os.makedirs(output_dir)
-        for idx, frame in enumerate(frames):
-            plt.imshow(cv2.cvtColor(frame.frame_image, cv2.COLOR_BGR2RGB))
-            plt.axis("off")  # hide the axis values
-            plt.savefig(os.path.join(output_dir, f"frame_{idx}.png"))
-            if is_imshow:
-                plt.show()
-            cv2.waitKey(int(1000 / frame_rate))  # wait for specified milliseconds
-        cv2.destroyAllWindows
