@@ -71,7 +71,7 @@ if __name__ == "__main__":
         )
         benchmark_img_frame = video_processor.benchmark_image_frames
         proposition_set = benchmark_img_frame.proposition
-        ltl_formula = f"P>=0.90 [{benchmark_img_frame.ltl_formula}]"
+        ltl_formula = f"P>=0.80 [{benchmark_img_frame.ltl_formula}]"
 
     if args.cv_model == "grounding_dino":
         cv_model = GroundingDino(
