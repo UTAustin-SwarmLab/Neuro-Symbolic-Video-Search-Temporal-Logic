@@ -7,7 +7,6 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 # USER INPUT (TODO: PLEASE MODIFY)
 
 CODE_PATH := /home/hg22723/projects/Neuro-Symbolic-Video-Frame-Search
-# DATASET_PATH := /home/hg22723/datasets/Neuro-Symbolic-Video-Frame-Search
 DS_PATH := /store/datasets/
 
 
