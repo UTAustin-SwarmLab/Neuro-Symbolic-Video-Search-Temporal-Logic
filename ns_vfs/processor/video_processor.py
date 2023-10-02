@@ -144,6 +144,7 @@ class VideoFrameProcessor(VideoProcessor):
         frame_of_interest.reorder_frame_of_interest()
         return frame_of_interest
 
+<<<<<<< HEAD
     # def get_frame_of_interest(
     #     self,
     #     proposition_set: list,
@@ -254,6 +255,8 @@ class VideoFrameProcessor(VideoProcessor):
     #     frame_of_interest_obj.frame_of_interest = frame_of_interest
     #     return frame_of_interest_obj
 
+=======
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
     def get_video_by_frame(
         self,
         frame_scale: int = 5,

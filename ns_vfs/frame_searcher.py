@@ -65,6 +65,10 @@ class FrameSearcher:
         ltl_formula: str,
         include_initial_state=False,
         verbose=False,
+<<<<<<< HEAD
+=======
+        is_filter=False,
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
     ):
         if "!" in ltl_formula:
             reverse_search = True
@@ -79,12 +83,20 @@ class FrameSearcher:
             proposition_set=proposition_set,
             ltl_formula=ltl_formula,
             verbose=verbose,
+<<<<<<< HEAD
+=======
+            is_filter=is_filter,
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
         )
         verification_result_str = str(verification_result)
 
         string_result = verification_result_str.split("{")[-1].split("}")[0]
 
+<<<<<<< HEAD
         if string_result[0] == "t":
+=======
+        if string_result[0] == "t":  # 0,6
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
             result = True
         else:
             result = False
@@ -113,6 +125,7 @@ class FrameSearcher:
         return frame_of_interest
 
     def search(self):
+<<<<<<< HEAD
         # return self._video_processor.get_frame_of_interest(
         #     proposition_set=self._video_automata_builder.proposition_set,
         #     calculate_propositional_confidence=self._video_automata_builder.calculate_confidence_of_proposition,
@@ -121,6 +134,8 @@ class FrameSearcher:
         #     manual_confidence_probability=self._video_automata_builder._manual_confidence_probability,
         #     verbose=True,
         # )
+=======
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
         return self._video_processor.process_and_get_frame_of_interest(
             ltl_formula=self._video_automata_builder.ltl_formula,
             proposition_set=self._video_automata_builder.proposition_set,

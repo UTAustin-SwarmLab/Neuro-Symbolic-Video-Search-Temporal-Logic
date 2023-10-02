@@ -161,6 +161,7 @@ class VideotoAutomaton:
             float: Probabilistic proposition from frame.
             detected_obj (any): Detected object.
         """
+<<<<<<< HEAD
         self._detector.detect(frame_img, [proposition])
         if self._detector.get_size() > 0:
             if is_annotation:
@@ -168,6 +169,26 @@ class VideotoAutomaton:
                     frame_img=frame_img,
                 )
             return self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2))
+=======
+        detected_obj = self._detector.detect(frame_img, [proposition])
+        if self._detector.get_size() > 0:
+            if save_annotation:
+                annotated_img = self._annotate_frame(
+                    frame_img=frame_img, output_dir=self._annotated_frame_path
+                )
+                return (
+                    self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2)),
+                    detected_obj,
+                    annotated_img,
+                )
+            else:
+                return (
+                    self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
+                    detected_obj,
+                    None,
+                )
+
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
             # probability of the object in the frame
         else:
             return 0, None, None  # probability of the object in the frame is 0

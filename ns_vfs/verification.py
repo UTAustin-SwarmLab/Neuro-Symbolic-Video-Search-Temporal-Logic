@@ -13,6 +13,10 @@ def check_automaton(
     proposition_set: list[str],
     ltl_formula: str,
     verbose: bool = False,
+<<<<<<< HEAD
+=======
+    is_filter: bool = False,
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
 ) -> any:
     """Check automaton.
 
@@ -46,7 +50,7 @@ def check_automaton(
         print(markov_automata)
 
     # Check the model (Markov Automata)
-    return model_checking(markov_automata, formula_str)
+    return model_checking(markov_automata, formula_str, is_filter)
 
 
 def model_checking(model: stormpy.storage.SparseMA, formula_str: str, is_filter: bool = False) -> any:
@@ -110,8 +114,11 @@ def build_label_func(states: list[State], props: list[str]) -> stormpy.storage.S
     for state in states:
         for label in state.current_descriptive_label:
             state_labeling.add_label_to_state(label, state.state_index)
+<<<<<<< HEAD
             if label == "init":
                 state_labeling.add_label_to_state(label, state.state_index)
+=======
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
         # if state.state_index == 0:
         #     state_labeling.add_label("init")
         #     state_labeling.add_label_to_state("init", state.state_index)

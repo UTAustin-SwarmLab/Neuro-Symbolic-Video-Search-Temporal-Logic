@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+<<<<<<< HEAD
+=======
+import warnings
+
+import numpy as np
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
 from groundingdino.util.inference import Model
 from omegaconf import DictConfig
 import numpy as np
@@ -33,9 +39,7 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             None
         """
-        return Model(
-            model_config_path=config_path, model_checkpoint_path=weight_path
-        )
+        return Model(model_config_path=config_path, model_checkpoint_path=weight_path)
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Parse class name.
@@ -70,7 +74,11 @@ class GroundingDino(ComputerVisionDetector):
             for _, _, confidence, class_id, _ in detected_obj
         ]
 
+<<<<<<< HEAD
         self._detections = detected_obj
+=======
+        self._detection = detected_obj
+>>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
 
         self._confidence = detected_obj.confidence
 

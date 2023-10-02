@@ -50,6 +50,7 @@ class Cifar10ImageLoader(DataLoader):
         batch_id (int | str, optional): Batch ID. Defaults to 1.
             If "all", load all batches.
         """
+        self.name = "CIFAR10"
         self._cifar_dir_path = Path(cifar_dir_path)
         self._batch_id = f"data_batch_{batch_id}"
         self.class_labels = [

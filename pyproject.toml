@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["."]  # list of folders that contain the packages (["."] by default)
 include = ["ns_vfs"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["artifacts, docker"]  # exclude packages matching these glob patterns (empty by default)
+exclude = ["artifacts, docker, experiments"]  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.my-tool]
@@ -34,6 +34,7 @@ dependencies = [
     "einops",
     "pytorch-lightning==1.4.2",
     "torchmetrics==0.5",
+    "ultralytics",
     "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
     "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
     "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251",

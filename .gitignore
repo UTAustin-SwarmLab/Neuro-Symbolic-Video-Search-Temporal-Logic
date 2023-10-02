@@ -1,3 +1,7 @@
+#ns_vfs_custom
+test_scripts/runs/
+artifacts/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
