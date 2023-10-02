@@ -47,9 +47,12 @@ class FramesofInterest:
 
     def reorder_frame_of_interest(self):
         if self._reverse_search:
-            flattened_list = [item for sublist in self.foi_list for item in sublist]
-            self.foi_list = [x for x in range(len(self.frame_images)) if x not in flattened_list]
-        self.foi_list = combine_consecutive_lists(self.foi_list)
+            # flattened_list = [item for sublist in self.foi_list for item in sublist]
+            # self.foi_list = [x for x in range(len(self.frame_images)) if x not in flattened_list]
+            pass
+        else:
+            # self.foi_list = combine_consecutive_lists(self.foi_list)
+            pass
 
     def save_frames(self, path):
         from PIL import Image

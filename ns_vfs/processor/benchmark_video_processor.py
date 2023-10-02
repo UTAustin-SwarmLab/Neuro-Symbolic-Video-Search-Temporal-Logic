@@ -13,13 +13,19 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
     concurretnly
     """
 
-    def __init__(self, video_path: str, artifact_dir: str) -> None:
+    def __init__(
+        self, video_path: str, artifact_dir: str, manual_confidence_probability: float | None
+    ) -> None:
         """Video Frame Processor.
 
         Args:
             video_path (str): Path to video file.
             artifact_dir (str): Path to artifact directory.
         """
+        try:
+            self._manual_confidence_probability = float(manual_confidence_probability)
+        except ValueError:
+            self._manual_confidence_probability = None
         self.benchmark_image_frames: BenchmarkLTLFrame = self.import_video(video_path)
         super().__init__(self, video_path, artifact_dir, is_auto_import=False)
 
@@ -56,7 +62,7 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
                 frame=frame,
                 proposition_set=proposition_set,
                 benchmark_frame_label=self.benchmark_image_frames.labels_of_frames[idx],
-                manual_confidence_probability=1,
+                manual_confidence_probability=self._manual_confidence_probability,
             )
 
             frame_set, interim_confidence_set = validate_propositional_confidence(
@@ -67,7 +73,7 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
             )
 
             if len(frame_set) > 0:  # propositions in frame
-                result = build_and_check_automaton(
+                result, frame_set = build_and_check_automaton(
                     frame_set=frame_set,
                     interim_confidence_set=interim_confidence_set,
                     include_initial_state=False,

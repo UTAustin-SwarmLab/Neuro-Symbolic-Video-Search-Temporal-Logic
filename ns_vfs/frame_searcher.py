@@ -1,5 +1,6 @@
 from typing import List
 
+from ns_vfs.common.ltl_utility import verification_result_eval
 from ns_vfs.data.frame import Frame, FramesofInterest
 from ns_vfs.processor.video_processor import (
     VideoProcessor,
@@ -34,7 +35,7 @@ class FrameSearcher:
                 frame_img=frame.frame_image,
                 save_annotation=self._video_automata_builder._save_annotation,
             )
-            if benchmark_frame_label is not None and manual_confidence_probability is not None:
+            if benchmark_frame_label is not None and isinstance(manual_confidence_probability, float):
                 if benchmark_frame_label == proposition:
                     propositional_confidence = manual_confidence_probability
                 else:
@@ -67,10 +68,10 @@ class FrameSearcher:
         verbose=False,
         is_filter=False,
     ):
-        if "!" in ltl_formula:
-            reverse_search = True
-        else:
-            reverse_search = False
+        # if "!" in ltl_formula:
+        #     reverse_search = True
+        # else:
+        #     reverse_search = False
         states, transitions = self._video_automata_builder.build_automaton(
             frame_set, interim_confidence_set, include_initial_state=include_initial_state
         )
@@ -82,17 +83,13 @@ class FrameSearcher:
             verbose=verbose,
             is_filter=is_filter,
         )
-        verification_result_str = str(verification_result)
+        result = verification_result_eval(verification_result)
 
-        string_result = verification_result_str.split("{")[-1].split("}")[0]
-
-        if string_result[0] == "t":  # 0,6
+        if result == "PartialTrue":
+            frame_set = [frame_set[-1]]
             result = True
-        else:
-            result = False
-            if reverse_search:
-                result = True
-        return result
+
+        return result, frame_set
 
     def update_frame_of_interest(
         self, frame_set: List[Frame], frame_of_interest: FramesofInterest

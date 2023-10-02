@@ -129,6 +129,7 @@ if __name__ == "__main__":
                     benchmark_video_processor = BenchmarkVideoFrameProcessor(
                         video_path=benchmark_video_file,
                         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
+                        manual_confidence_probability=1.0,
                     )
 
                     benchmark_img_frame: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
