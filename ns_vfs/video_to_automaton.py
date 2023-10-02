@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import copy
 import os
+import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
 import supervision as sv
+from PIL import Image
 
 from ns_vfs.common.utility import get_filename_with_datetime
 from ns_vfs.data.frame import Frame
 from ns_vfs.model.vision._base import ComputerVisionDetector
 from ns_vfs.processor.video_processor import (
-    VideoFrameWindowProcessor,
     VideoProcessor,
 )
 from ns_vfs.state import State
@@ -25,8 +26,10 @@ class VideotoAutomaton:
         video_processor: VideoProcessor,
         artifact_dir: str,
         ltl_formula: str,
-        is_annotation: bool = False,
+        save_annotation: bool = False,
         save_image: bool = False,
+        verbose: bool = False,
+        manual_confidence_probability: float | None = None,
     ) -> None:
         """Initialize Video to Automaton.
 
@@ -36,17 +39,25 @@ class VideotoAutomaton:
             video_processor (VideoProcessor): Video Processor.
             artifact_dir (str): Path to artifact directory.
             ltl_formula (str): LTL formula.
-            is_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
+            save_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
             save_image (bool, optional): Whether to save image. Defaults to False.
         """
+        self.ltl_formula = ltl_formula
         self.proposition_set = proposition_set
         self.proposition_combinations = self._create_proposition_status(len(proposition_set))
         self._detector = detector
-        self._video_processor = video_processor
         self._artifact_dir = artifact_dir
-        self._is_annotation = is_annotation
-        self._ltl_formula = ltl_formula
+        self._save_annotation = save_annotation
         self._save_image = save_image
+        self._verbose = verbose
+        self._manual_confidence_probability = manual_confidence_probability
+        if self._save_annotation:
+            self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
+            if os.path.exists(self._annotated_frame_path):
+                # If it exists, remove it (and all its contents)
+                shutil.rmtree(self._annotated_frame_path)
+            # Then, create the directory again
+            os.makedirs(self._annotated_frame_path)
 
     def _sigmoid(self, x, k=1, x0=0) -> float:
         """Sigmoid function.
@@ -64,38 +75,29 @@ class VideotoAutomaton:
     def _annotate_frame(
         self,
         frame_img: np.ndarray,
-        proposition: list,
-        detected_obj: any,
-        output_dir: str | None = None,
+        output_dir: str,
     ) -> None:
         """Annotate frame with bounding box.
 
         Args:
             frame_img (np.ndarray): Frame image.
-            proposition (list): List of propositions.
-            detected_obj (any): Detected object.
             output_dir (str | None, optional): Output directory. Defaults to None.
         """
         box_annotator = sv.BoxAnnotator()
-        labels = [
-            f"{proposition[class_id] if class_id is not None else None} {confidence:0.2f}"
-            for _, _, confidence, class_id, _ in detected_obj
-        ]
 
         annotated_frame = box_annotator.annotate(
-            scene=frame_img.copy(), detections=detected_obj, labels=labels
+            scene=frame_img.copy(),
+            detections=self._detector.get_detections(),
+            labels=self._detector.get_labels(),
         )
 
         sv.plot_image(annotated_frame, (16, 16))
 
-        if output_dir is None:
-            path = os.path.join(self._artifact_dir, "annotated_frame")
-
-        if not os.path.exists(path):
-            os.makedirs(path)
-
         filename = get_filename_with_datetime("annotated_frame.png")
-        plt.savefig(os.path.join(path, filename))
+        plt.savefig(os.path.join(output_dir, filename))
+
+        image = Image.open(os.path.join(output_dir, filename))
+        return np.array(image)
 
     def _create_proposition_status(self, num_props):
         """Create all possible combinations of T and F for the number of propositions.
@@ -123,7 +125,7 @@ class VideotoAutomaton:
         self,
         confidence_per_video: float,
         true_threshold=0.66,
-        false_threshold=0.38,
+        false_threshold=0.50,
     ) -> float:
         """Mapping probability.
 
@@ -146,62 +148,62 @@ class VideotoAutomaton:
         self,
         proposition: str,
         frame_img: np.ndarray,
-        is_annotation: bool = False,
+        save_annotation: bool = False,
     ) -> float:
         """Get probabilistic proposition from frame.
 
         Args:
             proposition (str): Proposition.
             frame_img (np.ndarray): Frame image.
-            is_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
+            save_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
 
         Returns:
             float: Probabilistic proposition from frame.
             detected_obj (any): Detected object.
         """
-        detected_obj = self._detector.detect(frame_img, [proposition])
-        if len(detected_obj) > 0:
+        self._detector.detect(frame_img, [proposition])
+        if self._detector.get_size() > 0:
             if is_annotation:
                 self._annotate_frame(
                     frame_img=frame_img,
-                    detected_obj=detected_obj,
-                    proposition=[proposition],
                 )
-            return (
-                self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
-                detected_obj,
-            )
+            return self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2))
             # probability of the object in the frame
         else:
-            return 0, None  # probability of the object in the frame is 0
+            return 0, None, None  # probability of the object in the frame is 0
 
     def calculate_confidence_of_proposition(
         self,
         proposition: str,
         frame_img: np.ndarray,
-        is_annotation: bool = False,
+        save_annotation: bool = False,
     ) -> float:
         """Calculate confidence of proposition.
 
         Args:
             proposition (str): Proposition.
             frame_img (np.ndarray): Frame image.
-            is_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
+            save_annotation (bool, optional): Whether to annotate the frame. Defaults to False.
 
         Returns:
             float: Confidence of proposition.
         """
-        propositional_probability_on_frame, _ = self.get_probabilistic_proposition_from_frame(
+        (
+            propositional_probability_on_frame,
+            detected_obj,
+            annotated_img,
+        ) = self.get_probabilistic_proposition_from_frame(
             proposition=proposition,
             frame_img=frame_img,
-            is_annotation=is_annotation,
+            save_annotation=save_annotation,
         )
-        return propositional_probability_on_frame, _
+        return propositional_probability_on_frame, detected_obj, annotated_img
 
     def build_automaton(
         self,
         frame_set: list[Frame],
         propositional_confidence: list[list[float]],
+        include_initial_state: bool = True,
     ) -> (list, list):
         """Build automaton.
 
@@ -213,66 +215,72 @@ class VideotoAutomaton:
             States: List of states.
             Transitions: List of transitions.
         """
+        # Initialize required variables
         state_idx = 0
         states = list()
+        prev_states = list()
         transitions = list()
 
-        state = State(state_idx, -1, "init", self.proposition_set)
-        states.append(copy.deepcopy(state))
-
-        prev_states = [copy.deepcopy(state)]
+        if include_initial_state:
+            state = State(state_idx, -1, "init", self.proposition_set)
+            states.append(copy.deepcopy(state))
+            prev_states.append(copy.deepcopy(state))
 
         for i in range(len(frame_set)):
-            frame_set[i]
             current_state = list()
             for prop_comb in self.proposition_combinations:
-                state.update(
-                    frame_index=i,
-                    proposition_combinations=prop_comb,
-                )
+                if len(states) == 0:
+                    state = State(
+                        index=0,
+                        frame_index=i,
+                        proposition_status_set=prop_comb,
+                        proposition_set=self.proposition_set,
+                    )
+                else:
+                    state.update(
+                        frame_index=i,
+                        proposition_combinations=prop_comb,
+                    )
                 state.compute_probability(probabilities=propositional_confidence)
-                if state.probability > 0:
-                    state.state_index += 1
-                    states.append(copy.deepcopy(state))
-                    current_state.append(copy.deepcopy(state))
 
-            # Transition
-            for cur_state in current_state:
+                if state.probability > 0:
+                    if len(prev_states) == 0:
+                        # prev_states.append(copy.deepcopy(state))
+                        states.append(copy.deepcopy(state))
+                        current_state.append(copy.deepcopy(state))
+                        state.state_index += 1
+                    else:
+                        if include_initial_state:
+                            state.state_index += 1
+                        states.append(copy.deepcopy(state))
+                        current_state.append(copy.deepcopy(state))
+                        if not include_initial_state:
+                            state.state_index += 1
+
+            if len(prev_states) == 0:
+                prev_states = current_state.copy()
                 for prev_state in prev_states:
                     transition = (
                         prev_state.state_index,
-                        cur_state.state_index,
-                        cur_state.probability,
+                        prev_state.state_index,
+                        0,
                     )
                     transitions.append(transition)
-            prev_states = current_state.copy()
+            else:
+                for cur_state in current_state:
+                    for prev_state in prev_states:
+                        transition = (
+                            prev_state.state_index,
+                            cur_state.state_index,
+                            cur_state.probability,
+                        )
+                        transitions.append(transition)
+                prev_states = current_state.copy()
 
         return states, transitions
-
-    def build_frame_window_automaton(self) -> dict:
-        """Build frame window automaton."""
-        video_frames_automaton = self._video_processor.build_frame_window_synchronously(
-            proposition_set=self.proposition_set,
-            calculate_propositional_confidence=self.calculate_confidence_of_proposition,
-            build_automaton=self.build_automaton,
-            ltl_formula=self._ltl_formula,
-            save_image=self._save_image,
-            is_annotation=self._is_annotation,
-        )
-        path = os.path.join(self._artifact_dir, "frame_window_automata.npy")
-        np.save(path, video_frames_automaton)
-        print(f"frame_window_automata saved to {path}")
-        return video_frames_automaton
 
     def build_frame_automaton(self) -> dict:
         """Build frame window automaton."""
         # TODO: If we need to build frame automaton differently, we can do it here.
         video_frames_automaton = None
         return video_frames_automaton
-
-    def run(self) -> dict:
-        """Run."""
-        if isinstance(self._video_processor, VideoFrameWindowProcessor):
-            return self.build_frame_window_automaton()
-        else:
-            return self.build_frame_automaton()

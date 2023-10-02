@@ -12,6 +12,7 @@ def check_automaton(
     states: list[State],
     proposition_set: list[str],
     ltl_formula: str,
+    verbose: bool = False,
 ) -> any:
     """Check automaton.
 
@@ -33,16 +34,22 @@ def check_automaton(
         markovian_states=markovian_states,
     )
     components.exit_rates = [0.0 for i in range(len(states))]
+    # [0.0 if i != len(states) - 1 else 1 for i in range(len(states))]
 
     # Markov Automaton
     markov_automata = stormpy.storage.SparseMA(components)
+
     formula_str = ltl_formula
+
+    if verbose:
+        print(transition_matrix)
+        print(markov_automata)
 
     # Check the model (Markov Automata)
     return model_checking(markov_automata, formula_str)
 
 
-def model_checking(model: stormpy.storage.SparseMA, formula_str: str) -> any:
+def model_checking(model: stormpy.storage.SparseMA, formula_str: str, is_filter: bool = False) -> any:
     """Model checking.
 
     Args:
@@ -61,8 +68,11 @@ def model_checking(model: stormpy.storage.SparseMA, formula_str: str) -> any:
 
     # Get Result and Filter it
     result = stormpy.model_checking(model, properties[0])
-    filter = stormpy.create_filter_initial_states_sparse(model)
-    result.filter(filter)
+
+    if is_filter:
+        filter = stormpy.create_filter_initial_states_sparse(model)
+        result.filter(filter)
+
     return result
 
 
@@ -92,16 +102,21 @@ def build_label_func(states: list[State], props: list[str]) -> stormpy.storage.S
         stormpy.storage.StateLabeling: State labeling.
     """
     state_labeling = stormpy.storage.StateLabeling(len(states))
+    state_labeling.add_label("init")
 
     for label in props:
         state_labeling.add_label(label)
 
     for state in states:
-        if state.state_index == 0:
-            state_labeling.add_label("init")
-            state_labeling.add_label_to_state("init", state.state_index)
-        else:
-            for label in state.current_descriptive_label:
+        for label in state.current_descriptive_label:
+            state_labeling.add_label_to_state(label, state.state_index)
+            if label == "init":
                 state_labeling.add_label_to_state(label, state.state_index)
+        # if state.state_index == 0:
+        #     state_labeling.add_label("init")
+        #     state_labeling.add_label_to_state("init", state.state_index)
+        # else:
+        #     for label in state.current_descriptive_label:
+        #         state_labeling.add_label_to_state(label, state.state_index)
 
     return state_labeling

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from groundingdino.util.inference import Model
 from omegaconf import DictConfig
+from ultralytics import YOLO
+import supervision as sv
 import numpy as np
 import warnings
 
@@ -10,31 +11,28 @@ from ns_vfs.model.vision._base import ComputerVisionDetector
 warnings.filterwarnings("ignore")
 
 
-class GroundingDino(ComputerVisionDetector):
-    """Grounding Dino."""
+class Yolo(ComputerVisionDetector):
+    """Yolo"""
 
     def __init__(
         self,
         config: DictConfig,
-        weight_path: str,
-        config_path: str,
+        weight_path: str
     ) -> None:
-        self.model = self.load_model(weight_path, config_path)
+        self.model = self.load_model(weight_path)
         self._config = config
 
-    def load_model(self, weight_path, config_path) -> Model:
+    def load_model(self, weight_path) -> Model:
         """Load weight.
 
         Args:
             weight_path (str): Path to weight file.
-            config_path (str): Path to config file.
-
 
         Returns:
             None
         """
-        return Model(
-            model_config_path=config_path, model_checkpoint_path=weight_path
+        return YOLO(
+            weight_path
         )
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
@@ -58,22 +56,23 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        detected_obj = self.model.predict_with_classes(
-            image=frame_img,
-            classes=self._parse_class_name(class_names=classes),
-            box_threshold=self._config.BOX_TRESHOLD,
-            text_threshold=self._config.TEXT_TRESHOLD,
+        classes_reversed = {v:k for k, v in self.model.names.items()}
+        class_ids = [classes_reversed[c] for c in classes]
+        detected_obj = self.model.predict(
+            source=frame_img,
+            classes=class_ids
         )
 
-        self._labels = [
-            f"{classes[class_id] if class_id is not None else None} {confidence:0.2f}"
-            for _, _, confidence, class_id, _ in detected_obj
-        ]
+        self._labels = []
+        for i in range(len(detected_obj[0].boxes)):
+            class_id = int(detected_obj[0].boxes.cls[i])
+            confidence = float(detected_obj[0].boxes.conf[i])
+            self._labels.append(f"{detected_obj[0].names[class_id] if class_id is not None else None} {confidence:0.2f}")
 
-        self._detections = detected_obj
+        self._detections = sv.Detections(xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy())
 
-        self._confidence = detected_obj.confidence
+        self._confidence = detected_obj[0].boxes.conf.cpu().detach().numpy()
 
-        self._size = len(detected_obj)
+        self._size = len(detected_obj[0].boxes)
 
         return detected_obj

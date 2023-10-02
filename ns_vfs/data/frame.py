@@ -3,8 +3,8 @@ import random
 from typing import List, Optional
 
 import numpy as np
-import torchvision.datasets as datasets
-
+from pdb import set_trace as st
+import torch
 @dataclasses.dataclass
 class Frame:
     """Frame class."""
@@ -142,7 +142,7 @@ class BenchmarkRawImageDataset:
 
     unique_labels: list
     labels: List[str]
-    dataset: datasets
+    dataset: torch.utils.data.Dataset
 
     def sample_image_from_label(self, labels: list, proposition: list) -> np.ndarray:
         """Sample image from label."""
@@ -155,7 +155,7 @@ class BenchmarkRawImageDataset:
         for lable in labels:
             if lable is None:
                 while True:
-                    random_idx = random.randrange(len(self.images))
+                    random_idx = random.randrange(len(self.dataset))
                     if self.labels[random_idx] not in proposition:
                         break
                 labels[label_idx] = self.labels[random_idx]
