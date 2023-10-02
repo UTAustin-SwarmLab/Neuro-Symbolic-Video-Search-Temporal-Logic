@@ -44,6 +44,11 @@ if __name__ == "__main__":
         type=str,
         default="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/frame_search_output",
     )
+    parser.add_argument(
+        "--manual_confidence_probability",
+        type=float,
+        default=1.0,
+    )
 
     args = parser.parse_args()
 
@@ -58,9 +63,11 @@ if __name__ == "__main__":
         ltl_formula = args.ltl_formula
     else:
         assert args.video_path.endswith(".pkl"), "Benchmark video path must be a .pkl file"
+        manual_confidence_probability = args.manual_confidence_probability
         video_processor = BenchmarkVideoFrameProcessor(
             video_path=args.video_path,
             artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
+            manual_confidence_probability=manual_confidence_probability,
         )
         benchmark_img_frame = video_processor.benchmark_image_frames
         proposition_set = benchmark_img_frame.proposition
