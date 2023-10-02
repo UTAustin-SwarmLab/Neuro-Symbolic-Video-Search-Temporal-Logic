@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-<<<<<<< HEAD
-=======
+
 import warnings
 
-import numpy as np
->>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
+import numpy as np  
 from groundingdino.util.inference import Model
 from omegaconf import DictConfig
 import numpy as np
@@ -74,11 +72,8 @@ class GroundingDino(ComputerVisionDetector):
             for _, _, confidence, class_id, _ in detected_obj
         ]
 
-<<<<<<< HEAD
-        self._detections = detected_obj
-=======
+
         self._detection = detected_obj
->>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
 
         self._confidence = detected_obj.confidence
 

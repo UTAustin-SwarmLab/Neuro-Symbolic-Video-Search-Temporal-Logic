@@ -1,5 +1,4 @@
 from ns_vfs.generator.data_generator import BenchmarkVideoGenerator
-<<<<<<< HEAD
 from ns_vfs.loader.benchmark_image import Cifar10ImageLoader, ImageNetDataloader
 
 
@@ -14,15 +13,6 @@ if __name__ == "__main__":
         image_dir = "/store/datasets/ILSVRC"
         image_loader = ImageNetDataloader(imagenet_dir_path=image_dir)
     
-=======
-from ns_vfs.loader.benchmark_image import Cifar10ImageLoader
-
-if __name__ == "__main__":
-    cifar_dir = (
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/benchmark_image_dataset/cifar-10-batches-py"
-    )
-    image_loader = Cifar10ImageLoader(cifar_dir_path=cifar_dir)
->>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
     cifar_video_generator = BenchmarkVideoGenerator(
         image_data_loader=image_loader,
         artificat_dir="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video",

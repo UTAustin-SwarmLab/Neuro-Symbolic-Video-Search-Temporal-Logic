@@ -4,15 +4,11 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import numpy as np
-<<<<<<< HEAD
+
 from pdb import set_trace as st
 import torch
-=======
 
 from ns_vfs.common.frame_grouping import combine_consecutive_lists
-
-
->>>>>>> a6438faaa43390dec3a3aa166812f22f34b54869
 @dataclasses.dataclass
 class Frame:
     """Frame class."""

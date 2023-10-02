@@ -192,6 +192,7 @@ class ImageNetDataloader(BenchmarkImageLoader):
         batch_id: int | str = 1,
     ):
         # Create an imagenet dataset
+        self.name = "ImageNet2017-1K"
         self.imagenet = ImageNetDS(imagenet_dir_path)
         # Get text labels from metadata
         self.class_labels = list(self.imagenet.class_mapping_dict.values())
