@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import numpy as np
-
+import torch
 from ns_vfs.common.frame_grouping import combine_consecutive_lists
 
 
@@ -101,6 +101,36 @@ class BenchmarkRawImage:
             label_idx += 1
         return labels, image_of_frame
 
+@dataclasses.dataclass
+class BenchmarkRawImageDataset:
+    """Benchmark image frame class with a torchvision dataset for large datasets"""
+
+    unique_labels: list
+    labels: List[str]
+    dataset: torch.utils.data.Dataset
+
+    def sample_image_from_label(self, labels: list, proposition: list) -> np.ndarray:
+        """Sample image from label."""
+        image_of_frame = []
+        img_to_label = {}
+        for prop in proposition:
+            img_to_label[prop] = [i for i, value in enumerate(self.labels) if value == prop]
+
+        label_idx = 0
+        for lable in labels:
+            if lable is None:
+                while True:
+                    random_idx = random.randrange(len(self.dataset))
+                    if self.labels[random_idx] not in proposition:
+                        break
+                labels[label_idx] = self.labels[random_idx]
+                image_of_frame.append(self.dataset[random_idx][0])
+            else:
+                random_idx = random.choice(img_to_label[lable])
+                image_of_frame.append(self.dataset[random_idx][0])
+
+            label_idx += 1
+        return labels, image_of_frame
 
 @dataclasses.dataclass
 class BenchmarkLTLFrame:

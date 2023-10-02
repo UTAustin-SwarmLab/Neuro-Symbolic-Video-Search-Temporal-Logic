@@ -6,6 +6,7 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
 # USER INPUT (TODO: PLEASE MODIFY)
 CODE_PATH := /home/ss96869/Neuro-Symbolic-Video-Frame-Search
+DS_PATH := /store/datasets/
 
 # Custom Image
 DOCKER_IMG := ns_vfs
@@ -26,6 +27,7 @@ run_docker_container:
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
+			   --volume ${DS_PATH}:/store/datasets \
 			   ${DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
@@ -39,6 +41,7 @@ run_docker_container_gpu:
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
+			   --volume ${DS_PATH}:/store/datasets \
 			   ${DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
