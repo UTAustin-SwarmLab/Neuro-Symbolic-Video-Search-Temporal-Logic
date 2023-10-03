@@ -5,6 +5,16 @@ from datetime import datetime
 from pathlib import Path
 
 
+def list_flatten(lst):
+    flattened = []
+    for item in lst:
+        if isinstance(item, list):
+            flattened.extend(list_flatten(item))
+        else:
+            flattened.append(item)
+    return flattened
+
+
 def get_filename_with_datetime(base_name):
     current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
     return f"{base_name}_{current_time}.png"
@@ -34,3 +44,13 @@ def save_dict_to_pickle(dict_obj: dict, path: str, file_name: str = "data.pkl"):
     # Save the Python object using pickle
     with open(full_path, "wb") as file:
         pickle.dump(dict_obj, file)
+
+
+def load_pickle_to_dict(path: str, file_name: str = "data.pkl") -> dict:
+    full_path = Path(path) / file_name
+
+    # Load the Python object using pickle
+    with open(full_path, "rb") as file:
+        dict_obj = pickle.load(file)
+
+    return dict_obj

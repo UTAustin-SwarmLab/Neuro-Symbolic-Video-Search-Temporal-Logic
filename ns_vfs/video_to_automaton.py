@@ -29,7 +29,6 @@ class VideotoAutomaton:
         save_annotation: bool = False,
         save_image: bool = False,
         verbose: bool = False,
-        manual_confidence_probability: float | None = None,
     ) -> None:
         """Initialize Video to Automaton.
 
@@ -50,7 +49,6 @@ class VideotoAutomaton:
         self._save_annotation = save_annotation
         self._save_image = save_image
         self._verbose = verbose
-        self._manual_confidence_probability = manual_confidence_probability
         if self._save_annotation:
             self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
             if os.path.exists(self._annotated_frame_path):
@@ -174,7 +172,7 @@ class VideotoAutomaton:
                 )
             else:
                 return (
-                    self._mapping_probability(np.round(np.max(detected_obj.confidence), 2)),
+                    self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2)),
                     detected_obj,
                     None,
                 )

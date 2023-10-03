@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import torch
+
 from ns_vfs.common.frame_grouping import combine_consecutive_lists
 
 
@@ -101,9 +102,10 @@ class BenchmarkRawImage:
             label_idx += 1
         return labels, image_of_frame
 
+
 @dataclasses.dataclass
 class BenchmarkRawImageDataset:
-    """Benchmark image frame class with a torchvision dataset for large datasets"""
+    """Benchmark image frame class with a torchvision dataset for large datasets."""
 
     unique_labels: list
     labels: List[str]
@@ -131,6 +133,7 @@ class BenchmarkRawImageDataset:
 
             label_idx += 1
         return labels, image_of_frame
+
 
 @dataclasses.dataclass
 class BenchmarkLTLFrame:

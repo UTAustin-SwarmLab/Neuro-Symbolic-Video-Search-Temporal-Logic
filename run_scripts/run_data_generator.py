@@ -1,7 +1,7 @@
 from ns_vfs.generator.data_generator import BenchmarkVideoGenerator
-from ns_vfs.loader.benchmark_image import Cifar10ImageLoader, Cifar100ImageLoader, ImageNetDataloader
+from ns_vfs.loader.benchmark_cifar import Cifar10ImageLoader, Cifar100ImageLoader, ImageNetDataloader
 
-DATASET_TYPE = "cifar10"  # "cifar10" or "imagenet"
+DATASET_TYPE = "cifar100"  # "cifar10" or "imagenet"
 
 if __name__ == "__main__":
     if DATASET_TYPE == "cifar10":

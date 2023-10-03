@@ -14,7 +14,7 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
     """
 
     def __init__(
-        self, video_path: str, artifact_dir: str, manual_confidence_probability: float | None
+        self, video_path: str, artifact_dir: str, manual_confidence_probability: float | None = None
     ) -> None:
         """Video Frame Processor.
 
@@ -22,10 +22,14 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
             video_path (str): Path to video file.
             artifact_dir (str): Path to artifact directory.
         """
-        try:
-            self._manual_confidence_probability = float(manual_confidence_probability)
-        except ValueError:
+        if manual_confidence_probability is None:
             self._manual_confidence_probability = None
+        else:
+            try:
+                self._manual_confidence_probability = float(manual_confidence_probability)
+            except ValueError or TypeError:
+                self._manual_confidence_probability = None
+
         self.benchmark_image_frames: BenchmarkLTLFrame = self.import_video(video_path)
         super().__init__(self, video_path, artifact_dir, is_auto_import=False)
 
