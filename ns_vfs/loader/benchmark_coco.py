@@ -6,8 +6,7 @@ from pycocotools.coco import COCO
 
 from ns_vfs.data.frame import BenchmarkRawImage
 from ns_vfs.loader import LABEL_OF_INTEREST
-
-from ._base import BenchmarkImageLoader
+from ns_vfs.loader._base import BenchmarkImageLoader
 
 
 class COCOImageLoader(BenchmarkImageLoader):
@@ -26,8 +25,10 @@ class COCOImageLoader(BenchmarkImageLoader):
         self._annotation_file = self._coco_dir_path / annotation_file
         self._image_dir = self._coco_dir_path / image_dir
         self._coco = COCO(self._annotation_file)
-        self._original_class_labels = [cat["name"] for cat in self._coco.cats.values()]
-        self.class_labels = [label for label in self._original_class_labels if label in LABEL_OF_INTEREST]
+        self._original_class_labels = [cat["name"].replace(" ", "_") for cat in self._coco.cats.values()]
+        self.class_labels = [
+            label.replace(" ", "_") for label in self._original_class_labels if label in LABEL_OF_INTEREST
+        ]
         self.images, self.annotations = self.load_data()
         self.data: BenchmarkRawImage = self.process_data()
 
@@ -59,18 +60,28 @@ class COCOImageLoader(BenchmarkImageLoader):
             annotation = self._coco.loadAnns(self._coco.getAnnIds(imgIds=id))
             labels_per_image = []
             for i in range(len(annotation)):
-                labels_per_image.append(self._coco.cats[annotation[i]["category_id"]]["name"])
+                labels_per_image.append(
+                    self._coco.cats[annotation[i]["category_id"]]["name"].replace(" ", "_")
+                )
             unique_labels = list(set(labels_per_image))
             if len(unique_labels) == 0:
                 images.pop()
             else:
-                class_labels.append(list(set(labels_per_image)))
+                val = []
+                for l in list(set(labels_per_image)):
+                    if l not in self.class_labels:
+                        val.append(False)
+                if False in val:
+                    images.pop()
+                else:
+                    class_labels.append(list(set(labels_per_image)))
         assert len(images) == len(class_labels)
 
         # Plot a sample image
-        plt.imshow(images[5])
-        plt.axis("off")
-        plt.savefig("data_loader_sample_image.png")
+        # for i in range(10):
+        #     plt.imshow(images[i])
+        #     plt.axis("off")
+        #     plt.savefig(f"{i}_data_loader_sample_image.png")
 
         return BenchmarkRawImage(unique_labels=self.class_labels, labels=class_labels, images=images)
 
@@ -91,12 +102,12 @@ class COCOImageLoader(BenchmarkImageLoader):
         plt.show()
 
 
-# Example usage:
-coco_loader = COCOImageLoader(
-    coco_dir_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/benchmark_image_dataset/coco",
-    annotation_file="annotations/instances_val2017.json",
-    image_dir="val2017",
-)
+# # Example usage:
+# coco_loader = COCOImageLoader(
+#     coco_dir_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/benchmark_image_dataset/coco",
+#     annotation_file="annotations/instances_val2017.json",
+#     image_dir="val2017",
+# )
 
-# Display a sample image
-coco_loader.display_sample_image(0)
+# # Display a sample image
+# coco_loader.display_sample_image(0)

@@ -47,8 +47,16 @@ class BenchmarkVideoGenerator(DataGenerator):
             result.append(prop)
         return "".join(result)
 
-    def sample_proposition(self, class_list: list[str], is_prop_2: bool = False) -> str:
+    def sample_proposition(
+        self, class_list: list[str], is_prop_2: bool = False, mutiple_props_in_frame=False
+    ) -> str:
         """Sample proposition from class list."""
+        if mutiple_props_in_frame:
+            assert is_prop_2 is True
+            while True:
+                sample = random.sample(self.data.labels, 2)
+                if len(sample) > 1:
+                    return random.sample(sample, 2)
         if is_prop_2:
             return random.sample(class_list, 2)
         else:
@@ -67,6 +75,7 @@ class BenchmarkVideoGenerator(DataGenerator):
         """Generate data."""
         number_frame = 25
         is_prop_2 = False
+        mutiple_props_in_frame = False
         for logic_component in ltl_logic.split(" "):
             if logic_component in ["F", "G", "U"]:
                 temporal_property = logic_component
@@ -74,10 +83,16 @@ class BenchmarkVideoGenerator(DataGenerator):
                 is_prop_2 = True
             elif logic_component in ["!", "&", "|"]:
                 conditional_property = logic_component
+                if conditional_property == "&":
+                    mutiple_props_in_frame = True
 
         while number_frame < max_number_frame + 1:
             for video_idx in range(number_video_per_set_of_frame):
-                proposition = self.sample_proposition(class_list=self.data.unique_labels, is_prop_2=is_prop_2)
+                proposition = self.sample_proposition(
+                    class_list=self.data.unique_labels,
+                    is_prop_2=is_prop_2,
+                    mutiple_props_in_frame=mutiple_props_in_frame,
+                )
                 ltl_frame = self.ltl_function(
                     temporal_property=temporal_property,
                     proposition_1=proposition[0],
