@@ -3,6 +3,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+from metrics.classification_metrics import precision_recall_f1
+
 from ns_vfs.common.utility import save_frames
 from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
@@ -47,9 +49,12 @@ def evaluate_frame_of_interest(
     # matching_accuracy
     flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
     flattened_predicted_foi = set([item for sublist in frame_of_interest.foi_list for item in sublist])
-    true_positive_set = flattened_true_foi.intersection(flattened_predicted_foi)
-    false_positive_set = flattened_predicted_foi.difference(flattened_true_foi)
-    false_negatives = flattened_true_foi.difference(flattened_predicted_foi)
+    precision, recall, f1 = precision_recall_f1(
+        actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
+    )
+    flattened_true_foi.intersection(flattened_predicted_foi)
+    flattened_predicted_foi.difference(flattened_true_foi)
+    flattened_true_foi.difference(flattened_predicted_foi)
 
     # filename = benchmark_video_file.name.split("_ltl_")[-1].split("_")[0]
     dir_path / benchmark_video_file.name.split(".pkl")[0] / ".json"
@@ -57,10 +62,9 @@ def evaluate_frame_of_interest(
     result["ltl_formula"] = benchmark_video.ltl_formula
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
     result["exact_frame_accuracy"] = frame_set_accuracy
-    result["num_true_positive"] = len(true_positive_set)
-    result["num_false_positive"] = len(false_positive_set)
-    result["precision"] = len(true_positive_set) / len(true_positive_set) + len(false_positive_set)
-    result["recall"] = len(true_positive_set) / len(true_positive_set) + len(false_negatives)
+    result["precision"] = precision
+    result["recall"] = recall
+    result["f1"] = f1
 
     result["groud_truth_frame"] = benchmark_video.frames_of_interest
     result["predicted_frame"] = frame_of_interest.foi_list
@@ -94,8 +98,7 @@ def evaluate_frame_of_interest(
     with acc_file.open("a") as f:
         f.write(
             f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]}
-            num_true_positive: {result["num_true_positive"]}, num_false_positive: {result["num_false_positive"]} ,
-            precision: {result["precision"]} recall: {result["recall"]}\n"""
+            precision: {result["precision"]} recall: {result["recall"]}, f1: {result["f1"]}\n"""
         )
 
 
@@ -111,7 +114,7 @@ def get_available_benchmark_video(path_to_directory: str):
 if __name__ == "__main__":
     config = load_config()
     benchmark_frame_video_root_dir = Path(
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video/"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_frame_video/"
     )
 
     benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
@@ -147,7 +150,6 @@ if __name__ == "__main__":
                         save_image=False,  # TODO: Debug only
                         ltl_formula=f"P>=0.80 [{benchmark_img_frame.ltl_formula}]",
                         verbose=False,
-                        manual_confidence_probability=1.0,
                     )
                     frame_sercher = FrameSearcher(
                         video_automata_builder=video_automata_builder,
@@ -160,5 +162,5 @@ if __name__ == "__main__":
                         benchmark_video_file=benchmark_video_file,
                         benchmark_video=benchmark_img_frame,
                         frame_of_interest=frame_of_interest,
-                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_eval_results",
+                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_eval_results",
                     )

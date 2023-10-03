@@ -52,7 +52,7 @@ class Yolo(ComputerVisionDetector):
             any: Detections.
         """
         classes_reversed = {v: k for k, v in self.model.names.items()}
-        class_ids = [classes_reversed[c] for c in classes]
+        class_ids = [classes_reversed[c.replace("_", " ")] for c in classes]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
         self._labels = []
