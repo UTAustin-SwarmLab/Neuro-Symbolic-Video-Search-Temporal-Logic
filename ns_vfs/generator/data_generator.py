@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from ns_vfs.data.frame import BenchmarkLTLFrame
-from ns_vfs.loader.benchmark_image import BenchmarkImageLoader
+from ns_vfs.loader.benchmark_cifar import BenchmarkImageLoader
 
 
 class DataGenerator(abc.ABC):
