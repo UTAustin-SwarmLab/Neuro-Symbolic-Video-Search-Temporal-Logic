@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from ns_vfs.common.ltl_utility import verification_result_eval
 from ns_vfs.data.frame import Frame, FramesofInterest
@@ -22,7 +22,7 @@ class FrameSearcher:
         self,
         frame: Frame,
         proposition_set: List[str],
-        benchmark_frame_label=None,
+        benchmark_frame_label: Union[str, List[str], None] = None,
         manual_confidence_probability=None,
     ):
         for proposition in proposition_set:
@@ -36,11 +36,16 @@ class FrameSearcher:
                 save_annotation=self._video_automata_builder._save_annotation,
             )
             if benchmark_frame_label is not None and isinstance(manual_confidence_probability, float):
-                if benchmark_frame_label == proposition:
-                    propositional_confidence = manual_confidence_probability
-                else:
-                    propositional_confidence = 1 - manual_confidence_probability
-
+                if isinstance(benchmark_frame_label, list):
+                    if proposition in benchmark_frame_label:
+                        propositional_confidence = manual_confidence_probability
+                    else:
+                        propositional_confidence = 1 - manual_confidence_probability
+                elif isinstance(benchmark_frame_label, str):
+                    if benchmark_frame_label == proposition:
+                        propositional_confidence = manual_confidence_probability
+                    else:
+                        propositional_confidence = 1 - manual_confidence_probability
             frame.object_detection[str(proposition)] = detected_obj
             frame.propositional_probability[str(proposition)] = propositional_confidence
             if annotated_image is not None:

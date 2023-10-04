@@ -9,7 +9,7 @@ import numpy as np
 import supervision as sv
 from PIL import Image
 
-from ns_vfs.common.utility import get_filename_with_datetime
+from ns_vfs.common.utility import get_file_or_dir_with_datetime
 from ns_vfs.data.frame import Frame
 from ns_vfs.model.vision._base import ComputerVisionDetector
 from ns_vfs.processor.video_processor import (
@@ -91,7 +91,7 @@ class VideotoAutomaton:
 
         sv.plot_image(annotated_frame, (16, 16))
 
-        filename = get_filename_with_datetime("annotated_frame.png")
+        filename = get_file_or_dir_with_datetime("annotated_frame", ".png")
         plt.savefig(os.path.join(output_dir, filename))
 
         image = Image.open(os.path.join(output_dir, filename))
@@ -122,8 +122,8 @@ class VideotoAutomaton:
     def _mapping_probability(
         self,
         confidence_per_video: float,
-        true_threshold=0.66,
-        false_threshold=0.50,
+        true_threshold=0.51,
+        false_threshold=0.48,
     ) -> float:
         """Mapping probability.
 
@@ -165,6 +165,10 @@ class VideotoAutomaton:
                 annotated_img = self._annotate_frame(
                     frame_img=frame_img, output_dir=self._annotated_frame_path
                 )
+                confidence_after_mapping = self._mapping_probability(
+                    np.round(np.max(self._detector.get_confidence()), 2)
+                )
+                confidence_after_mapping
                 return (
                     self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2)),
                     detected_obj,
