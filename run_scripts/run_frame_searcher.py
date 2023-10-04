@@ -46,7 +46,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--manual_confidence_probability",
-        type=float,
+        type=str,
         default=1.0,
     )
 

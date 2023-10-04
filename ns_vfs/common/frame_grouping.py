@@ -28,8 +28,44 @@ def combine_consecutive_lists(data):
         return []
 
 
+def prop1_u_prop2_grouping(my_list):
+    # To hold the indices of non-None elements
+    groups = []
+    current_group = []
+
+    for i, elem in enumerate(my_list):
+        if elem is not None:
+            current_group.append(i)
+        elif current_group:
+            groups.append(current_group)
+            current_group = []
+
+    # Append the last group if it exists
+    if current_group:
+        groups.append(current_group)
+    return groups
+
+
 if __name__ == "__main__":
-    data = [1, 2, [3], [4, 5], 9, 21]
-    # data = [[2, 4, 6], [9, 21]]
-    # data = [[1], [2], [3], [5], [7], [9], [10], [21]]
-    print(combine_consecutive_lists(data))
+    # data = [1, 2, [3], [4, 5], 9, 21]
+    # # data = [[2, 4, 6], [9, 21]]
+    # # data = [[1], [2], [3], [5], [7], [9], [10], [21]]
+    # print(combine_consecutive_lists(data))
+    my_list = [
+        ["book", "toilet"],
+        ["book", "toilet"],
+        ["book", "toilet"],
+        None,
+        ["book", "toilet"],
+        "hello",
+        None,
+        None,
+        None,
+        None,
+        ["book", "toilet"],
+        ["book", "toilet"],
+        None,
+        "hello",
+        None,
+    ]
+    print(prop1_u_prop2_grouping(my_list))

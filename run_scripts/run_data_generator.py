@@ -28,10 +28,11 @@ if __name__ == "__main__":
         image_data_loader=image_loader,
         artificat_dir="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_frame_video",
     )
-    ltl_logic_list = ["F prop1", "G prop1"]
+    ltl_logic_list = ["(prop1 & prop2) U prop3"]
     for ltl_logic in ltl_logic_list:
         video_generator.generate(max_number_frame=100, ltl_logic=ltl_logic, save_frames=False)
         # prop1 U prop2
         # F prop1
         # G prop1
+        # (prop1 & prop2) U prop3
         print("Done!")
