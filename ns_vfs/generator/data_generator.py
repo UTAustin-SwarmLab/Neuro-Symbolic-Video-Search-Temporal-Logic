@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from ns_vfs.data.frame import BenchmarkLTLFrame
-from ns_vfs.loader.benchmark_image import BenchmarkImageLoader
+from ns_vfs.loader.benchmark_cifar import BenchmarkImageLoader
 
 
 class DataGenerator(abc.ABC):
@@ -47,12 +47,29 @@ class BenchmarkVideoGenerator(DataGenerator):
             result.append(prop)
         return "".join(result)
 
-    def sample_proposition(self, class_list: list[str], is_prop_2: bool = False) -> str:
+    def sample_proposition(
+        self,
+        class_list: list[str],
+        is_prop_2: bool = False,
+        is_prop_3: bool = False,
+        is_and_conditional_op=False,
+    ) -> str:
         """Sample proposition from class list."""
-        if is_prop_2:
-            return random.sample(class_list, 2)
+        if is_and_conditional_op:
+            assert is_prop_2 is True
+            while True:
+                sample = random.sample(self.data.labels, 1)[0]
+                if len(sample) > 1:
+                    if not is_prop_3:
+                        return random.sample(sample, 2)
+                    else:
+                        return random.sample(sample, 2) + [random.sample(class_list, 2)[0]]
+        if is_prop_2 and is_prop_3 is False:
+            return random.sample(class_list, 2) + [None]
+        elif is_prop_2 is False and is_prop_3:
+            return random.sample(class_list, 3)
         else:
-            return [random.sample(class_list, 2)[0], None]
+            return [random.sample(class_list, 2)[0], None, None]
 
     def generate(
         self,
@@ -67,21 +84,34 @@ class BenchmarkVideoGenerator(DataGenerator):
         """Generate data."""
         number_frame = 25
         is_prop_2 = False
+        is_prop_3 = False
+        is_and_conditional_op = False
         for logic_component in ltl_logic.split(" "):
             if logic_component in ["F", "G", "U"]:
                 temporal_property = logic_component
-            elif logic_component == "prop2":
+            elif logic_component in ["prop2", "prop2)"]:
                 is_prop_2 = True
+            elif logic_component == "prop3":
+                is_prop_3 = True
             elif logic_component in ["!", "&", "|"]:
                 conditional_property = logic_component
+                if conditional_property == "&":
+                    is_and_conditional_op = True
 
         while number_frame < max_number_frame + 1:
             for video_idx in range(number_video_per_set_of_frame):
-                proposition = self.sample_proposition(class_list=self.data.unique_labels, is_prop_2=is_prop_2)
+                proposition = self.sample_proposition(
+                    class_list=self.data.unique_labels,
+                    is_prop_2=is_prop_2,
+                    is_prop_3=is_prop_3,
+                    is_and_conditional_op=is_and_conditional_op,
+                )
                 ltl_frame = self.ltl_function(
+                    logic_component=ltl_logic.split(" "),
                     temporal_property=temporal_property,
                     proposition_1=proposition[0],
                     proposition_2=proposition[1],
+                    proposition_3=proposition[2],
                     conditional_property=conditional_property,
                     number_of_frame=number_frame,
                 )
@@ -103,10 +133,12 @@ class BenchmarkVideoGenerator(DataGenerator):
 
     def ltl_function(
         self,
+        logic_component: list[str],
         proposition_1: str,
         temporal_property: str,
         number_of_frame: int,
         proposition_2: str | None = None,
+        proposition_3: str | None = None,
         conditional_property: str = "",
     ) -> BenchmarkLTLFrame:
         """LTL function.
@@ -127,45 +159,86 @@ class BenchmarkVideoGenerator(DataGenerator):
         labels_of_frame = [None] * number_of_frame
         temp_frames_of_interest = []
         proposition_set = []
-
+        random_frame_idx_selection = sorted(
+            list(set([random.randint(0, number_of_frame - 3) for _ in range(int(number_of_frame / 5))]))
+        )  # number_of_frame - 3 to avoid random.range(same_idx,same_idx)
         # Single Rule
         if proposition_2 is not None:
-            proposition_set = [proposition_1, proposition_2]
+            if proposition_3 is not None:
+                proposition_set = [proposition_1, proposition_2, proposition_3]
+            else:
+                proposition_set = [proposition_1, proposition_2]
             if temporal_property == "U":
                 assert proposition_2 is not None, "proposition 2 must be not None"
-                # TODO: F & G...
-                ltl_formula = f'"{proposition_1}" {temporal_property} "{proposition_2}"'
-                # select multiple random prop1
-                for i in range(0, int(number_of_frame / 10)):
-                    range_of_frame = int(number_of_frame / int(number_of_frame / 10))
+                u_index = logic_component.index("U")
+                pre_u_index = logic_component[u_index - 1]
+                post_u_index = logic_component[u_index + 1]
+                if pre_u_index == "prop2":
+                    # TODO: F & G...
+                    ltl_formula = f'"{proposition_1}" {temporal_property} "{proposition_2}"'
+                    # select multiple random prop1
+                    for i in range(0, int(number_of_frame / 10)):
+                        range_of_frame = int(number_of_frame / int(number_of_frame / 10))
 
-                    num_prop1 = random.randrange(1, int(range_of_frame / 4))
+                        num_prop1 = random.randrange(1, int(range_of_frame / 4))
 
-                    prop1_idx = []
-                    for _ in range(num_prop1):
-                        random_prop1 = random.randrange(i * range_of_frame, (i + 1) * range_of_frame - 1)
-                        if random_prop1 not in prop1_idx:
-                            prop1_idx.append(random_prop1)
+                        prop1_idx = []
+                        for _ in range(num_prop1):
+                            random_prop1 = random.randrange(i * range_of_frame, (i + 1) * range_of_frame - 1)
+                            if random_prop1 not in prop1_idx:
+                                prop1_idx.append(random_prop1)
 
-                    curr_frames_interest = list()
-                    for p1_idx in prop1_idx:
-                        labels_of_frame[p1_idx] = proposition_1
-                        curr_frames_interest.append(p1_idx)
-                    try:
-                        prop2_idx = random.randrange(int(max(prop1_idx) + 1), (i + 1) * range_of_frame - 1)
-                    except:
-                        prop2_idx = (i + 1) * range_of_frame - 1
+                        curr_frames_interest = list()
+                        for p1_idx in prop1_idx:
+                            labels_of_frame[p1_idx] = proposition_1
+                            curr_frames_interest.append(p1_idx)
+                        try:
+                            prop2_idx = random.randrange(
+                                int(max(prop1_idx) + 1), (i + 1) * range_of_frame - 1
+                            )
+                        except:
+                            prop2_idx = (i + 1) * range_of_frame - 1
 
-                    labels_of_frame[prop2_idx] = proposition_2
-                    curr_frames_interest.sort()
-                    curr_frames_interest.append(prop2_idx)
-                    temp_frames_of_interest.append(curr_frames_interest)
+                        labels_of_frame[prop2_idx] = proposition_2
+                        curr_frames_interest.sort()
+                        curr_frames_interest.append(prop2_idx)
+                        temp_frames_of_interest.append(curr_frames_interest)
+                elif pre_u_index == "prop2" and post_u_index == "prop3":
+                    # TODO
+                    pass
+                elif pre_u_index == "prop2)" and post_u_index == "prop3":
+                    ltl_formula = f'("{proposition_1}" {logic_component[logic_component.index(pre_u_index)-1]} "{proposition_2}") U "{proposition_3}"'
+                    post_u_label_idx = []
+                    for idx in list(set(random_frame_idx_selection)):
+                        temp_frames_of_interest.append(idx)
+                        labels_of_frame[idx] = [proposition_1, proposition_2]
+                        if len(post_u_label_idx) > 0:
+                            if idx > post_u_label_idx[-1]:
+                                prop3_idx = random.randrange(idx + 1, number_of_frame - 1)
+                                temp_frames_of_interest.append(prop3_idx)
+                                post_u_label_idx.append(prop3_idx)
+                                labels_of_frame[prop3_idx] = proposition_3
+                        else:
+                            prop3_idx = random.randrange(idx + 1, number_of_frame - 1)
+                            temp_frames_of_interest.append(prop3_idx)
+                            post_u_label_idx.append(prop3_idx)
+                            labels_of_frame[prop3_idx] = proposition_3
+
+                    temp_frames_of_interest = list(set(temp_frames_of_interest))
+                    for i, temp_label in enumerate(temp_frames_of_interest):
+                        if temp_label > max(post_u_label_idx):
+                            labels_of_frame[temp_label[0]] = None
+                            temp_frames_of_interest.pop(i)
 
             else:
                 assert conditional_property is not None, "conditional_property must be not None"
                 ltl_formula = (
                     f'{temporal_property} "{proposition_1}" {conditional_property} "{proposition_2}"'
                 )
+
+                for idx in list(set(random_frame_idx_selection)):
+                    temp_frames_of_interest.append([idx])
+                    labels_of_frame[idx] = proposition_set
 
         else:
             proposition_set.append(proposition_1)

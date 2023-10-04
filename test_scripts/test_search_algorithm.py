@@ -150,14 +150,16 @@ def build_automaton(
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 label_set = [
+    ["prop1", "prop2"],
     "prop1",
     "prop1",
     "random_label",
     "random_label",
-    "prop2",
+    ["prop1", "prop2"],
+    "prop3",
 ]
-proposition_set = ["prop1", "prop2"]
-ltl_formula = 'P>=0.90 [G "prop2"]'
+proposition_set = ["prop1", "prop2", "prop3"]
+ltl_formula = 'P>=0.90 [("prop1" & "prop2") U "prop3"]'
 # 'P>=0.90 [!F ("prop2" & !F "prop1")]'
 
 # Creating a list of 32x32 black images

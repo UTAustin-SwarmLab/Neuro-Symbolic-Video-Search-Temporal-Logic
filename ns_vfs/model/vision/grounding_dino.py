@@ -45,7 +45,11 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             list[str]: List of class names.
         """
-        return [f"all {class_name}s" for class_name in class_names]
+        result = []
+        for class_name in class_names:
+            c = class_name.replace("_", " ")
+            result.append(f"all {c}s")
+        return result
 
     def detect(self, frame_img: np.ndarray, classes: list) -> any:
         """Detect object in frame.
