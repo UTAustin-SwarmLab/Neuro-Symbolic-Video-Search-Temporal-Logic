@@ -57,13 +57,14 @@ class BenchmarkVideoGenerator(DataGenerator):
         """Sample proposition from class list."""
         if is_and_conditional_op:
             assert is_prop_2 is True
-            while True:
-                sample = random.sample(self.data.labels, 1)[0]
-                if len(sample) > 1:
-                    if not is_prop_3:
-                        return random.sample(sample, 2)
-                    else:
-                        return random.sample(sample, 2) + [random.sample(class_list, 2)[0]]
+            if is_prop_3:
+                while True:
+                    sample = random.sample(self.data.labels, 1)[0]
+                    if len(sample) > 1:
+                        if not is_prop_3:
+                            return random.sample(sample, 2)
+                        else:
+                            return random.sample(sample, 2) + [random.sample(class_list, 2)[0]]
         if is_prop_2 and is_prop_3 is False:
             return random.sample(class_list, 2) + [None]
         elif is_prop_2 is False and is_prop_3:
@@ -173,7 +174,7 @@ class BenchmarkVideoGenerator(DataGenerator):
                 u_index = logic_component.index("U")
                 pre_u_index = logic_component[u_index - 1]
                 post_u_index = logic_component[u_index + 1]
-                if pre_u_index == "prop2":
+                if post_u_index == "prop2":
                     # TODO: F & G...
                     ltl_formula = f'"{proposition_1}" {temporal_property} "{proposition_2}"'
                     # select multiple random prop1

@@ -4,8 +4,8 @@ import csv
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from metrics.classification_metrics import precision_recall_f1
 
+from experiments._metrics import classification_metrics
 from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
 from ns_vfs.frame_searcher import FrameSearcher
@@ -49,9 +49,10 @@ def evaluate_frame_of_interest(
     # matching_accuracy
     flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
     flattened_predicted_foi = set([item for sublist in frame_of_interest.foi_list for item in sublist])
-    precision, recall, f1 = precision_recall_f1(
+    accuracy, precision, recall, f1 = classification_metrics(
         actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
     )
+
     flattened_true_foi.intersection(flattened_predicted_foi)
     flattened_predicted_foi.difference(flattened_true_foi)
     flattened_true_foi.difference(flattened_predicted_foi)
@@ -62,6 +63,7 @@ def evaluate_frame_of_interest(
     result["ltl_formula"] = benchmark_video.ltl_formula
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
     result["exact_frame_accuracy"] = frame_set_accuracy
+    result["accuracy"] = accuracy
     result["precision"] = precision
     result["recall"] = recall
     result["f1"] = f1
