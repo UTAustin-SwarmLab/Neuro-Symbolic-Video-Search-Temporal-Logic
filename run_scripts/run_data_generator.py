@@ -3,7 +3,7 @@ from ns_vfs.loader.benchmark_cifar import Cifar10ImageLoader, Cifar100ImageLoade
 from ns_vfs.loader.benchmark_coco import COCOImageLoader
 from ns_vfs.loader.benchmark_imagenet import ImageNetDataloader
 
-DATASET_TYPE = "cifar100"  # "cifar10" or "imagenet"
+DATASET_TYPE = "imagenet"  # "cifar10" or "imagenet"
 
 if __name__ == "__main__":
     if DATASET_TYPE == "cifar10":
