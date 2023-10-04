@@ -7,7 +7,7 @@ from pathlib import Path
 
 from ns_vfs.data.frame import BenchmarkLTLFrame
 from ns_vfs.loader.benchmark_cifar import BenchmarkImageLoader
-
+from pdb import set_trace as bp
 
 class DataGenerator(abc.ABC):
     """Data generator."""
