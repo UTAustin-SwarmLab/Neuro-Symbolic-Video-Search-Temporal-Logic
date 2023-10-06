@@ -80,3 +80,20 @@ class GroundingDino(ComputerVisionDetector):
         self._size = len(detected_obj)
 
         return detected_obj
+
+    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
+        max_conf = 0
+        detected_obj = self.model.predict_with_classes(
+            image=frame_img,
+            classes=self._parse_class_name(class_names=[true_label]),
+            box_threshold=self._config.BOX_TRESHOLD,
+            text_threshold=self._config.TEXT_TRESHOLD,
+        )
+        all_detected_object_list = detected_obj.class_id
+        all_detected_object_confidence = detected_obj.confidence
+
+        for i in range(len(all_detected_object_list)):
+            if all_detected_object_list[i] == 0:  # we pass only one class lable -> class id = 0
+                if all_detected_object_confidence[i] > max_conf:
+                    max_conf = all_detected_object_confidence[i]
+        return max_conf

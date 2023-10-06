@@ -69,8 +69,11 @@ class FramesofInterest:
 
         for idx, img in enumerate(self.frame_images):
             Image.fromarray(img).save(f"{frame_path}/{idx}.png")
-            if len(self.annotated_images) > 0 and self.annotated_images[idx] is not None:
-                Image.fromarray(self.annotated_images[idx]).save(f"{annotation_path}/{idx}_annotated.png")
+            try:
+                if len(self.annotated_images) > 0 and self.annotated_images[idx] is not None:
+                    Image.fromarray(self.annotated_images[idx]).save(f"{annotation_path}/{idx}_annotated.png")
+            except:
+                pass
 
 
 @dataclasses.dataclass

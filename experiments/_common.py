@@ -1,9 +1,23 @@
+import csv
 from pathlib import Path
 
 from _metrics import classification_metrics
 
 from ns_vfs.common.utility import list_flatten
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
+
+
+def write_to_csv_from_dict(dict_data: dict, csv_file_path: str, file_name="data.csv"):
+    """Write dictionary to csv file."""
+    csv_file_name = Path(csv_file_path) / file_name
+
+    with open(csv_file_name, mode="a", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=dict_data.keys())
+
+        if not csv_file_name.exists():
+            # If file does not exist, write header
+            writer.writeheader()
+        writer.writerow(dict_data)
 
 
 def get_available_benchmark_video(path_to_directory: str):

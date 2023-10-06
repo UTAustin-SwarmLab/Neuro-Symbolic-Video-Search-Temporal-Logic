@@ -4,12 +4,12 @@ import csv
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from _metrics import classification_metrics
 
-from experiments._metrics import classification_metrics
 from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
 from ns_vfs.frame_searcher import FrameSearcher
-from ns_vfs.model.vision.grounding_dino import GroundingDino
+from ns_vfs.model.vision.dummy import DummyVisionModel
 from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
@@ -35,6 +35,7 @@ def evaluate_frame_of_interest(
     benchmark_video: BenchmarkLTLFrame,
     frame_of_interest: FramesofInterest,
     directory_path: str,
+    save_predicted_frame: bool = False,
 ):
     result = dict()
     dir_path = Path(directory_path) / benchmark_video_file.name.split(".pkl")[0]
@@ -74,12 +75,15 @@ def evaluate_frame_of_interest(
     result["total_number_of_framer_of_interest"] = len(benchmark_video.frames_of_interest)
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
 
-    for idx in list(flattened_predicted_foi):
-        img = benchmark_video.images_of_frames[idx]
-        path = Path(directory_path) / benchmark_video_file.name.split(".pkl")[0] / f"video_frame_{idx}.png"
-        plt.imshow(img)
-        plt.axis("off")
-        plt.savefig(path)
+    if save_predicted_frame:
+        for idx in list(flattened_predicted_foi):
+            img = benchmark_video.images_of_frames[idx]
+            path = (
+                Path(directory_path) / benchmark_video_file.name.split(".pkl")[0] / f"video_frame_{idx}.png"
+            )
+            plt.imshow(img)
+            plt.axis("off")
+            plt.savefig(path)
 
     # save_dict_to_pickle(
     #     path=Path(directory_path) / benchmark_video_file.name.split(".pkl")[0],
@@ -101,7 +105,7 @@ def evaluate_frame_of_interest(
     with acc_file.open("a") as f:
         f.write(
             f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]}
-            precision: {result["precision"]} recall: {result["recall"]}, f1: {result["f1"]}\n"""
+            accuracy: {result["accuracy"]}, precision: {result["precision"]} recall: {result["recall"]}, f1: {result["f1"]}\n"""
         )
 
 
@@ -117,7 +121,7 @@ def get_available_benchmark_video(path_to_directory: str):
 if __name__ == "__main__":
     config = load_config()
     benchmark_frame_video_root_dir = Path(
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_frame_video/"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video/"
     )
 
     benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
@@ -141,11 +145,7 @@ if __name__ == "__main__":
                     benchmark_img_frame: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
 
                     video_automata_builder = VideotoAutomaton(
-                        detector=GroundingDino(
-                            config=config.GROUNDING_DINO,
-                            weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
-                            config_path=config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH,
-                        ),
+                        detector=DummyVisionModel(),
                         video_processor=benchmark_video_processor,
                         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
                         proposition_set=benchmark_img_frame.proposition,
@@ -165,5 +165,6 @@ if __name__ == "__main__":
                         benchmark_video_file=benchmark_video_file,
                         benchmark_video=benchmark_img_frame,
                         frame_of_interest=frame_of_interest,
-                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_eval_results",
+                        save_predicted_frame=False,
+                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video_results",
                     )

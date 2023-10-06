@@ -1,5 +1,6 @@
 """ns_vfs package."""
 
+
 LABEL_OF_INTEREST = [
     "person",
     "bicycle",

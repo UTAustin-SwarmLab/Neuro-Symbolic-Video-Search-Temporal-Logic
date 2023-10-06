@@ -20,7 +20,7 @@ def classification_metrics(actual_result, predicted_result):
     FN = len(actual_result.difference(predicted_result))
 
     # Calculating Precision and Recall
-    accuracy = TP / (TP + FP + FN) if TP + FP + FN != 0 else 0  # Corrected accuracy formula
+    accuracy = TP / len(actual_result) if len(actual_result) != 0 else 0  # Corrected accuracy formula
     precision = TP / (TP + FP) if TP + FP != 0 else 0
     recall = TP / (TP + FN) if TP + FN != 0 else 0
     f1 = 2 * precision * recall / (precision + recall) if precision + recall != 0 else 0
