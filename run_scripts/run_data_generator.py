@@ -3,7 +3,7 @@ from ns_vfs.loader.benchmark_cifar import Cifar10ImageLoader, Cifar100ImageLoade
 from ns_vfs.loader.benchmark_coco import COCOImageLoader
 from ns_vfs.loader.benchmark_imagenet import ImageNetDataloader
 
-DATASET_TYPE = "cifar100"  # "cifar10" or "imagenet"
+DATASET_TYPE = "coco"  # "cifar10" or "imagenet" or "coco"
 
 if __name__ == "__main__":
     if DATASET_TYPE == "cifar10":
@@ -26,17 +26,21 @@ if __name__ == "__main__":
         )
     video_generator = BenchmarkVideoGenerator(
         image_data_loader=image_loader,
-        artificat_dir="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/test_benchmark_frame_video",
+        artificat_dir="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/e_1_3_benchmark_frame_video",
     )
     """
     SPECIFICATION BELOW ONLY WORKS WITH COCO DATASET
     prop1 & prop2
     (prop1 & prop2) U prop3
     """
-    ltl_logic_list = ["prop1 U prop2", "F prop1", "G prop1"]
+    ltl_logic_list = ["F prop1", "prop1 U prop2", "G prop1"]
     for ltl_logic in ltl_logic_list:
         video_generator.generate(
-            max_number_frame=25, ltl_logic=ltl_logic, save_frames=False, number_video_per_set_of_frame=3
+            initial_number_of_frame=100,
+            max_number_frame=200,
+            ltl_logic=ltl_logic,
+            save_frames=False,
+            number_video_per_set_of_frame=5,
         )
         # prop1 U prop2
         # prop1 & prop2

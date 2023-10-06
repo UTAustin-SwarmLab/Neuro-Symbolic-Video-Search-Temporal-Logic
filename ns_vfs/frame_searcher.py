@@ -39,13 +39,13 @@ class FrameSearcher:
                 if isinstance(benchmark_frame_label, list):
                     if proposition in benchmark_frame_label:
                         propositional_confidence = manual_confidence_probability
-                    else:
-                        propositional_confidence = 1 - manual_confidence_probability
+                    # else:
+                    #     propositional_confidence = 1 - manual_confidence_probability
                 elif isinstance(benchmark_frame_label, str):
                     if benchmark_frame_label == proposition:
                         propositional_confidence = manual_confidence_probability
-                    else:
-                        propositional_confidence = 1 - manual_confidence_probability
+                    # else:
+                    #     propositional_confidence = 1 - manual_confidence_probability
             frame.object_detection[str(proposition)] = detected_obj
             frame.propositional_probability[str(proposition)] = propositional_confidence
             if annotated_image is not None:
@@ -91,7 +91,7 @@ class FrameSearcher:
         result = verification_result_eval(verification_result)
 
         if result == "PartialTrue":
-            frame_set = [frame_set[-1]]
+            # frame_set = [frame_set[-1]]
             result = True
 
         return result, frame_set

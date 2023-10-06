@@ -10,7 +10,7 @@ VERSION_AND_PATH:
 GROUNDING_DINO:
   GROUNDING_DINO_CONFIG_PATH: # if empty, will automatically loaded from config loader
   GROUNDING_DINO_CHECKPOINT_PATH: # if empty, will automatically loaded from config loader
-  BOX_TRESHOLD: 0.4
+  BOX_TRESHOLD: 0.25
   TEXT_TRESHOLD: 0.25
 
 YOLO:
