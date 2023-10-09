@@ -42,7 +42,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir",
         type=str,
-        default="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/frame_search_output",
+        default="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/_result/frame_search_output",
     )
     parser.add_argument(
         "--manual_confidence_probability",

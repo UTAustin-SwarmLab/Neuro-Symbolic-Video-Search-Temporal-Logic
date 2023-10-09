@@ -28,6 +28,9 @@ class VideotoAutomaton:
         ltl_formula: str,
         save_annotation: bool = False,
         save_image: bool = False,
+        mapping_threshold: tuple = (0.36, 0.58),
+        mapping_param_x0=0.58,
+        mapping_param_k=0.50,
         verbose: bool = False,
     ) -> None:
         """Initialize Video to Automaton.
@@ -48,6 +51,9 @@ class VideotoAutomaton:
         self._artifact_dir = artifact_dir
         self._save_annotation = save_annotation
         self._save_image = save_image
+        self._mapping_threshold = mapping_threshold
+        self._mapping_param_x0 = mapping_param_x0
+        self._mapping_param_k = mapping_param_k
         self._verbose = verbose
         if self._save_annotation:
             self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
@@ -122,14 +128,14 @@ class VideotoAutomaton:
     def _mapping_probability(
         self,
         confidence_per_video: float,
-        true_threshold=0.51,
-        false_threshold=0.48,
+        true_threshold=0.64,
+        false_threshold=0.38,
     ) -> float:
         """Mapping probability.
 
         Args:
             confidence_per_video (float): Confidence per video.
-            true_threshold (float, optional): True threshold. Defaults to 0.66.
+            true_threshold (float, optional): True threshold. Defaults to 0.64.
             false_threshold (float, optional): False threshold. Defaults to 0.38.
 
         Returns:
@@ -140,7 +146,9 @@ class VideotoAutomaton:
         elif confidence_per_video <= false_threshold:
             return 0
         else:
-            return round(self._sigmoid(confidence_per_video, k=50, x0=0.56), 2)
+            return round(
+                self._sigmoid(confidence_per_video, k=self._mapping_param_k, x0=self._mapping_param_x0), 2
+            )
 
     def get_probabilistic_proposition_from_frame(
         self,
@@ -165,18 +173,39 @@ class VideotoAutomaton:
                 annotated_img = self._annotate_frame(
                     frame_img=frame_img, output_dir=self._annotated_frame_path
                 )
+                # # # DEBUG # # #
                 confidence_after_mapping = self._mapping_probability(
-                    np.round(np.max(self._detector.get_confidence()), 2)
+                    np.round(np.max(self._detector.get_confidence()), 2),
+                    true_threshold=self._mapping_threshold[1],
+                    false_threshold=self._mapping_threshold[0],
                 )
                 confidence_after_mapping
+                # # # DEBUG # # #
                 return (
-                    self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2)),
+                    self._mapping_probability(
+                        np.round(np.max(self._detector.get_confidence()), 2),
+                        true_threshold=self._mapping_threshold[1],
+                        false_threshold=self._mapping_threshold[0],
+                    ),
                     detected_obj,
                     annotated_img,
                 )
             else:
+                # # # DEBUG # # #
+                conf = np.round(np.max(self._detector.get_confidence()), 2)
+                confidence_after_mapping = self._mapping_probability(
+                    np.round(np.max(self._detector.get_confidence()), 2),
+                    true_threshold=self._mapping_threshold[1],
+                    false_threshold=self._mapping_threshold[0],
+                )
+                confidence_after_mapping, conf
+                # # # DEBUG # # #
                 return (
-                    self._mapping_probability(np.round(np.max(self._detector.get_confidence()), 2)),
+                    self._mapping_probability(
+                        np.round(np.max(self._detector.get_confidence()), 2),
+                        true_threshold=self._mapping_threshold[1],
+                        false_threshold=self._mapping_threshold[0],
+                    ),
                     detected_obj,
                     None,
                 )

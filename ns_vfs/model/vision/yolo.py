@@ -18,6 +18,7 @@ class Yolo(ComputerVisionDetector):
     def __init__(self, config: DictConfig, weight_path: str) -> None:
         self.model = self.load_model(weight_path)
         self._config = config
+        self._classes_reversed = {v: k for k, v in self.model.names.items()}
 
     def load_model(self, weight_path) -> YOLO:
         """Load weight.
@@ -51,8 +52,7 @@ class Yolo(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        classes_reversed = {v: k for k, v in self.model.names.items()}
-        class_ids = [classes_reversed[c.replace("_", " ")] for c in classes]
+        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in classes]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
         self._labels = []
@@ -70,3 +70,16 @@ class Yolo(ComputerVisionDetector):
         self._size = len(detected_obj[0].boxes)
 
         return detected_obj
+
+    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
+        max_conf = 0
+        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in [true_label]]
+        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[0]
+        all_detected_object_list = detected_obj.boxes.cls
+        all_detected_object_confidence = detected_obj.boxes.conf
+
+        for i in range(len(all_detected_object_list)):
+            if all_detected_object_list[i] == class_ids[0]:
+                if all_detected_object_confidence[i] > max_conf:
+                    max_conf = all_detected_object_confidence[i].cpu().item()
+        return max_conf

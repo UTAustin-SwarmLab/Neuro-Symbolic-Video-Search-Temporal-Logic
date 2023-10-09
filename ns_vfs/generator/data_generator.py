@@ -61,7 +61,7 @@ class BenchmarkVideoGenerator(DataGenerator):
                 sample = random.sample(self.data.labels, 1)[0]
                 if len(sample) > 1:
                     if not is_prop_3:
-                        return random.sample(sample, 2)
+                        return random.sample(sample, 2) + [None]
                     else:
                         return random.sample(sample, 2) + [random.sample(class_list, 2)[0]]
         if is_prop_2 and is_prop_3 is False:
@@ -73,16 +73,17 @@ class BenchmarkVideoGenerator(DataGenerator):
 
     def generate(
         self,
+        initial_number_of_frame=25,
         max_number_frame: int = 200,
         number_video_per_set_of_frame: int = 3,
         increase_rate: int = 25,
         ltl_logic: str = "F prop1",
-        temporal_property: str = "F",
+        temporal_property: str = "",
         conditional_property: str = "",
         save_frames: bool = False,
     ) -> any:
         """Generate data."""
-        number_frame = 25
+        number_frame = initial_number_of_frame
         is_prop_2 = False
         is_prop_3 = False
         is_and_conditional_op = False
@@ -173,7 +174,7 @@ class BenchmarkVideoGenerator(DataGenerator):
                 u_index = logic_component.index("U")
                 pre_u_index = logic_component[u_index - 1]
                 post_u_index = logic_component[u_index + 1]
-                if pre_u_index == "prop2":
+                if post_u_index == "prop2":
                     # TODO: F & G...
                     ltl_formula = f'"{proposition_1}" {temporal_property} "{proposition_2}"'
                     # select multiple random prop1
@@ -227,8 +228,9 @@ class BenchmarkVideoGenerator(DataGenerator):
                     temp_frames_of_interest = list(set(temp_frames_of_interest))
                     for i, temp_label in enumerate(temp_frames_of_interest):
                         if temp_label > max(post_u_label_idx):
-                            labels_of_frame[temp_label[0]] = None
-                            temp_frames_of_interest.pop(i)
+                            if temp_frames_of_interest not in post_u_label_idx:
+                                labels_of_frame[temp_label[0]] = None
+                                temp_frames_of_interest.pop(i)
 
             else:
                 assert conditional_property is not None, "conditional_property must be not None"
