@@ -4,9 +4,7 @@ import supervision as sv
 
 from ns_vfs.config import config
 
-assert (
-    config.VERSION_AND_PATH.SUPERVISION_VERSION == sv.__version__
-), "please install supervision==0.6.0"
+assert config.VERSION_AND_PATH.SUPERVISION_VERSION == sv.__version__, "please install supervision==0.6.0"
 
 
 def load_config():

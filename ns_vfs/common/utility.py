@@ -46,8 +46,14 @@ def save_dict_to_pickle(dict_obj: dict, path: str, file_name: str = "data.pkl"):
         pickle.dump(dict_obj, file)
 
 
-def load_pickle_to_dict(path: str, file_name: str = "data.pkl") -> dict:
-    full_path = Path(path) / file_name
+def load_pickle_to_dict(path: str, file_name=None) -> dict:
+    if file_name is None:
+        if isinstance(path, str):
+            full_path = Path(path)
+        else:
+            full_path = path
+    else:
+        full_path = Path(path) / file_name
 
     # Load the Python object using pickle
     with open(full_path, "rb") as file:

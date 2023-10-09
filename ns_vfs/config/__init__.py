@@ -9,4 +9,4 @@ config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.y
 config = omegaconf.load_config_from_yaml(config_path)
 
 config.VERSION_AND_PATH.ROOT_PATH = os.path.join(ROOT_DIR)
-config.VERSION_AND_PATH.ARTIFACTS_PATH = os.path.join(ROOT_DIR, "artifacts")
+config.VERSION_AND_PATH.ARTIFACTS_PATH = os.path.join(ROOT_DIR, "store/nsvs_artifact")
