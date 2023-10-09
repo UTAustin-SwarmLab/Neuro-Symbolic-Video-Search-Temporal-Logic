@@ -71,9 +71,9 @@ class Yolo(ComputerVisionDetector):
 
         return detected_obj
 
-    def get_confidence_score(self, frame_img: np.ndarray, true_lable: str) -> any:
+    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
         max_conf = 0
-        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in [true_lable]]
+        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in [true_label]]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)[0]
         all_detected_object_list = detected_obj.boxes.cls
         all_detected_object_confidence = detected_obj.boxes.conf

@@ -134,7 +134,7 @@ class BenchmarkRawImageDataset:
 
     unique_labels: list
     labels: List[List[str]]
-    dataset: torch.utils.data.Dataset
+    images: torch.utils.data.Dataset
 
     def sample_image_from_label(self, labels: list, proposition: list) -> np.ndarray:
         """Sample image from label."""
@@ -148,14 +148,14 @@ class BenchmarkRawImageDataset:
         for label in labels:
             if label is None:
                 while True:
-                    random_idx = random.randrange(len(self.dataset))
+                    random_idx = random.randrange(len(self.images))
                     if self.labels[random_idx] not in proposition:
                         break
                 labels[label_idx] = self.labels[random_idx]
-                image_of_frame.append(self.dataset[random_idx][0])
+                image_of_frame.append(self.images[random_idx][0])
             else:
                 random_idx = random.choice(img_to_label[label])
-                image_of_frame.append(self.dataset[random_idx][0])
+                image_of_frame.append(self.images[random_idx][0])
 
             label_idx += 1
         return labels, image_of_frame
