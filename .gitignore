@@ -1,6 +1,7 @@
 #ns_vfs_custom
 test_scripts/runs/
 artifacts/
+store/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

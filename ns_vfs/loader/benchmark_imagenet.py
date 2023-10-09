@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 from ns_vfs.data.frame import BenchmarkRawImageDataset
 
 from ._base import BenchmarkImageLoader
-from .meta_to_imagenet import filter, META_TO_IMAGENET
+from .meta_to_imagenet import META_TO_IMAGENET, filter
 
 
 class ImageNetDS(Dataset):
@@ -20,11 +20,12 @@ class ImageNetDS(Dataset):
     class_mapping_dict: dict
     class_mapping_dict_number: dict
     mapping_class_to_number: dict
-    classname_classid:dict
+    classname_classid: dict
 
-    metaclass_imagenetclass:dict
-    imagenetclass_metaclass:dict
+    metaclass_imagenetclass: dict
+    imagenetclass_metaclass: dict
     valid_classes: list
+
     # TODO: Use the filtered meta to imagenet to rd
     def __init__(
         self,
@@ -32,7 +33,7 @@ class ImageNetDS(Dataset):
         type: str = "train",
         batch_id: int | str = 1,
         target_size: tuple = (224, 224, 3),
-        map_to_cocometa: bool = False
+        map_to_cocometa: bool = False,
     ):
         """Load ImageNet dataset from file."""
         self.imagenet_path = imagenet_dir_path
@@ -41,7 +42,7 @@ class ImageNetDS(Dataset):
         self.class_mapping_dict = {}
         self.class_mapping_dict_number = {}
         self.mapping_class_to_number = {}
-        self.mapping_number_to_class = {} 
+        self.mapping_number_to_class = {}
         self.classname_classid = {}
         i = 0
 
@@ -59,7 +60,6 @@ class ImageNetDS(Dataset):
             self.mapping_class_to_number[line[:9].strip()] = i
             self.mapping_number_to_class[i] = line[:9].strip()
             i += 1
-
 
         self.length_dataset = 0
         self.image_path = imagenet_dir_path + "/Data/CLS-LOC/" + type + "/"
@@ -87,7 +87,7 @@ class ImageNetDS(Dataset):
                 "After mapping imagenet dataset({}), we have {} images and {} classes: ".format(
                     type, self.length_dataset, len(self.metaclass_imagenetclass.keys())
                 )
-        )
+            )
 
     @property
     def class_counts(self):
@@ -98,20 +98,14 @@ class ImageNetDS(Dataset):
             return {self.class_mapping_dict[k]: v for k, v in self._num_images_per_class.items()}
 
     def map_data(self):
-        """
-        Map data meta data on to the imagenet classes.
-        
-        """
-
-        filtered_meta_data = filter(META_TO_IMAGENET, 
-                                    self.imagenet_path + "/LOC_synset_mapping.txt")
-
+        """Map data meta data on to the imagenet classes."""
+        filtered_meta_data = filter(META_TO_IMAGENET, self.imagenet_path + "/LOC_synset_mapping.txt")
 
         self.metaclass_imagenetclass = filtered_meta_data
         self.imagenetclass_metaclass = {}
         self.length_dataset = 0
         self._num_images_per_metaclass = {}
-        for key,val in self.metaclass_imagenetclass.items():
+        for key, val in self.metaclass_imagenetclass.items():
             num_images = 0
             for v in val:
                 v_id = self.classname_classid[v][0]
@@ -126,7 +120,7 @@ class ImageNetDS(Dataset):
         """Get item from dataset."""
         index_copy = index
         if not self.map_to_cocometa:
-        # Find the class ID where the index is located
+            # Find the class ID where the index is located
             class_id = 0
             while index >= self._num_images_per_class[self.mapping_number_to_class[class_id]]:
                 index -= self._num_images_per_class[self.mapping_number_to_class[class_id]]
@@ -153,7 +147,7 @@ class ImageNetDS(Dataset):
                 cum_count += self._num_images_per_metaclass[metaclassname]
                 metaclass_id += 1
                 metaclassname = list(self.metaclass_imagenetclass.keys())[metaclass_id]
-                
+
             imagenet_class_for_metaclass = self.metaclass_imagenetclass[metaclassname]
             index = index_copy - cum_count
 
@@ -173,7 +167,7 @@ class ImageNetDS(Dataset):
             # Resize
             image = cv2.resize(image, self.target_size[:2])
 
-            return image,metaclass_id
+            return image, metaclass_id
 
     def __len__(self):
         """Get the length of the dataset."""
@@ -194,13 +188,13 @@ class ImageNetDS(Dataset):
     def class_to_class_name(self, id):
         """Get the class name from the class ID."""
         return self.class_mapping_dict[id]
-    
+
     @property
     def classnames(self):
         if self.map_to_cocometa:
             keys = []
-            for k,v in self._num_images_per_metaclass.items():
-                if v!=0:
+            for k, v in self._num_images_per_metaclass.items():
+                if v != 0:
                     keys.append(k)
             return keys
         else:
@@ -227,7 +221,7 @@ class ImageNetDataloader(BenchmarkImageLoader):
         """Load the labels of the data
         Returns:
         any: dataset.
-        """  
+        """
         labels = [0 for _ in range(len(self.imagenet))]
         mapped_labels = [0 for _ in range(len(self.imagenet))]
         cum_count = 0
@@ -243,16 +237,15 @@ class ImageNetDataloader(BenchmarkImageLoader):
     def process_data(self, raw_data) -> any:
         """Process raw data to BenchmarkRawImage Data Class."""
         return BenchmarkRawImageDataset(
-            unique_labels=self.class_labels, 
-            labels=raw_data["labels"], 
-            dataset=raw_data["dataset"]
+            unique_labels=self.class_labels, labels=raw_data["labels"], images=raw_data["dataset"]
         )
+
 
 if __name__ == "__main__":
     image_dir = "/store/datasets/ILSVRC"
     classes = []
     text = ""
-    for j,line in enumerate(open(image_dir + "/LOC_synset_mapping.txt")):
-        text += "{}. {} \n".format(j,line[9:].strip())
+    for j, line in enumerate(open(image_dir + "/LOC_synset_mapping.txt")):
+        text += f"{j}. {line[9:].strip()} \n"
     with open("imagenet_classes.txt", "w") as f:
         f.write(text)
