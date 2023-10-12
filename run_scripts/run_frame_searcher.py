@@ -79,6 +79,7 @@ if __name__ == "__main__":
             weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
             config_path=config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH,
         )
+
     else:
         cv_model = Yolo(
             config=config.YOLO,

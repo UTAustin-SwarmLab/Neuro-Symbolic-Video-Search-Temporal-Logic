@@ -63,7 +63,7 @@ def evaluate_frame_of_interest(
 
     result["ltl_formula"] = benchmark_video.ltl_formula
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
-    result["exact_frame_accuracy"] = frame_set_accuracy
+    result["exact_frame_acc"] = frame_set_accuracy
     result["accuracy"] = accuracy
     result["precision"] = precision
     result["recall"] = recall
@@ -85,11 +85,6 @@ def evaluate_frame_of_interest(
             plt.axis("off")
             plt.savefig(path)
 
-    # save_dict_to_pickle(
-    #     path=Path(directory_path) / benchmark_video_file.name.split(".pkl")[0],
-    #     dict_obj=result,
-    #     file_name="result.pkl",
-    # )
     # Specifying the file name
     csv_file_name = Path(directory_path) / "data.csv"
 
@@ -121,9 +116,8 @@ def get_available_benchmark_video(path_to_directory: str):
 if __name__ == "__main__":
     config = load_config()
     benchmark_frame_video_root_dir = Path(
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video/"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/benchmark_frame_video_generated"
     )
-
     benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
 
     for benchmark_name_dir in benchmark_image_set_dir:
@@ -166,5 +160,5 @@ if __name__ == "__main__":
                         benchmark_video=benchmark_img_frame,
                         frame_of_interest=frame_of_interest,
                         save_predicted_frame=False,
-                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video_results",
+                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/benchmark_frame_video_generated_results",
                     )

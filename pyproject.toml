@@ -35,10 +35,10 @@ dependencies = [
     "pytorch-lightning==1.4.2",
     "torchmetrics==0.5",
     "ultralytics",
-    "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
     "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
     "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251",
-    "taming-transformers@git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
+    # "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
+    # "taming-transformers@git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
     # -> we used git submodule to add this repo (GroundingDINO API Structure Issue)
 ]
 

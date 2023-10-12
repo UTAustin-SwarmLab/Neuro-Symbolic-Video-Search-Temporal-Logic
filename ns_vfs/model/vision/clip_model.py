@@ -82,10 +82,10 @@ def main():
     test = ClipPerception(None, None)
     img = cv2.imread("/opt/Neuro-Symbolic-Video-Frame-Search/store/omama/cat1.jpeg")
     test.detect(img, ["cat", "dog", "person", "table"])
-    print('Testing with 4 labels:')
+    print("Testing with 4 labels:")
     print(test._confidence)
 
-    print('\nTesting with 1 label:')
+    print("\nTesting with 1 label:")
     test.detect(img, ["cat"])
     print(test._confidence)
     breakpoint()

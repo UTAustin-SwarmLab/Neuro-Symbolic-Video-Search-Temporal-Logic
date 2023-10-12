@@ -3,7 +3,6 @@ import random
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
@@ -114,9 +113,9 @@ class BenchmarkRawImage:
                 if isinstance(label, str):
                     # one label in the frame
                     random_idx = random.choice(img_to_label[label])
-                    plt.imshow(self.images[random_idx])
-                    plt.axis("off")
-                    plt.savefig("data_loader_sample_image.png")
+                    # plt.imshow(self.images[random_idx])
+                    # plt.axis("off")
+                    # plt.savefig("data_loader_sample_image.png")
                     image_of_frame.append(self.images[random_idx])
                 elif isinstance(label, list):
                     img_to_label_list[tuple(sorted(label))] = [

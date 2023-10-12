@@ -63,7 +63,12 @@ class BenchmarkVideoGenerator(DataGenerator):
                     if not is_prop_3:
                         return random.sample(sample, 2) + [None]
                     else:
-                        return random.sample(sample, 2) + [random.sample(class_list, 2)[0]]
+                        prop_1_and_2 = random.sample(sample, 2)
+                        prop_3 = [random.sample(class_list, 2)[0]]
+                        if prop_3[0] not in prop_1_and_2:
+                            return prop_1_and_2 + prop_3
+                        else:
+                            continue
         if is_prop_2 and is_prop_3 is False:
             return random.sample(class_list, 2) + [None]
         elif is_prop_2 is False and is_prop_3:
@@ -177,33 +182,60 @@ class BenchmarkVideoGenerator(DataGenerator):
                 if post_u_index == "prop2":
                     # TODO: F & G...
                     ltl_formula = f'"{proposition_1}" {temporal_property} "{proposition_2}"'
-                    # select multiple random prop1
-                    for i in range(0, int(number_of_frame / 10)):
-                        range_of_frame = int(number_of_frame / int(number_of_frame / 10))
+                    post_u_label_idx = []
+                    for idx in list(set(random_frame_idx_selection)):
+                        temp_frames_of_interest.append(idx)
+                        labels_of_frame[idx] = proposition_1
+                        if len(post_u_label_idx) > 0:
+                            if idx >= post_u_label_idx[-1]:
+                                prop2_idx = random.randrange(idx + 1, number_of_frame - 1)
+                                temp_frames_of_interest.append(prop2_idx)
+                                post_u_label_idx.append(prop2_idx)
+                                labels_of_frame[prop2_idx] = proposition_2
+                        else:
+                            prop2_idx = random.randrange(idx + 1, number_of_frame - 1)
+                            temp_frames_of_interest.append(prop2_idx)
+                            post_u_label_idx.append(prop2_idx)
+                            labels_of_frame[prop2_idx] = proposition_2
 
-                        num_prop1 = random.randrange(1, int(range_of_frame / 4))
+                    temp_frames_of_interest = list(set(temp_frames_of_interest))
+                    for i, temp_label in enumerate(temp_frames_of_interest):
+                        if temp_label not in post_u_label_idx:
+                            if temp_label > max(post_u_label_idx):
+                                labels_of_frame[temp_label] = None
+                                temp_frames_of_interest.pop(temp_frames_of_interest.index(temp_label))
 
-                        prop1_idx = []
-                        for _ in range(num_prop1):
-                            random_prop1 = random.randrange(i * range_of_frame, (i + 1) * range_of_frame - 1)
-                            if random_prop1 not in prop1_idx:
-                                prop1_idx.append(random_prop1)
+                    if proposition_2 not in labels_of_frame:
+                        labels_of_frame[-1] = proposition_2
+                        temp_frames_of_interest.append(len(labels_of_frame) - 1)
+                    temp_frames_of_interest = list(set(temp_frames_of_interest))
+                    # # select multiple random prop1
+                    # for i in range(0, int(number_of_frame / 10)):
+                    #     range_of_frame = int(number_of_frame / int(number_of_frame / 10))
 
-                        curr_frames_interest = list()
-                        for p1_idx in prop1_idx:
-                            labels_of_frame[p1_idx] = proposition_1
-                            curr_frames_interest.append(p1_idx)
-                        try:
-                            prop2_idx = random.randrange(
-                                int(max(prop1_idx) + 1), (i + 1) * range_of_frame - 1
-                            )
-                        except:
-                            prop2_idx = (i + 1) * range_of_frame - 1
+                    #     num_prop1 = random.randrange(1, int(range_of_frame / 4))
 
-                        labels_of_frame[prop2_idx] = proposition_2
-                        curr_frames_interest.sort()
-                        curr_frames_interest.append(prop2_idx)
-                        temp_frames_of_interest.append(curr_frames_interest)
+                    #     prop1_idx = []
+                    #     for _ in range(num_prop1):
+                    #         random_prop1 = random.randrange(i * range_of_frame, (i + 1) * range_of_frame - 1)
+                    #         if random_prop1 not in prop1_idx:
+                    #             prop1_idx.append(random_prop1)
+
+                    #     curr_frames_interest = list()
+                    #     for p1_idx in prop1_idx:
+                    #         labels_of_frame[p1_idx] = proposition_1
+                    #         curr_frames_interest.append(p1_idx)
+                    #     try:
+                    #         prop2_idx = random.randrange(
+                    #             int(max(prop1_idx) + 1), (i + 1) * range_of_frame - 1
+                    #         )
+                    #     except:
+                    #         prop2_idx = (i + 1) * range_of_frame - 1
+
+                    #     labels_of_frame[prop2_idx] = proposition_2
+                    #     curr_frames_interest.sort()
+                    #     curr_frames_interest.append(prop2_idx)
+                    #     temp_frames_of_interest.append(curr_frames_interest)
                 elif pre_u_index == "prop2" and post_u_index == "prop3":
                     # TODO
                     pass
@@ -214,7 +246,7 @@ class BenchmarkVideoGenerator(DataGenerator):
                         temp_frames_of_interest.append(idx)
                         labels_of_frame[idx] = [proposition_1, proposition_2]
                         if len(post_u_label_idx) > 0:
-                            if idx > post_u_label_idx[-1]:
+                            if idx >= post_u_label_idx[-1]:
                                 prop3_idx = random.randrange(idx + 1, number_of_frame - 1)
                                 temp_frames_of_interest.append(prop3_idx)
                                 post_u_label_idx.append(prop3_idx)
@@ -227,10 +259,15 @@ class BenchmarkVideoGenerator(DataGenerator):
 
                     temp_frames_of_interest = list(set(temp_frames_of_interest))
                     for i, temp_label in enumerate(temp_frames_of_interest):
-                        if temp_label > max(post_u_label_idx):
-                            if temp_frames_of_interest not in post_u_label_idx:
-                                labels_of_frame[temp_label[0]] = None
-                                temp_frames_of_interest.pop(i)
+                        if temp_label not in post_u_label_idx:
+                            if temp_label > max(post_u_label_idx):
+                                labels_of_frame[temp_label] = None
+                                temp_frames_of_interest.pop(temp_frames_of_interest.index(temp_label))
+
+                    if proposition_3 not in labels_of_frame:
+                        labels_of_frame[-1] = proposition_3
+                        temp_frames_of_interest.append(len(labels_of_frame) - 1)
+                    temp_frames_of_interest = list(set(temp_frames_of_interest))
 
             else:
                 assert conditional_property is not None, "conditional_property must be not None"
