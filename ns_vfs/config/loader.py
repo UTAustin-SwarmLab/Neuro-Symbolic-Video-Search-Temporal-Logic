@@ -29,4 +29,9 @@ def load_config():
         "weights",
         "yolov8n.pt",
     )
+    config.YOLOX.YOLOX_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "yolox_x.pth",
+    )
     return config
