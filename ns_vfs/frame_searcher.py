@@ -17,6 +17,16 @@ class FrameSearcher:
     ):
         self._video_automata_builder = video_automata_builder
         self._video_processor = video_processor
+        self.ltl_info = self._post_process_ltl_formula(self._video_automata_builder.ltl_formula)
+
+    def _post_process_ltl_formula(self, ltl_formula) -> str:
+        ltl_info = {}
+        if "!" in ltl_formula:
+            avoid_proposition = ltl_formula.split("!")[-1][1:].split('"')[0]  # [1:-2].replace('"', "")
+            ltl_info["avoid_proposition"] = avoid_proposition
+        else:
+            ltl_info["avoid_proposition"] = None
+        return ltl_info
 
     def get_propositional_confidence_per_frame(
         self,
@@ -53,10 +63,19 @@ class FrameSearcher:
         return frame
 
     def validate_propositional_confidence(
-        self, frame_set: List[Frame], frame: Frame, proposition_set, interim_confidence_set: List[List[float]]
+        self,
+        frame_set: List[Frame],
+        frame: Frame,
+        proposition_set,
+        interim_confidence_set: List[List[float]],
+        avoid_proposition: List[str] = None,
     ):
         propositional_confidence_of_frame = frame.propositional_confidence
         proposition_condition = sum(propositional_confidence_of_frame)
+        if avoid_proposition is not None:
+            if frame.propositional_probability[str(avoid_proposition)] > 0:
+                return frame_set, interim_confidence_set
+
         if proposition_condition > 0:
             frame_set.append(frame)
             for i in range(len(proposition_set)):
@@ -113,12 +132,12 @@ class FrameSearcher:
                 frame_of_interest.frame_idx_to_real_idx[frame.frame_index] = frame.real_frame_idx
                 frame_of_interest.frame_images.append(frame.frame_image)
                 frame_of_interest.save_annotated_images(frame.annotated_image)
-
         return frame_of_interest
 
     def search(self):
         return self._video_processor.process_and_get_frame_of_interest(
             ltl_formula=self._video_automata_builder.ltl_formula,
+            ltl_info=self.ltl_info,
             proposition_set=self._video_automata_builder.proposition_set,
             get_propositional_confidence_per_frame=self.get_propositional_confidence_per_frame,
             validate_propositional_confidence=self.validate_propositional_confidence,

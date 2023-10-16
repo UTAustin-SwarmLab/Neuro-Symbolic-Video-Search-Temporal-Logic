@@ -27,7 +27,7 @@ root_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/exp
 weight_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/weights/")
 weights = ["yolov8n", "yolov8m", "yolov8x"]
 cv_model_list = ["yolo"]
-mapping_threshold = (0.25, 0.42)  # (0.10, 0.58)
+mapping_threshold = (0.45, 0.60)  # (0.10, 0.58)
 mapping_param_x0 = 0.25  # 0.10
 mapping_param_k = 50
 save_csv_file_name = get_file_or_dir_with_datetime(base_name="yolo_benchmark_search_result", ext=".csv")
@@ -59,6 +59,7 @@ for image_set in benchmark_image_set_dir:
                 )
 
                 benchmark_video: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+                breakpoint()
 
                 video_automata_builder = VideotoAutomaton(
                     detector=cv_detection_model,
@@ -79,8 +80,10 @@ for image_set in benchmark_image_set_dir:
                 frame_of_interest = frame_sercher.search()
 
                 # writing result as csv
+                breakpoint()
                 actual_result = set(list_flatten(benchmark_video.frames_of_interest))
                 predictive_result = set(list_flatten(frame_of_interest.foi_list))
+                breakpoint()
 
                 accuracy, precision, recall, f1 = classification_metrics(
                     actual_result=actual_result, predicted_result=predictive_result

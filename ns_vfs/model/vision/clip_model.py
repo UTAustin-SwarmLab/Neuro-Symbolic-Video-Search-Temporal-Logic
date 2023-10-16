@@ -36,7 +36,11 @@ class ClipPerception(ComputerVisionDetector):
         Returns:
             list[str]: List of class names.
         """
-        return [f"all {class_name}s" for class_name in class_names]
+        result = []
+        for class_name in class_names:
+            c = class_name.replace("_", " ")
+            result.append(f"all {c}s")
+        return result
 
     def detect(self, frame_img: np.ndarray, classes: list) -> any:
         """Detect object in frame.
@@ -50,7 +54,7 @@ class ClipPerception(ComputerVisionDetector):
         """
         image = Image.fromarray(frame_img.astype("uint8"), "RGB")
         image = self.preprocess(image).unsqueeze(0).to(self.device)
-        text = clip.tokenize(classes).to(self.device)
+        text = clip.tokenize(self._parse_class_name(classes)).to(self.device)
 
         with torch.no_grad():
             image_features = self.model.encode_image(image)
@@ -63,6 +67,11 @@ class ClipPerception(ComputerVisionDetector):
 
             # logits_per_image, logits_per_text = self.model(image, text)
             # probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+        self._labels = []
+        if len(scores) > 0:
+            self._labels.append(f"{classes[0]} {scores[0]:0.4f}")
+        else:
+            self._labels.append({None}, {None})
 
         self._detection = None  # Todo: Figure out what to do about it
 

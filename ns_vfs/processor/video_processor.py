@@ -89,6 +89,7 @@ class VideoFrameProcessor(VideoProcessor):
     def process_and_get_frame_of_interest(
         self,
         ltl_formula: str = "",
+        ltl_info: dict = None,
         proposition_set: list = None,
         get_propositional_confidence_per_frame: callable = None,
         validate_propositional_confidence: callable = None,
@@ -107,6 +108,7 @@ class VideoFrameProcessor(VideoProcessor):
                 break
             if self._frame_scale is not None:
                 frame_img = self._resize_frame(frame_img, self.frame_scale)
+            frame_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
             # --------------- frame image imported above --------------- #
             frame: Frame = Frame(frame_index=frame_idx, frame_image=frame_img, real_frame_idx=real_frame_idx)
 
@@ -117,10 +119,11 @@ class VideoFrameProcessor(VideoProcessor):
                 frame=frame,
                 proposition_set=proposition_set,
                 interim_confidence_set=interim_confidence_set,
+                avoid_proposition=ltl_info["avoid_proposition"],
             )
 
             if len(frame_set) > 0:  # propositions in frame
-                result = build_and_check_automaton(
+                result, frame_set = build_and_check_automaton(
                     frame_set=frame_set,
                     interim_confidence_set=interim_confidence_set,
                     include_initial_state=False,
