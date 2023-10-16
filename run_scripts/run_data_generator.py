@@ -30,14 +30,14 @@ if __name__ == "__main__":
     prop1 & prop2
     (prop1 & prop2) U prop3
     """
-    ltl_logic_list = ["prop1 & prop2"]
+    ltl_logic_list = ["F prop1", "G prop1", "prop1 U prop2", "(prop1 & prop2) U prop3", "prop1 & prop2"]
     for ltl_logic in ltl_logic_list:
         video_generator.generate(
             initial_number_of_frame=25,
-            max_number_frame=500,  # 500
+            max_number_frame=50,  # 500
             ltl_logic=ltl_logic,
             save_frames=False,
-            number_video_per_set_of_frame=6,
+            number_video_per_set_of_frame=2,
         )
         # prop1 U prop2
         # prop1 & prop2

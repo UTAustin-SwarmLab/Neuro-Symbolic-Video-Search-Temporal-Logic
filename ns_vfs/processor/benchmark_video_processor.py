@@ -44,6 +44,7 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
         self,
         proposition_set: list = None,
         ltl_formula: str = "",
+        ltl_info: dict = None,
         get_propositional_confidence_per_frame: callable = None,
         validate_propositional_confidence: callable = None,
         build_and_check_automaton: callable = None,
@@ -74,6 +75,7 @@ class BenchmarkVideoFrameProcessor(VideoFrameProcessor):
                 frame=frame,
                 proposition_set=proposition_set,
                 interim_confidence_set=interim_confidence_set,
+                avoid_proposition=ltl_info["avoid_proposition"],
             )
 
             if len(frame_set) > 0:  # propositions in frame

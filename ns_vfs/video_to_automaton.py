@@ -29,6 +29,7 @@ class VideotoAutomaton:
         save_annotation: bool = False,
         save_image: bool = False,
         mapping_threshold: tuple = (0.36, 0.58),
+        mapping_param_a=1.00,
         mapping_param_x0=0.58,
         mapping_param_k=0.50,
         verbose: bool = False,
@@ -52,6 +53,7 @@ class VideotoAutomaton:
         self._save_annotation = save_annotation
         self._save_image = save_image
         self._mapping_threshold = mapping_threshold
+        self._mapping_param_a = mapping_param_a
         self._mapping_param_x0 = mapping_param_x0
         self._mapping_param_k = mapping_param_k
         self._verbose = verbose
@@ -63,7 +65,7 @@ class VideotoAutomaton:
             # Then, create the directory again
             os.makedirs(self._annotated_frame_path)
 
-    def _sigmoid(self, x, k=1, x0=0) -> float:
+    def _sigmoid(self, x, a=1, k=1, x0=0) -> float:
         """Sigmoid function.
 
         Args:
@@ -88,20 +90,22 @@ class VideotoAutomaton:
             output_dir (str | None, optional): Output directory. Defaults to None.
         """
         box_annotator = sv.BoxAnnotator()
+        if self._detector.get_detections() is not None:
+            annotated_frame = box_annotator.annotate(
+                scene=frame_img.copy(),
+                detections=self._detector.get_detections(),
+                labels=self._detector.get_labels(),
+            )
 
-        annotated_frame = box_annotator.annotate(
-            scene=frame_img.copy(),
-            detections=self._detector.get_detections(),
-            labels=self._detector.get_labels(),
-        )
+            sv.plot_image(annotated_frame, (16, 16))
 
-        sv.plot_image(annotated_frame, (16, 16))
+            filename = get_file_or_dir_with_datetime("annotated_frame", ".png")
+            plt.savefig(os.path.join(output_dir, filename))
 
-        filename = get_file_or_dir_with_datetime("annotated_frame", ".png")
-        plt.savefig(os.path.join(output_dir, filename))
-
-        image = Image.open(os.path.join(output_dir, filename))
-        return np.array(image)
+            image = Image.open(os.path.join(output_dir, filename))
+            return np.array(image)
+        else:
+            return frame_img
 
     def _create_proposition_status(self, num_props):
         """Create all possible combinations of T and F for the number of propositions.
@@ -143,11 +147,17 @@ class VideotoAutomaton:
         """
         if confidence_per_video >= true_threshold:
             return 1
-        elif confidence_per_video <= false_threshold:
+        elif confidence_per_video < false_threshold:
             return 0
         else:
             return round(
-                self._sigmoid(confidence_per_video, k=self._mapping_param_k, x0=self._mapping_param_x0), 2
+                self._sigmoid(
+                    confidence_per_video,
+                    a=self._mapping_param_a,
+                    k=self._mapping_param_k,
+                    x0=self._mapping_param_x0,
+                ),
+                2,
             )
 
     def get_probabilistic_proposition_from_frame(

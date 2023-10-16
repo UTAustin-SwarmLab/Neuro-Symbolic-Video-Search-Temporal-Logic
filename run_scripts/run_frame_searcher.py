@@ -4,6 +4,7 @@ import argparse
 
 from ns_vfs.config.loader import load_config
 from ns_vfs.frame_searcher import FrameSearcher
+from ns_vfs.model.vision.clip_model import ClipPerception
 from ns_vfs.model.vision.grounding_dino import GroundingDino
 from ns_vfs.model.vision.yolo import Yolo
 from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
@@ -71,20 +72,35 @@ if __name__ == "__main__":
         )
         benchmark_img_frame = video_processor.benchmark_image_frames
         proposition_set = benchmark_img_frame.proposition
-        ltl_formula = f"P>=0.80 [{benchmark_img_frame.ltl_formula}]"
+        ltl_formula = f"Pmin=? [{benchmark_img_frame.ltl_formula}]"
 
-    if args.cv_model == "grounding_dino":
+    if args.cv_model == "yolo":
+        cv_model = Yolo(
+            config=config.YOLO,
+            weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
+        )
+        mapping_threshold = (0.40, 0.42)
+        mapping_param_a = 0.971
+        mapping_param_k = 7.024
+        mapping_param_x0 = 0.117
+
+    elif args.cv_model == "clip":
+        cv_model = ClipPerception(config=config, weight_path=None)
+        mapping_threshold = (0.226, 0.30)
+        mapping_param_a = 1.00
+        mapping_param_k = 56.546
+        mapping_param_x0 = 0.059
+
+    else:
         cv_model = GroundingDino(
             config=config.GROUNDING_DINO,
             weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
             config_path=config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH,
         )
-
-    else:
-        cv_model = Yolo(
-            config=config.YOLO,
-            weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
-        )
+        mapping_threshold = (0.40, 0.80)
+        mapping_param_a = 3.856
+        mapping_param_k = 5.417
+        mapping_param_x0 = 1.169
 
     video_automata_builder = VideotoAutomaton(
         detector=cv_model,
@@ -93,6 +109,10 @@ if __name__ == "__main__":
         proposition_set=proposition_set,
         save_annotation=args.save_annotation,  # TODO: Debug only
         save_image=False,  # TODO: Debug only
+        mapping_threshold=mapping_threshold,
+        mapping_param_a=mapping_param_a,
+        mapping_param_x0=mapping_param_x0,
+        mapping_param_k=mapping_param_k,
         ltl_formula=ltl_formula,  # 'P>=0.99 [F "person"]' P>=0.99 [F ("person" U "car")] P>=0.99 [F "person" U "car"]
     )
 

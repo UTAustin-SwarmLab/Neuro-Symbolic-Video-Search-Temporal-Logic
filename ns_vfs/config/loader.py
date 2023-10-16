@@ -16,17 +16,16 @@ def load_config():
     config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH = os.path.join(
         config.VERSION_AND_PATH.ARTIFACTS_PATH,
         "weights",
-        "groundingdino_swint_ogc.pth",
+        "groundingdino_swinb_cogcoor.pth",
     )
     config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH = os.path.join(
-        config.VERSION_AND_PATH.ROOT_PATH,
-        "ns_vfs",
-        "config",
-        "GroundingDINO_SwinT_OGC.py",
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "GroundingDINO_SwinB_cfg.py",
     )
     config.YOLO.YOLO_CHECKPOINT_PATH = os.path.join(
         config.VERSION_AND_PATH.ARTIFACTS_PATH,
         "weights",
-        "yolov8n.pt",
+        "yolov8x.pt",
     )
     return config

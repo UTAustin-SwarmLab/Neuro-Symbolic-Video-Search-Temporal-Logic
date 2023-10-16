@@ -19,11 +19,12 @@ class GroundingDino(ComputerVisionDetector):
         config: DictConfig,
         weight_path: str,
         config_path: str,
+        device: str = "cuda:0",
     ) -> None:
-        self.model = self.load_model(weight_path, config_path)
+        self.model = self.load_model(weight_path, config_path, device)
         self._config = config
 
-    def load_model(self, weight_path, config_path) -> Model:
+    def load_model(self, weight_path, config_path, device) -> Model:
         """Load weight.
 
         Args:
@@ -34,7 +35,7 @@ class GroundingDino(ComputerVisionDetector):
         Returns:
             None
         """
-        return Model(model_config_path=config_path, model_checkpoint_path=weight_path)
+        return Model(model_config_path=config_path, model_checkpoint_path=weight_path, device=device)
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Parse class name.

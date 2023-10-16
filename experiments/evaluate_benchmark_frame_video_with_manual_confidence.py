@@ -99,7 +99,7 @@ def evaluate_frame_of_interest(
     acc_file = Path(directory_path) / "accuracy.txt"
     with acc_file.open("a") as f:
         f.write(
-            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]}
+            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_acc: {result["exact_frame_acc"]}
             accuracy: {result["accuracy"]}, precision: {result["precision"]} recall: {result["recall"]}, f1: {result["f1"]}\n"""
         )
 
