@@ -6,6 +6,7 @@ from ns_vfs.config.loader import load_config
 from ns_vfs.frame_searcher import FrameSearcher
 from ns_vfs.model.vision.grounding_dino import GroundingDino
 from ns_vfs.model.vision.yolo import Yolo
+from ns_vfs.model.vision.yolox import YoloX
 from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
 from ns_vfs.processor.video_processor import (
     VideoFrameProcessor,
@@ -14,14 +15,14 @@ from ns_vfs.video_to_automaton import VideotoAutomaton
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cv_model", type=str, default="grounding_dino")
+    parser.add_argument("--cv_model", type=str, default="yolo")
     parser.add_argument(
         "--video_processor", type=str, default="regular_video", choices=["regular_video", "benchmark_video"]
     )
     parser.add_argument(
         "--video_path",
         type=str,
-        default="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/data/nyc_street/nyc_stree_53sec.mp4",
+        default="../VIRAT_S_050201_05_000890_000944.mp4",
     )
     parser.add_argument(
         "--proposition_set",
@@ -79,10 +80,15 @@ if __name__ == "__main__":
             weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
             config_path=config.GROUNDING_DINO.GROUNDING_DINO_CONFIG_PATH,
         )
-    else:
+    elif args.cv_model == "yolo":
         cv_model = Yolo(
             config=config.YOLO,
             weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
+        )
+    else:
+        cv_model = YoloX(
+            config=config.YOLOX,
+            weight_path=config.YOLOX.YOLOX_CHECKPOINT_PATH,
         )
 
     video_automata_builder = VideotoAutomaton(
