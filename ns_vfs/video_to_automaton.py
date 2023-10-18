@@ -11,6 +11,7 @@ from PIL import Image
 
 from ns_vfs.common.utility import get_file_or_dir_with_datetime
 from ns_vfs.data.frame import Frame
+from ns_vfs.loader import LABEL_OF_INTEREST
 from ns_vfs.model.vision._base import ComputerVisionDetector
 from ns_vfs.processor.video_processor import (
     VideoProcessor,
@@ -22,7 +23,7 @@ class VideotoAutomaton:
     def __init__(
         self,
         proposition_set: list[str],
-        detector: ComputerVisionDetector,
+        detector: ComputerVisionDetector | dict,
         video_processor: VideoProcessor,
         artifact_dir: str,
         ltl_formula: str,
@@ -57,6 +58,11 @@ class VideotoAutomaton:
         self._mapping_param_x0 = mapping_param_x0
         self._mapping_param_k = mapping_param_k
         self._verbose = verbose
+        if isinstance(detector, dict):
+            self._double_model_mode = True
+        else:
+            self._double_model_mode = False
+
         if self._save_annotation:
             self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
             if os.path.exists(self._annotated_frame_path):
@@ -177,45 +183,64 @@ class VideotoAutomaton:
             float: Probabilistic proposition from frame.
             detected_obj (any): Detected object.
         """
-        detected_obj = self._detector.detect(frame_img, [proposition])
-        if self._detector.get_size() > 0:
+        # if proposition not in yolo class label
+        if self._double_model_mode:
+            if proposition not in LABEL_OF_INTEREST:
+                detector = self._detector["clip"]
+                # detected_obj = detector.detect(frame_img, [proposition])
+            else:
+                detector = self._detector["yolo"]
+                # detected_obj = detector.detect(frame_img, [proposition])
+        else:
+            detector = self._detector
+
+        detected_obj = detector.detect(frame_img, [proposition])
+        if detector.get_size() > 0:
             if save_annotation:
-                annotated_img = self._annotate_frame(
-                    frame_img=frame_img, output_dir=self._annotated_frame_path
-                )
+                if self._double_model_mode:
+                    annotated_img = None
+                else:
+                    annotated_img = self._annotate_frame(
+                        frame_img=frame_img, output_dir=self._annotated_frame_path
+                    )
                 # # # DEBUG # # #
-                confidence_after_mapping = self._mapping_probability(
-                    np.round(np.max(self._detector.get_confidence()), 2),
-                    true_threshold=self._mapping_threshold[1],
-                    false_threshold=self._mapping_threshold[0],
-                )
-                confidence_after_mapping
-                # # # DEBUG # # #
-                return (
-                    self._mapping_probability(
-                        np.round(np.max(self._detector.get_confidence()), 2),
+
+                if self._double_model_mode:
+                    confidence_after_mapping = detector._mapping_probability(
+                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2)
+                    )
+                else:
+                    confidence_after_mapping = detector._mapping_probability(
+                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2),
                         true_threshold=self._mapping_threshold[1],
                         false_threshold=self._mapping_threshold[0],
-                    ),
+                        a=self._mapping_param_a,
+                        k=self._mapping_param_x0,
+                        x0=self._mapping_param_k,
+                    )
+                # # # DEBUG # # #
+                return (
+                    confidence_after_mapping,
                     detected_obj,
                     annotated_img,
                 )
             else:
-                # # # DEBUG # # #
-                conf = np.round(np.max(self._detector.get_confidence()), 2)
-                confidence_after_mapping = self._mapping_probability(
-                    np.round(np.max(self._detector.get_confidence()), 2),
-                    true_threshold=self._mapping_threshold[1],
-                    false_threshold=self._mapping_threshold[0],
-                )
-                confidence_after_mapping, conf
-                # # # DEBUG # # #
-                return (
-                    self._mapping_probability(
-                        np.round(np.max(self._detector.get_confidence()), 2),
+                if self._double_model_mode:
+                    confidence_after_mapping = detector._mapping_probability(
+                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2)
+                    )
+                else:
+                    confidence_after_mapping = detector._mapping_probability(
+                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2),
                         true_threshold=self._mapping_threshold[1],
                         false_threshold=self._mapping_threshold[0],
-                    ),
+                        a=self._mapping_param_a,
+                        k=self._mapping_param_x0,
+                        x0=self._mapping_param_k,
+                    )
+                # # # DEBUG # # #
+                return (
+                    confidence_after_mapping,
                     detected_obj,
                     None,
                 )

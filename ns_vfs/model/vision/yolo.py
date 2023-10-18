@@ -82,6 +82,40 @@ class Yolo(ComputerVisionDetector):
 
         return detected_obj
 
+    def _mapping_probability(
+        self,
+        confidence_per_video: float,
+        true_threshold=0.60,
+        false_threshold=0.40,
+        a=0.971,
+        k=7.024,
+        x0=0.117,
+    ) -> float:
+        """Mapping probability.
+
+        Args:
+            confidence_per_video (float): Confidence per video.
+            true_threshold (float, optional): True threshold. Defaults to 0.64.
+            false_threshold (float, optional): False threshold. Defaults to 0.38.
+
+        Returns:
+            float: Mapped probability.
+        """
+        if confidence_per_video >= true_threshold:
+            return 1
+        elif confidence_per_video < false_threshold:
+            return 0
+        else:
+            return round(
+                self._sigmoid_mapping_estimation_function(
+                    confidence_per_video,
+                    a=a,
+                    k=k,
+                    x0=x0,
+                ),
+                2,
+            )
+
     def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
         max_conf = 0
         class_ids = [self._classes_reversed[c.replace("_", " ")] for c in [true_label]]
