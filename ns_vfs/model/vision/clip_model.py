@@ -86,18 +86,52 @@ class ClipPerception(ComputerVisionDetector):
         self.detect(frame_img, true_label)
         return float(self._confidence[0])
 
+    def _mapping_probability(
+        self,
+        confidence_per_video: float,
+        true_threshold=0.30,
+        false_threshold=0.230,
+        a=1.00,
+        k=56.546,
+        x0=0.059,
+    ) -> float:
+        """Mapping probability.
+
+        Args:
+            confidence_per_video (float): Confidence per video.
+            true_threshold (float, optional): True threshold. Defaults to 0.64.
+            false_threshold (float, optional): False threshold. Defaults to 0.38.
+
+        Returns:
+            float: Mapped probability.
+        """
+        if confidence_per_video >= true_threshold:
+            return 1
+        elif confidence_per_video < false_threshold:
+            return 0
+        else:
+            return round(
+                self._sigmoid_mapping_estimation_function(
+                    confidence_per_video,
+                    a=a,
+                    k=k,
+                    x0=x0,
+                ),
+                2,
+            )
+
 
 def main():
     test = ClipPerception(None, None)
-    img = cv2.imread("/opt/Neuro-Symbolic-Video-Frame-Search/store/omama/cat1.jpeg")
-    test.detect(img, ["cat", "dog", "person", "table"])
+    img = cv2.imread("/opt/Neuro-Symbolic-Video-Frame-Search/ship_on_the_sea.png")
+    test.detect(img, ["sunset", "dog", "person", "table"])
     print("Testing with 4 labels:")
     print(test._confidence)
 
     print("\nTesting with 1 label:")
-    test.detect(img, ["cat"])
+    test.detect(img, ["ship_on_the_sea"])  # man backhug woman
     print(test._confidence)
-    breakpoint()
+    # breakpoint()
 
 
 if __name__ == "__main__":

@@ -79,7 +79,7 @@ if __name__ == "__main__":
             config=config.YOLO,
             weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
         )
-        mapping_threshold = (0.40, 0.42)
+        mapping_threshold = (0.40, 0.60)
         mapping_param_a = 0.971
         mapping_param_k = 7.024
         mapping_param_x0 = 0.117
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         mapping_param_k = 56.546
         mapping_param_x0 = 0.059
 
-    else:
+    elif args.cv_model == "dino":
         cv_model = GroundingDino(
             config=config.GROUNDING_DINO,
             weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
@@ -101,6 +101,18 @@ if __name__ == "__main__":
         mapping_param_a = 3.856
         mapping_param_k = 5.417
         mapping_param_x0 = 1.169
+    else:
+        cv_model = {
+            "yolo": Yolo(
+                config=config.YOLO,
+                weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
+            ),
+            "clip": ClipPerception(config=config, weight_path=None),
+        }
+        mapping_threshold = None
+        mapping_param_a = None
+        mapping_param_k = None
+        mapping_param_x0 = None
 
     video_automata_builder = VideotoAutomaton(
         detector=cv_model,
