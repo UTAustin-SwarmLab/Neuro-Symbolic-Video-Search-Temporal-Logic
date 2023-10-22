@@ -31,4 +31,20 @@ def load_config():
         "weights",
         "yolov8n.pt",
     )
+    config.YOLOX.YOLOX_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "yolox_x.pth",
+    )
+    config.MMDETECTION.MMDETECTION_CONFIG_PATH = os.path.join(
+        config.VERSION_AND_PATH.ROOT_PATH,
+        "ns_vfs",
+        "config",
+        "rtmdet_tiny_8xb32-300e_coco.py",
+    )
+    config.MMDETECTION.MMDETECTION_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "rtmdet_tiny_8xb32-300e_coco_20220902_112414-78e30dcc.pth"
+    )
     return config
