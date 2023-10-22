@@ -35,7 +35,7 @@ class ComputerVisionDetector(ComputerVisionModel):
     
     def get_detections(self) -> sv.Detections:
         """Return sv.Detections"""
-        return self._detection
+        return self._detections
 
     def get_confidence(self) -> np.ndarray:
         return self._confidence

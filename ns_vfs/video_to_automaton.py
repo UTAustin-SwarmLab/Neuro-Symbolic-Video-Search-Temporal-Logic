@@ -74,10 +74,13 @@ class VideotoAutomaton:
             output_dir (str | None, optional): Output directory. Defaults to None.
         """
         box_annotator = sv.BoxAnnotator()
-
-        annotated_frame = box_annotator.annotate(
-            scene=frame_img.copy(), detections=self._detector.get_detections(), labels=self._detector.get_labels()
-        )
+        
+        if self._detector.get_size() > 0:
+            annotated_frame = box_annotator.annotate(
+                scene=frame_img.copy(), detections=self._detector.get_detections(), labels=self._detector.get_labels()
+            )
+        else:
+            annotated_frame = frame_img.copy()
 
         sv.plot_image(annotated_frame, (16, 16))
 
