@@ -64,6 +64,12 @@ class YoloX(ComputerVisionDetector):
         """
         class_reversed = COCO_CLASSES.index(classes[0])
         outputs, img_info = self.model.inference(frame_img)
+        if outputs[0] is None:
+            self._labels = []
+            self._confidence = np.array([])
+            self._detections = None
+            self._size = 0
+            return None
         output = outputs[0].cpu()
         cls = (output[:, 6]).numpy()
         scores = (output[:, 4] * output[:, 5]).numpy()

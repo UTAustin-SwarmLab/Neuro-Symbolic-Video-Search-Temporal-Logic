@@ -16,19 +16,19 @@ if __name__ == "__main__":
     config = load_config()
 
     frame2automaton = VideotoAutomaton(
-        detector=YoloX(
-            config=config.YOLOX,
-            weight_path=config.YOLOX.YOLOX_CHECKPOINT_PATH,
-        ),
+        # detector=YoloX(
+        #     config=config.YOLOX,
+        #     weight_path=config.YOLOX.YOLOX_CHECKPOINT_PATH,
+        # ),
         # detector=Yolo(
         #     config=config.YOLO,
         #     weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
         # ),
-        # detector=MMDetection(
-        #     config=config.MMDETECTION,
-        #     config_path=config.MMDETECTION.MMDETECTION_CONFIG_PATH,
-        #     weight_path=config.MMDETECTION.MMDETECTION_CHECKPOINT_PATH
-        # ),
+        detector=MMDetection(
+            config=config.MMDETECTION,
+            config_path=config.MMDETECTION.MMDETECTION_CONFIG_PATH,
+            weight_path=config.MMDETECTION.MMDETECTION_CHECKPOINT_PATH
+        ),
         # detector=GroundingDino(
         #     config=config.GROUNDING_DINO,
         #     weight_path=config.GROUNDING_DINO.GROUNDING_DINO_CHECKPOINT_PATH,
@@ -40,8 +40,8 @@ if __name__ == "__main__":
         ),
         artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
         proposition_set=["car", "person"],
-        is_annotation=True,  # TODO: Debug only
-        save_image=True,  # TODO: Debug only
+        is_annotation=False,  # TODO: Debug only
+        save_image=False,  # TODO: Debug only
         ltl_formula='P>=0.99 [F "person"]',
     )
 
