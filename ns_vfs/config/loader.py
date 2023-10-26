@@ -40,11 +40,11 @@ def load_config():
         config.VERSION_AND_PATH.ROOT_PATH,
         "ns_vfs",
         "config",
-        "rtmdet_tiny_8xb32-300e_coco.py",
+        "mask-rcnn_x101-64x4d_fpn_1x_coco.py",
     )
     config.MMDETECTION.MMDETECTION_CHECKPOINT_PATH = os.path.join(
         config.VERSION_AND_PATH.ARTIFACTS_PATH,
         "weights",
-        "rtmdet_tiny_8xb32-300e_coco_20220902_112414-78e30dcc.pth"
+        "mask_rcnn_x101_64x4d_fpn_1x_coco_20200201-9352eb0d.pth"
     )
     return config
