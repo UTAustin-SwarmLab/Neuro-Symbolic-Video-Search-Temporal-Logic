@@ -13,12 +13,14 @@ from ns_vfs.loader.benchmark_coco import COCOImageLoader
 from ns_vfs.loader.benchmark_imagenet import ImageNetDataloader
 from ns_vfs.model.vision.clip_model import ClipPerception
 from ns_vfs.model.vision.grounding_dino import GroundingDino
+from ns_vfs.model.vision.mmdetection import MMDetection
 from ns_vfs.model.vision.yolo import Yolo
+from ns_vfs.model.vision.yolo_x import YoloX
 
 IMAGE_LOADER = ["coco"]
 NUM_SAMPLE = 3000
 LABEL_OF_INTEREST = LABEL_OF_INTEREST
-CV_MODEL_DES = "clip"
+CV_MODEL_DES = "yolox"
 CONFIG = load_config()
 CONF_RANGE = np.array(range(40)) / 50 + 0.2
 ROOT_DIR = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_1.2_calibration")
@@ -82,6 +84,19 @@ if __name__ == "__main__":
         )
     elif CV_MODEL_DES == "clip":
         cv_model = ClipPerception(config=CONFIG, weight_path=None)
+
+    elif CV_MODEL_DES == "yolox":
+        cv_model = YoloX(
+            config=CONFIG.YOLOX,
+            weight_path=CONFIG.YOLOX.YOLOX_CHECKPOINT_PATH,
+        )
+
+    elif CV_MODEL_DES == "mrcnn":
+        cv_model = MMDetection(
+            config=CONFIG.MMDETECTION,
+            config_path=CONFIG.MMDETECTION.MMDETECTION_CONFIG_PATH,
+            weight_path=CONFIG.MMDETECTION.MMDETECTION_CHECKPOINT_PATH,
+        )
 
     else:
         cv_model = GroundingDino(
