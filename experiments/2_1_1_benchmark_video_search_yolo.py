@@ -59,7 +59,6 @@ for image_set in benchmark_image_set_dir:
                 )
 
                 benchmark_video: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
-                breakpoint()
 
                 video_automata_builder = VideotoAutomaton(
                     detector=cv_detection_model,
@@ -80,10 +79,9 @@ for image_set in benchmark_image_set_dir:
                 frame_of_interest = frame_sercher.search()
 
                 # writing result as csv
-                breakpoint()
+
                 actual_result = set(list_flatten(benchmark_video.frames_of_interest))
                 predictive_result = set(list_flatten(frame_of_interest.foi_list))
-                breakpoint()
 
                 accuracy, precision, recall, f1 = classification_metrics(
                     actual_result=actual_result, predicted_result=predictive_result

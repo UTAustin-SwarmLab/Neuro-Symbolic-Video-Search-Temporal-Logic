@@ -28,4 +28,20 @@ def load_config():
         "weights",
         "yolov8x.pt",
     )
+    config.YOLOX.YOLOX_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "yolox_x.pth",
+    )
+    config.MMDETECTION.MMDETECTION_CONFIG_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "mask-rcnn_x101-64x4d_fpn_ms-poly_3x_coco.py",
+    )
+    config.MMDETECTION.MMDETECTION_CHECKPOINT_PATH = os.path.join(
+        config.VERSION_AND_PATH.ARTIFACTS_PATH,
+        "weights",
+        "mask_rcnn_x101_64x4d_fpn_mstrain-poly_3x_coco_20210526_120447-c376f129.pth",
+    )
+
     return config
