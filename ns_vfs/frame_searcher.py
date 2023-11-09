@@ -1,4 +1,5 @@
-from typing import List, Union
+import re
+from typing import Dict, List, Optional, Union
 
 from ns_vfs.common.ltl_utility import verification_result_eval
 from ns_vfs.data.frame import Frame, FramesofInterest
@@ -17,7 +18,9 @@ class FrameSearcher:
     ):
         self._video_automata_builder = video_automata_builder
         self._video_processor = video_processor
-        self.ltl_info = self._post_process_ltl_formula(self._video_automata_builder.ltl_formula)
+        self.symbolic_verification_rule = self._post_process_ltl_formula(
+            self._video_automata_builder.ltl_formula
+        )
 
     def _post_process_ltl_formula(self, ltl_formula) -> str:
         ltl_info = {}
@@ -26,6 +29,14 @@ class FrameSearcher:
             ltl_info["avoid_proposition"] = avoid_proposition
         else:
             ltl_info["avoid_proposition"] = None
+
+        if "&" in ltl_formula:
+            # if A,B are associated by &
+            # and there's no A,B in the formula
+            A, B = ltl_formula.split("&")[0], ltl_formula.split("&")[1]
+            A, B = re.findall(r"\"(.*?)\"", A.split("(")[-1]), re.findall(r"\"(.*?)\"", B.split(")")[0])
+            ltl_info["and_associated_props"] = A + B
+
         return ltl_info
 
     def get_propositional_confidence_per_frame(
@@ -68,12 +79,25 @@ class FrameSearcher:
         frame: Frame,
         proposition_set,
         interim_confidence_set: List[List[float]],
-        avoid_proposition: List[str] = None,
+        symbolic_verification_rule: Optional[Dict] = {},
     ):
         propositional_confidence_of_frame = frame.propositional_confidence
         proposition_condition = sum(propositional_confidence_of_frame)
-        if avoid_proposition is not None:
-            if frame.propositional_probability[str(avoid_proposition)] > 0:
+        tmp_proposition_condition = sum(propositional_confidence_of_frame)
+        if symbolic_verification_rule.get("avoid_proposition") is not None:
+            for avoid_p in symbolic_verification_rule["avoid_proposition"]:
+                if frame.propositional_probability[str(avoid_p)] > 0:
+                    return frame_set, interim_confidence_set
+        if symbolic_verification_rule.get("and_associated_props") is not None:
+            validator = 0
+            for and_p in symbolic_verification_rule["and_associated_props"]:
+                if frame.propositional_probability[str(and_p)] > 0:
+                    validator += 1
+                    tmp_proposition_condition = -frame.propositional_probability[str(and_p)]
+            if (
+                validator != len(symbolic_verification_rule["and_associated_props"])
+                and not tmp_proposition_condition > 0
+            ):
                 return frame_set, interim_confidence_set
 
         if proposition_condition > 0:
@@ -137,7 +161,7 @@ class FrameSearcher:
     def search(self):
         return self._video_processor.process_and_get_frame_of_interest(
             ltl_formula=self._video_automata_builder.ltl_formula,
-            ltl_info=self.ltl_info,
+            symbolic_verification_rule=self.symbolic_verification_rule,
             proposition_set=self._video_automata_builder.proposition_set,
             get_propositional_confidence_per_frame=self.get_propositional_confidence_per_frame,
             validate_propositional_confidence=self.validate_propositional_confidence,

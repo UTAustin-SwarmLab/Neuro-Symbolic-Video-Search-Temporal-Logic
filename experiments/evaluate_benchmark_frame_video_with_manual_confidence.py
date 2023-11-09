@@ -116,7 +116,7 @@ def get_available_benchmark_video(path_to_directory: str):
 if __name__ == "__main__":
     config = load_config()
     benchmark_frame_video_root_dir = Path(
-        "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/benchmark_frame_video_generated"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_validated_benchmark_video"
     )
     benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
 

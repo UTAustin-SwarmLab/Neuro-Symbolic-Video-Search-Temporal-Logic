@@ -89,7 +89,7 @@ class VideoFrameProcessor(VideoProcessor):
     def process_and_get_frame_of_interest(
         self,
         ltl_formula: str = "",
-        ltl_info: dict = None,
+        symbolic_verification_rule: dict = None,
         proposition_set: list = None,
         get_propositional_confidence_per_frame: callable = None,
         validate_propositional_confidence: callable = None,
@@ -119,7 +119,7 @@ class VideoFrameProcessor(VideoProcessor):
                 frame=frame,
                 proposition_set=proposition_set,
                 interim_confidence_set=interim_confidence_set,
-                avoid_proposition=ltl_info["avoid_proposition"],
+                symbolic_verification_rule=symbolic_verification_rule,
             )
 
             if len(frame_set) > 0:  # propositions in frame

@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "omegaconf",
-    "numpy==1.22.0",
+    "numpy==1.21.5",
     "pandas",
     "supervision==0.6.0",
     "roboflow",
