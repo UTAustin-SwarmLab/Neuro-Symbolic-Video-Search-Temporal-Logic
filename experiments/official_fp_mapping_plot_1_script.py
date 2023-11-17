@@ -6,7 +6,6 @@
 import os
 from pathlib import Path
 
-import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -440,21 +439,21 @@ f1_false_positive = {
         "ts_vector": yolo_f1_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#1f77b4",
+        "color": "#4b5451",
     },
     "grounding-dino": {
         "xvec": dino_avg_f1.index,
         "ts_vector": dino_f1_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#d62728",
+        "color": "#2a82f5",
     },
     "clip": {
         "xvec": clip_avg_f1.index,
         "ts_vector": clip_f1_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#2ca02c",
+        "color": "#8f090f",
     },
     # "yolox": {
     #     "xvec": yolox_avg_f1.index,
@@ -508,21 +507,21 @@ precision_false_positive = {
         "ts_vector": yolo_precision_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#1f77b4",
+        "color": "#4b5451",
     },
     "grounding-dino": {
         "xvec": dino_avg_precision.index,
         "ts_vector": dino_precision_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#d62728",
+        "color": "#2a82f5",
     },
     "clip": {
         "xvec": clip_avg_precision.index,
         "ts_vector": clip_precision_mean,
         "lw": 3,
         "linestyle": "-",
-        "color": "#2ca02c",
+        "color": "#8f090f",
     },
     # "yolox": {
     #     "xvec": yolox_avg_precision.index,
@@ -629,42 +628,45 @@ mapping_estimation = {
         "ts_vector": tuple(data["yolo_acc"]),
         "lw": 3,
         "linestyle": "-",
-        "color": "#1f77b4",
+        "color": "#4b5451",
+        "alpha": 0.8,
     },
     "grounding-dino": {
         "xvec": xvec,
         "ts_vector": tuple(data["dino_acc"]),
         "lw": 3,
         "linestyle": "-",
-        "color": "#d62728",
+        "color": "#2a82f5",
+        "alpha": 0.8,
     },
     "clip": {
         "xvec": xvec,
         "ts_vector": tuple(data["clip_acc"]),
         "lw": 3,
         "linestyle": "-",
-        "color": "#2ca02c",
+        "color": "#8f090f",
+        "alpha": 0.8,
     },
     "yolov8-est.": {
         "xvec": xvec,
         "ts_vector": tuple(data["yolo_mapping_fun"]),
         "lw": 3,
         "linestyle": "--",  # Dashed line
-        "color": "#3147a8",  # Deep blue
+        "color": "#a8bdb6",  # Deep blue
     },
     "grounding-dino-est.": {
         "xvec": xvec,
         "ts_vector": tuple(data["dino_mapping_fun"]),
         "lw": 3,
         "linestyle": "--",  # Dashed line
-        "color": "#cf704a",  # Crimson
+        "color": "#8ebdfa",  # Crimson
     },
     "clip-est.": {
         "xvec": xvec,
         "ts_vector": tuple(data["clip_mapping_fun"]),
         "lw": 3,
         "linestyle": "--",  # Dashed line
-        "color": "#8ccf4a",  # Forest green
+        "color": "#8c4245",  # Forest green
     },
 }
 
@@ -683,7 +685,7 @@ sns.set_style(style="darkgrid")
 sns.set_color_codes()
 sns.set()
 # Recreate the figure with 2 rows and 2 columns
-fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 12))
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
 axes = axes.flatten()  # Flatten the axes array for easy indexing
 
 handles, labels = [], []
@@ -697,24 +699,24 @@ plt.rcParams["text.latex.preamble"] = r"\boldmath"
 plt.rcParams["axes.labelweight"] = "bold"
 plt.rcParams["font.weight"] = "bold"
 
-params = {
-    "legend.fontsize": 14,
-    "axes.labelsize": 20,
-    "axes.titlesize": 20,
-    "xtick.labelsize": 14,
-    "ytick.labelsize": 14,
-    "lines.markersize": 10,
-    "figure.autolayout": False,
-}
+# params = {
+#     "legend.fontsize": 14,
+#     "axes.labelsize": 20,
+#     "axes.titlesize": 20,
+#     "xtick.labelsize": 14,
+#     "ytick.labelsize": 14,
+#     "lines.markersize": 10,
+#     "figure.autolayout": False,
+# }
 
-pylab.rcParams.update(params)
+# pylab.rcParams.update(params)
 
 
 # set_plot_properties()
 # Data for the subplots - using the same data for simplicity, but you can change this
 data_for_subplots = {
-    "Precision": precision_false_positive,
-    "Recall": recall_false_positive,
+    # "Precision": precision_false_positive,
+    # "Recall": recall_false_positive,
     "F1 Score": f1_false_positive,
     "Accuracy": mapping_estimation,
 }
@@ -724,17 +726,22 @@ for i, (title, data) in enumerate(data_for_subplots.items()):
     print(title)
     if title == "Accuracy":
         x_label = "Confidence"
+        title_ = "Mapping estimation per neural perception model"
+
     else:
         x_label = "False Positive Threshold"
+        title_ = "False positive per neural perception model"
     plot_overlaid_ts(
         normalized_ts_dict=data,
-        title_str=False,
+        title_str=title_,
         ylabel=title,
         xlabel=x_label,
         fontsize=10,
         legend_present=False,
         ax=axes[i],
     )
+    axes[i].set_title(title_, fontsize=16)
+
     # Get handles and labels from each subplot
     for handle, label in zip(*axes[i].get_legend_handles_labels()):
         if label not in labels:
@@ -742,7 +749,7 @@ for i, (title, data) in enumerate(data_for_subplots.items()):
             labels.append(label)
 
 fig.set_constrained_layout(False)
-fig.subplots_adjust(bottom=0.15, wspace=0.25, hspace=0.25)
+fig.subplots_adjust(bottom=0.30)
 
 # Create a unified legend below the subplots
 # Manually setting the bbox_to_anchor to ensure the legend is outside the plots
@@ -754,7 +761,7 @@ new_handles = [handles[labels.index(label)] for label in desired_order]
 new_labels = desired_order
 
 fig.legend(new_handles, new_labels, loc="lower center", bbox_to_anchor=(0.5, 0.020), ncol=3, fontsize=15)
-
+# fig.tight_layout()
 # Display the plot
 plt.show()
 plt.savefig("calibration_plot.png")

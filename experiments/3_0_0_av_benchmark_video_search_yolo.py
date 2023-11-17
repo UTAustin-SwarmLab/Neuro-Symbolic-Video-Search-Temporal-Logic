@@ -25,7 +25,7 @@ csv_result = {}
 ############### Variable
 root_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/yolo")
 weight_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/weights/")
-weights = ["yolov8x"]
+weights = ["yolov8n", "yolov8m", "yolov8x"]
 cv_model_list = ["yolo"]
 mapping_threshold = (0.45, 0.60)  # (0.10, 0.58)
 mapping_param_x0 = 0.25  # 0.10
@@ -96,6 +96,14 @@ for image_set in benchmark_image_set_dir:
                 csv_result["mapping_true_threshold"] = mapping_threshold[1]
                 csv_result["mapping_param_x0"] = mapping_param_x0
                 csv_result["mapping_param_k"] = mapping_param_k
+
+                # if f1 > 0.60:
+                #     print("h")
+                #     pass
+
+                # frame_of_interest.save_frames_of_interest(
+                #     "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/sample"
+                # )
 
                 # save as csv
                 write_to_csv_from_dict(

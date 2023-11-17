@@ -3,8 +3,10 @@ import random
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import cv2
 import numpy as np
 import torch
+from PIL import Image
 
 from ns_vfs.common.frame_grouping import combine_consecutive_lists
 from ns_vfs.common.utility import get_file_or_dir_with_datetime
@@ -55,6 +57,18 @@ class FramesofInterest:
         else:
             # self.foi_list = combine_consecutive_lists(self.foi_list)
             pass
+
+    def save_frames_of_interest(self, path):
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        for idx, img in enumerate(self.frame_images):
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            Image.fromarray(img_rgb).save(f"{path}/{idx}.png")
+            try:
+                if len(self.annotated_images) > 0 and self.annotated_images[idx] is not None:
+                    Image.fromarray(self.annotated_images[idx]).save(f"{path}/{idx}_annotated.png")
+            except:
+                pass
 
     def save_frames(self, path):
         from PIL import Image

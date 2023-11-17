@@ -4,6 +4,7 @@ import copy
 import os
 import shutil
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import supervision as sv
@@ -62,6 +63,14 @@ class VideotoAutomaton:
             self._double_model_mode = True
         else:
             self._double_model_mode = False
+
+        if self._save_image:
+            self._frame_img_path = os.path.join(self._artifact_dir, "frame_images")
+            if os.path.exists(self._frame_img_path):
+                # If it exists, remove it (and all its contents)
+                shutil.rmtree(self._frame_img_path)
+            # Then, create the directory again
+            os.makedirs(self._frame_img_path)
 
         if self._save_annotation:
             self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
@@ -195,6 +204,15 @@ class VideotoAutomaton:
             detector = self._detector
 
         detected_obj = detector.detect(frame_img, [proposition])
+        if self._save_image:
+            filename = get_file_or_dir_with_datetime("frame", ".png")
+            # img = Image.fromarray(frame_img, "RGB")
+
+            img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
+            Image.fromarray(img).save(os.path.join(self._frame_img_path, filename))
+            # img.save(os.path.join(self._frame_img_path, filename))
+            # plt.imsave(os.path.join(self._frame_img_path, filename), frame_img)
+
         if detector.get_size() > 0:
             if save_annotation:
                 if self._double_model_mode:
