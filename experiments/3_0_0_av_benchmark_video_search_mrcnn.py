@@ -13,7 +13,7 @@ from ns_vfs.video_to_automaton import VideotoAutomaton
 
 config = load_config()
 benchmark_frame_video_root_dir = Path(
-    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_validated_waymo_video"
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_validated_real_av_for_plot"
 )
 benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
 
@@ -106,6 +106,15 @@ def run_search(false_threshold=0.10):
                 csv_result["mapping_param_x0"] = mapping_param_x0
                 csv_result["mapping_param_k"] = mapping_param_k
 
+                # if f1 > 0.80:
+                #     frame_of_interest.save_frames_of_interest(
+                #         "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/sample_mrcnn"
+                #     )
+                #     print("h")
+                #     pass
+                frame_of_interest.save_frames_of_interest(
+                    "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/sample_mrcnn"
+                )
                 # save as csv
                 write_to_csv_from_dict(
                     dict_data=csv_result, csv_file_path=root_path, file_name=save_csv_file_name

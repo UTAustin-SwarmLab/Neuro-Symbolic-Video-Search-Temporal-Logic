@@ -24,9 +24,9 @@ class Yolo(ComputerVisionDetector):
         if "8n" in weight_path.name:
             device = "cuda:1" if torch.cuda.is_available() else "cpu"
         elif "8m" in weight_path.name:
-            device = "cuda:2" if torch.cuda.is_available() else "cpu"
+            device = "cuda:1" if torch.cuda.is_available() else "cpu"
         elif "8x" in weight_path.name:
-            device = "cuda:2" if torch.cuda.is_available() else "cpu"
+            device = "cuda:1" if torch.cuda.is_available() else "cpu"
         self.model.to(device)
         self._config = config
         self._classes_reversed = {v: k for k, v in self.model.names.items()}

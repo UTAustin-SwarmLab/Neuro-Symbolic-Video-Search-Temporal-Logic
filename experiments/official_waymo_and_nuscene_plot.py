@@ -10,8 +10,9 @@ from swarm_visualizer.boxplot import plot_grouped_boxplot
 from swarm_visualizer.utility.general_utils import set_plot_properties
 
 df = pd.read_csv(
-    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/yolo_clip/yolo_clip_benchmark_search_result_20231031_031107.csv"
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_result/benchmark_with_nuscene/nuscene_mrcnn_benchmark_search_result_20231104.csv"
 )
+# /opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_result/benchmark_with_nuscene/nuscene_mrcnn_benchmark_search_result_20231104.csv
 header = [
     "dataset",
     "ltl_group",
@@ -34,14 +35,14 @@ f1_scores_per_group = df.groupby("ltl_group")["f1_score"].apply(list)
 _X_DATA = np.concatenate(
     [
         f1_scores_per_group["(prop1&prop2)Uprop3"],
-        f1_scores_per_group["Fprop1"],
+        # f1_scores_per_group["Fprop1"],
         f1_scores_per_group["prop1Uprop2"],
     ]
 )
 _X_LABEL = np.concatenate(
     [
         np.repeat("(prop1&prop2)Uprop3", len(f1_scores_per_group["(prop1&prop2)Uprop3"])),
-        np.repeat("Fprop1", len(f1_scores_per_group["Fprop1"])),
+        # np.repeat("Fprop1", len(f1_scores_per_group["Fprop1"])),
         np.repeat("prop1Uprop2", len(f1_scores_per_group["prop1Uprop2"])),
     ],
 )
@@ -60,7 +61,7 @@ fig, ax = plt.subplots(figsize=(10, 10))
 plot_grouped_boxplot(df=plot_dict, x_var="ltl_group", y_var="f1_score", title_str="Grouped Violinplot", ax=ax)
 
 # Save the plot
-plt.savefig("_nuscene_grouped_violinplot.png", dpi=600)
+plt.savefig("nuscenes_grouped_violinplot.png", dpi=600)
 # save_fig(fig, "grouped_violinplot.png", dpi=600)
 
 # _X1_DATA = np.arange(0, 5, 0.05) + np.random.normal(0, 0.1, 100)

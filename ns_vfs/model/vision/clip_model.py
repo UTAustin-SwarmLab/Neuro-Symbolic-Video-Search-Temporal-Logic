@@ -19,7 +19,7 @@ class ClipPerception(ComputerVisionDetector):
 
     def __init__(self, config: DictConfig, weight_path: str) -> None:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model, self.preprocess = clip.load("ViT-B/32", device=self.device)
+        self.model, self.preprocess = clip.load("ViT-B/32", device=self.device) #ViT-L/14
         self._config = config
         # self._classes_reversed = {v: k for k, v in self.model.names.items()}
 
