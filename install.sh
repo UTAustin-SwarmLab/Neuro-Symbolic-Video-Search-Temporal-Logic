@@ -4,7 +4,7 @@ export role=$2
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 #-- Downloading Required weights and data -- #
-echo "Downloading GroundingDINO & Segment Anything Model (SAM) Weights"
+echo "Downloading Yolo V8"
 WEIGHT_DIR=$ROOT_DIR/artifacts/weights
 if [[ ! -e $WEIGHT_DIR ]]; then
     mkdir -p $WEIGHT_DIR
