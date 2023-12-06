@@ -5,7 +5,7 @@ SHELL := /bin/bash
 BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
 # USER INPUT (TODO: PLEASE MODIFY)
-# e.g /home/repos/Video-to-Automaton
+# e.g /home/repos/Neuro-Symbolic-Video-Frame-Search
 # No space at the end
 CODE_PATH := <<YOUR PATH>>
 

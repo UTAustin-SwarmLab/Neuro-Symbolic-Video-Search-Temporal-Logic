@@ -1,8 +1,7 @@
 # Neuro Symbolic Video Frame Search
 
 ## CV23 Fall Evaluator 
-1. Follow the installation guide below. In installation step 5, 
-    - run `make run_docker_container_gpu`
+1. Follow the installation guide below.
 
 2. Download data from [GoogleDrive](https://drive.google.com/drive/folders/1_APVcUDID0oEj6m3HVUxWY8bdZnaZWDr?usp=sharing) and put them into `/sample_data`
 
@@ -38,6 +37,7 @@ No need to worry about the prerequisites below if you are using a UT Swarm Lab c
 3. Execute `make pull_docker_image`
 4. Execute `make build_docker_image`
 5. Execute `make run_docker_container_gpu`
+    - Note: If you are a developer: `make run_dev_docker_container_gpu`
 6. Execute `make exec_docker_container`
 7. Inside the container, navigate to `/opt/Neuro-Symbolic-Video-Frame-Search` 
 8. Inside the container, execute `bash install.sh`
