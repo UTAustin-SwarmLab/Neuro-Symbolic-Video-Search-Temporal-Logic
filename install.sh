@@ -9,9 +9,7 @@ WEIGHT_DIR=$ROOT_DIR/artifacts/weights
 if [[ ! -e $WEIGHT_DIR ]]; then
     mkdir -p $WEIGHT_DIR
     cd $WEIGHT_DIR
-    wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-    wget -q https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x.pt
 elif [[ ! -d $WEIGHT_DIR ]]; then
     echo "$WEIGHT_DIR already exists but is not a directory" 1>&2
 fi

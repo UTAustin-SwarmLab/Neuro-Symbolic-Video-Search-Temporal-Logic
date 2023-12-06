@@ -18,15 +18,11 @@ class Yolo(ComputerVisionDetector):
     """Yolo."""
 
     def __init__(self, config: DictConfig, weight_path: Path) -> None:
+        """Init."""
         if isinstance(weight_path, str):
             weight_path = Path(weight_path)
         self.model = self.load_model(weight_path)
-        if "8n" in weight_path.name:
-            device = "cuda:1" if torch.cuda.is_available() else "cpu"
-        elif "8m" in weight_path.name:
-            device = "cuda:1" if torch.cuda.is_available() else "cpu"
-        elif "8x" in weight_path.name:
-            device = "cuda:1" if torch.cuda.is_available() else "cpu"
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.model.to(device)
         self._config = config
         self._classes_reversed = {v: k for k, v in self.model.names.items()}
@@ -63,7 +59,9 @@ class Yolo(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in classes]
+        class_ids = [
+            self._classes_reversed[c.replace("_", " ")] for c in classes
+        ]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
         self._labels = []
@@ -74,7 +72,9 @@ class Yolo(ComputerVisionDetector):
                 f"{detected_obj[0].names[class_id] if class_id is not None else None} {confidence:0.2f}"
             )
 
-        self._detection = sv.Detections(xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy())
+        self._detection = sv.Detections(
+            xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy()
+        )
 
         self._confidence = detected_obj[0].boxes.conf.cpu().detach().numpy()
 
@@ -116,10 +116,16 @@ class Yolo(ComputerVisionDetector):
                 2,
             )
 
-    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
+    def get_confidence_score(
+        self, frame_img: np.ndarray, true_label: str
+    ) -> any:
         max_conf = 0
-        class_ids = [self._classes_reversed[c.replace("_", " ")] for c in [true_label]]
-        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[0]
+        class_ids = [
+            self._classes_reversed[c.replace("_", " ")] for c in [true_label]
+        ]
+        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[
+            0
+        ]
         all_detected_object_list = detected_obj.boxes.cls
         all_detected_object_confidence = detected_obj.boxes.conf
 

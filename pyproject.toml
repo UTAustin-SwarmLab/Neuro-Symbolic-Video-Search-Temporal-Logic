@@ -35,11 +35,6 @@ dependencies = [
     "pytorch-lightning==1.4.2",
     "torchmetrics==0.5",
     "ultralytics",
-    "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
-    "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251",
-    # "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
-    # "taming-transformers@git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
-    # -> we used git submodule to add this repo (GroundingDINO API Structure Issue)
 ]
 
 [project.urls]
@@ -51,7 +46,7 @@ dev = ["black", "ruff", "mypy"]
 test = ["pytest", "pytest-cov", "pytest-mock"]
 
 [tool.black]
-line-length = 110
+line-length = 80
 
 [tool.ruff]
 select = [
@@ -60,7 +55,7 @@ select = [
   "UP",  # pyupgrade
   "D",   # pydocstyle
 ]
-line-length = 110
+line-length = 80
 
 ignore = ["ANN101", "ANN102", "D100"]
 

@@ -27,9 +27,23 @@ Enjoy your development environment inside the container!
 Please avoid stopping and removing the container, as you will need to reinstall the dependencies. If the container is stopped or removed, repeat steps 5 to 8.
 
 ## Dataset
-[The VIRAT Video Dataset](https://viratdata.org/#getting-data): The VIRAT Video Dataset is designed to be realistic, natural and challenging for video surveillance domains in terms of its resolution, background clutter, diversity in scenes, and human activity/event categories than existing action recognition datasets. It has become a benchmark dataset for the computer vision community.
-
 [NuScenes](https://www.nuscenes.org/nuimages#download): A public large-scale dataset for autonomous driving
+
+## Run Script Arugment
+```
+# Common arguments
+--cv_model: ["yolo", "mrcnn", "clip"].
+--video_processor: ["regular_video", "tlv_dataset"].
+--output_dir: Output directory.
+
+# If you use regular video
+--proposition_set: Proposition sets of a video, e.g - "car,bicycle"
+--ltl_formula: LTL formula of a video. The format is very sensitive, e.g - 'P>=0.90 ["car" U "bicycle"]'
+
+# Choose carefully
+--save_annotation: Only support by Yolo in this version. Default: False.
+--manual_confidence_probability: Development Only.
+```
 
 ## Linear Temporal Logitics
 Confiremd Examples:

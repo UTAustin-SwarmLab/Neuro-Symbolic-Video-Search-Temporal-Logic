@@ -49,7 +49,9 @@ class VideotoAutomaton:
         """
         self.ltl_formula = ltl_formula
         self.proposition_set = proposition_set
-        self.proposition_combinations = self._create_proposition_status(len(proposition_set))
+        self.proposition_combinations = self._create_proposition_status(
+            len(proposition_set)
+        )
         self._detector = detector
         self._artifact_dir = artifact_dir
         self._save_annotation = save_annotation
@@ -65,7 +67,9 @@ class VideotoAutomaton:
             self._double_model_mode = False
 
         if self._save_image:
-            self._frame_img_path = os.path.join(self._artifact_dir, "frame_images")
+            self._frame_img_path = os.path.join(
+                self._artifact_dir, "frame_images"
+            )
             if os.path.exists(self._frame_img_path):
                 # If it exists, remove it (and all its contents)
                 shutil.rmtree(self._frame_img_path)
@@ -73,25 +77,14 @@ class VideotoAutomaton:
             os.makedirs(self._frame_img_path)
 
         if self._save_annotation:
-            self._annotated_frame_path = os.path.join(self._artifact_dir, "annotated_frame")
+            self._annotated_frame_path = os.path.join(
+                self._artifact_dir, "annotated_frame"
+            )
             if os.path.exists(self._annotated_frame_path):
                 # If it exists, remove it (and all its contents)
                 shutil.rmtree(self._annotated_frame_path)
             # Then, create the directory again
             os.makedirs(self._annotated_frame_path)
-
-    def _sigmoid(self, x, a=1, k=1, x0=0) -> float:
-        """Sigmoid function.
-
-        Args:
-            x (float): Input.
-            k (int, optional): Steepness of the function. Defaults to 1.
-            x0 (int, optional): Midpoint of the function. Defaults to 0.
-
-        Returns:
-            float: Sigmoid function.
-        """
-        return 1 / (1 + np.exp(-k * (x - x0)))
 
     def _annotate_frame(
         self,
@@ -144,37 +137,6 @@ class VideotoAutomaton:
         add_labels(num_props, "", label_list)
         return label_list
 
-    def _mapping_probability(
-        self,
-        confidence_per_video: float,
-        true_threshold=0.64,
-        false_threshold=0.38,
-    ) -> float:
-        """Mapping probability.
-
-        Args:
-            confidence_per_video (float): Confidence per video.
-            true_threshold (float, optional): True threshold. Defaults to 0.64.
-            false_threshold (float, optional): False threshold. Defaults to 0.38.
-
-        Returns:
-            float: Mapped probability.
-        """
-        if confidence_per_video >= true_threshold:
-            return 1
-        elif confidence_per_video < false_threshold:
-            return 0
-        else:
-            return round(
-                self._sigmoid(
-                    confidence_per_video,
-                    a=self._mapping_param_a,
-                    k=self._mapping_param_k,
-                    x0=self._mapping_param_x0,
-                ),
-                2,
-            )
-
     def get_probabilistic_proposition_from_frame(
         self,
         proposition: str,
@@ -206,12 +168,10 @@ class VideotoAutomaton:
         detected_obj = detector.detect(frame_img, [proposition])
         if self._save_image:
             filename = get_file_or_dir_with_datetime("frame", ".png")
-            # img = Image.fromarray(frame_img, "RGB")
-
             img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2RGB)
-            Image.fromarray(img).save(os.path.join(self._frame_img_path, filename))
-            # img.save(os.path.join(self._frame_img_path, filename))
-            # plt.imsave(os.path.join(self._frame_img_path, filename), frame_img)
+            Image.fromarray(img).save(
+                os.path.join(self._frame_img_path, filename)
+            )
 
         if detector.get_size() > 0:
             if save_annotation:
@@ -219,50 +179,31 @@ class VideotoAutomaton:
                     annotated_img = None
                 else:
                     annotated_img = self._annotate_frame(
-                        frame_img=frame_img, output_dir=self._annotated_frame_path
+                        frame_img=frame_img,
+                        output_dir=self._annotated_frame_path,
                     )
-                # # # DEBUG # # #
-
-                if self._double_model_mode:
-                    confidence_after_mapping = detector._mapping_probability(
-                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2)
+                confidence_after_mapping = detector._mapping_probability(
+                    confidence_per_video=np.round(
+                        np.max(detector.get_confidence()), 2
                     )
-                else:
-                    confidence_after_mapping = detector._mapping_probability(
-                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2),
-                        true_threshold=self._mapping_threshold[1],
-                        false_threshold=self._mapping_threshold[0],
-                        a=self._mapping_param_a,
-                        k=self._mapping_param_x0,
-                        x0=self._mapping_param_k,
-                    )
-                # # # DEBUG # # #
+                )
                 return (
                     confidence_after_mapping,
                     detected_obj,
                     annotated_img,
                 )
             else:
-                if self._double_model_mode:
-                    confidence_after_mapping = detector._mapping_probability(
-                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2)
+                confidence_after_mapping = detector._mapping_probability(
+                    confidence_per_video=np.round(
+                        np.max(detector.get_confidence()), 2
                     )
-                else:
-                    confidence_after_mapping = detector._mapping_probability(
-                        confidence_per_video=np.round(np.max(detector.get_confidence()), 2),
-                        true_threshold=self._mapping_threshold[1],
-                        false_threshold=self._mapping_threshold[0],
-                        a=self._mapping_param_a,
-                        k=self._mapping_param_x0,
-                        x0=self._mapping_param_k,
-                    )
+                )
                 # # # DEBUG # # #
                 return (
                     confidence_after_mapping,
                     detected_obj,
                     None,
                 )
-
             # probability of the object in the frame
         else:
             return 0, None, None  # probability of the object in the frame is 0
@@ -336,7 +277,9 @@ class VideotoAutomaton:
                         frame_index=i,
                         proposition_combinations=prop_comb,
                     )
-                state.compute_probability(probabilities=propositional_confidence)
+                state.compute_probability(
+                    probabilities=propositional_confidence
+                )
 
                 if state.probability > 0:
                     if len(prev_states) == 0:
