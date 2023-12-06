@@ -5,8 +5,9 @@ SHELL := /bin/bash
 BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
 # USER INPUT (TODO: PLEASE MODIFY)
-CODE_PATH := /home/mc76728/repos/Video-to-Automaton
-# IF YOU ARE NOT A SWARM CLUSTER 1 USER COMMENT OUT BELOW
+CODE_PATH := <<YOUR PATH>> # e.g /home/repos/Video-to-Automaton
+
+# ONLY FOR UT SWARM LAB DEVELOPERS
 DS_PATH := /store/
 
 # Custom Image
@@ -20,11 +21,25 @@ pull_docker_image:
 build_docker_image:
 	docker build --build-arg BASE_IMG=${BASE_IMG} . -f docker/Dockerfile --network=host --tag ${DOCKER_IMG}:${TAG}
 
-run_docker_container:
+run_dev_docker_container:
 	docker run --interactive \
 			   --detach \
 			   --tty \
 			   --name ${MY_DOCKER_IMG} \
+			   --cap-add=SYS_PTRACE \
+			   --ulimit core=0:0 \
+			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
+			   --volume ${DS_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search/store \
+			   ${DOCKER_IMG}:${TAG} \
+			   /bin/bash
+
+run_dev_docker_container_gpu:
+	docker run --interactive \
+			   --detach \
+			   --tty \
+			   --name ${MY_DOCKER_IMG} \
+			   --gpus=all \
+			   --runtime=nvidia \
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
@@ -42,7 +57,6 @@ run_docker_container_gpu:
 			   --cap-add=SYS_PTRACE \
 			   --ulimit core=0:0 \
 			   --volume ${CODE_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search \
-			   --volume ${DS_PATH}:/opt/Neuro-Symbolic-Video-Frame-Search/store \
 			   ${DOCKER_IMG}:${TAG} \
 			   /bin/bash
 
