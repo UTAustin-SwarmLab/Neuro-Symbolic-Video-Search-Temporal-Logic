@@ -5,14 +5,16 @@ SHELL := /bin/bash
 BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 
 # USER INPUT (TODO: PLEASE MODIFY)
-CODE_PATH := <<YOUR PATH>> # e.g /home/repos/Video-to-Automaton
+# e.g /home/repos/Video-to-Automaton
+# No space at the end
+CODE_PATH := <<YOUR PATH>>
 
 # ONLY FOR UT SWARM LAB DEVELOPERS
 DS_PATH := /store/
 
 # Custom Image
 DOCKER_IMG := ns_vfs
-MY_DOCKER_IMG := ${USER}_ns_vfs
+MY_DOCKER_IMG := ${USER}_ns_vfs_cv24
 TAG := latest
 
 pull_docker_image:
