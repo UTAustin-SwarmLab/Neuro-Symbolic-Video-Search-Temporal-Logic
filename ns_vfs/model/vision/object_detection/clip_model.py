@@ -86,8 +86,8 @@ class ClipPerception(ComputerVisionObjectDetector):
                 .numpy()
             )
 
-            logits_per_image, logits_per_text = self.model(image, text)
-            probs = logits_per_text.softmax(dim=-1).cpu().numpy()
+            # logits_per_image, logits_per_text = self.model(image, text)
+            # probs = logits_per_text.softmax(dim=-1).cpu().numpy()
 
         self._labels = []
         if len(scores) > 0:

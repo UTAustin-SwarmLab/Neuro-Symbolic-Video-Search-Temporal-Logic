@@ -128,5 +128,5 @@ class FramesofInterest:
                     Image.fromarray(self.annotated_images[idx]).save(
                         f"{annotation_path}/{idx}_annotated.png"
                     )
-            except:
+            except:  # noqa: E722
                 pass
