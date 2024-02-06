@@ -6,9 +6,9 @@ from pathlib import Path
 import numpy as np
 import supervision as sv
 import torch
-from omegaconf import DictConfig
 from ultralytics import YOLO
 
+from ns_vfs.data.detected_object import DetectedObject
 from ns_vfs.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
@@ -17,15 +17,14 @@ warnings.filterwarnings("ignore")
 class Yolo(ComputerVisionDetector):
     """Yolo."""
 
-    def __init__(self, config: DictConfig, weight_path: Path) -> None:
-        """Init."""
+    def __init__(self, weight_path: Path, gpu_number: int = 0) -> None:
+        """Initialization."""
         if isinstance(weight_path, str):
             weight_path = Path(weight_path)
         self.model = self.load_model(weight_path)
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        device = f"cuda:{gpu_number}" if torch.cuda.is_available() else "cpu"
         self.model.to(device)
-        self._config = config
-        self._classes_reversed = {v: k for k, v in self.model.names.items()}
+        self._available_classes = {v: k for k, v in self.model.names.items()}
 
     def load_model(self, weight_path) -> YOLO:
         """Load weight.
@@ -37,6 +36,17 @@ class Yolo(ComputerVisionDetector):
             None
         """
         return YOLO(weight_path)
+
+    def validate_object(self, object_name: str) -> bool:
+        """Validate object name.
+
+        Args:
+            object_name (str): Object name.
+
+        Returns:
+            bool: True if object name is valid.
+        """
+        return object_name in list(self._available_classes.keys())
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Parse class name.
@@ -59,9 +69,8 @@ class Yolo(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        class_ids = [
-            self._classes_reversed[c.replace("_", " ")] for c in classes
-        ]
+        class_name = classes[0].replace("_", " ")
+        class_ids = [self._available_classes[c.replace("_", " ")] for c in classes]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
         self._labels = []
@@ -79,8 +88,24 @@ class Yolo(ComputerVisionDetector):
         self._confidence = detected_obj[0].boxes.conf.cpu().detach().numpy()
 
         self._size = len(detected_obj[0].boxes)
+        if self._size > 0:
+            is_detected = True
+        else:
+            is_detected = False
 
-        return detected_obj
+        probability = []
+        for confidence in self._confidence:
+            probability.append(self._mapping_probability(confidence))
+
+        return DetectedObject(
+            name=class_name,
+            model_name="yolo",
+            confidence_of_all_obj=list(self._confidence),
+            probability_of_all_obj=list(probability),
+            all_obj_detected=detected_obj,
+            number_of_detection=self._size,
+            is_detected=is_detected,
+        )
 
     def _mapping_probability(
         self,
@@ -116,16 +141,10 @@ class Yolo(ComputerVisionDetector):
                 2,
             )
 
-    def get_confidence_score(
-        self, frame_img: np.ndarray, true_label: str
-    ) -> any:
+    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
         max_conf = 0
-        class_ids = [
-            self._classes_reversed[c.replace("_", " ")] for c in [true_label]
-        ]
-        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[
-            0
-        ]
+        class_ids = [self._available_classes[c.replace("_", " ")] for c in [true_label]]
+        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[0]
         all_detected_object_list = detected_obj.boxes.cls
         all_detected_object_confidence = detected_obj.boxes.conf
 

@@ -53,14 +53,18 @@ while true_threshold <= 1.0:
         # ** #
         search_result_per_video = {}
         ltl_specification = "Fprop1"
-        ltl_formula = benchmark_video_file.name.split(".")[0].split("_ltl_")[-1].split("_")[0]
+        ltl_formula = (
+            benchmark_video_file.name.split(".")[0].split("_ltl_")[-1].split("_")[0]
+        )
         # result[benchmark_name_dir.name][ltl_video_dir.name][ltl_formula] = {}
         result["ltl_specification"] = ltl_specification
         result["ltl_formula"] = ltl_formula
 
         for cv_model in CV_MODEL_LIST:
             if cv_model == "yolo":
-                cv_detection_model = Yolo(config=config.YOLO, weight_path=config.YOLO.YOLO_CHECKPOINT_PATH)
+                cv_detection_model = Yolo(
+                    config=config.YOLO, weight_path=config.YOLO.YOLO_CHECKPOINT_PATH
+                )
             elif cv_model == "grounding_dino":
                 cv_detection_model = GroundingDino(
                     config=config.GROUNDING_DINO,
@@ -72,7 +76,9 @@ while true_threshold <= 1.0:
                 artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
             )
 
-            benchmark_video: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+            benchmark_video: BenchmarkLTLFrame = (
+                benchmark_video_processor.benchmark_image_frames
+            )
 
             video_automata_builder = VideotoAutomaton(
                 detector=cv_detection_model,
@@ -97,7 +103,9 @@ while true_threshold <= 1.0:
 
             true_foi_list = benchmark_video.frames_of_interest
             # matching_accuracy
-            flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
+            flattened_true_foi = set(
+                [item for sublist in true_foi_list for item in sublist]
+            )
             flattened_predicted_foi = set(
                 [item for sublist in frame_of_interest.foi_list for item in sublist]
             )
@@ -105,14 +113,17 @@ while true_threshold <= 1.0:
             # classification_metrics
             search_result_per_video = get_classification_score(search_result_per_video)
             accuracy, precision, recall, f1 = classification_metrics(
-                actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
+                actual_result=flattened_true_foi,
+                predicted_result=flattened_predicted_foi,
             )
             result["accuracy"] = accuracy
             result["precision"] = precision
             result["recall"] = recall
             result["f1"] = f1
             write_to_csv_from_dict(
-                dict_data=result, csv_file_path=str(ROOTDIR / "results"), file_name=result_file
+                dict_data=result,
+                csv_file_path=str(ROOTDIR / "results"),
+                file_name=result_file,
             )
 
             final_result[str(true_threshold)].append(result.copy())
@@ -135,7 +146,9 @@ for threshold in final_result.keys():
 import seaborn as sns
 
 ax = sns.lineplot(x=threshold_data, y=threshold_data, label="Mapping Estimation")
-sns.lineplot(x=threshold_data, y=precision_data, ax=ax, label="precision", linestyle="dashed")
+sns.lineplot(
+    x=threshold_data, y=precision_data, ax=ax, label="precision", linestyle="dashed"
+)
 sns.lineplot(x=threshold_data, y=recall_data, label="racall", linestyle="dashed")
 sns.lineplot(x=threshold_data, y=accuracy_data, label="accuracy", linestyle="dashed")
 ax.set_xlabel("confidence")
@@ -147,5 +160,7 @@ plt.savefig(ROOTDIR / "plot.png", dpi=300)  # Adjust filename, format, and DPI a
 plt.show()
 
 save_dict_to_pickle(
-    final_result, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/", file_name="exp1_3_result_v1.pkl"
+    final_result,
+    path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/",
+    file_name="exp1_3_result_v1.pkl",
 )
