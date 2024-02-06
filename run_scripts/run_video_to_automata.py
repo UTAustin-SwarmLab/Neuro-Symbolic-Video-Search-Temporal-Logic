@@ -5,8 +5,8 @@ import cv2
 from ns_vfs.automaton.probabilistic import ProbabilisticAutomaton
 from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import Frame, FramesofInterest
-from ns_vfs.model.vision.clip_model import ClipPerception
-from ns_vfs.model.vision.yolo import Yolo
+from ns_vfs.model.vision.object_detection.clip_model import ClipPerception
+from ns_vfs.model.vision.object_detection.yolo import Yolo
 from ns_vfs.model_checker.stormpy import StormModelChecker
 from ns_vfs.percepter.multi_vision_percepter import MultiVisionPercepter
 from ns_vfs.processor.video.real_video import RealVideoProcessor
