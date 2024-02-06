@@ -13,13 +13,18 @@ from pathlib import Path
 from _common import get_classification_score, write_to_csv_from_dict
 from _metrics import classification_metrics
 
-from ns_vfs.common.utility import get_file_or_dir_with_datetime, save_dict_to_pickle
+from ns_vfs.common.utility import (
+    get_file_or_dir_with_datetime,
+    save_dict_to_pickle,
+)
 from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame
 from ns_vfs.frame_searcher import FrameSearcher
 from ns_vfs.model.vision.grounding_dino import GroundingDino
 from ns_vfs.model.vision.yolo import Yolo
-from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
+from ns_vfs.processor.benchmark_video_processor import (
+    BenchmarkVideoFrameProcessor,
+)
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 config = load_config()
@@ -58,7 +63,9 @@ for i in range(10):
         # ** #
         search_result_per_video = {}
         ltl_specification = "Fprop1"
-        ltl_formula = benchmark_video_file.name.split(".")[0].split("_ltl_")[-1].split("_")[0]
+        ltl_formula = (
+            benchmark_video_file.name.split(".")[0].split("_ltl_")[-1].split("_")[0]
+        )
         # result[benchmark_name_dir.name][ltl_video_dir.name][ltl_formula] = {}
         result["ltl_specification"] = ltl_specification
         result["ltl_formula"] = ltl_formula
@@ -66,7 +73,9 @@ for i in range(10):
 
         for cv_model in CV_MODEL_LIST:
             if cv_model == "yolo":
-                cv_detection_model = Yolo(config=config.YOLO, weight_path=config.YOLO.YOLO_CHECKPOINT_PATH)
+                cv_detection_model = Yolo(
+                    config=config.YOLO, weight_path=config.YOLO.YOLO_CHECKPOINT_PATH
+                )
             elif cv_model == "grounding_dino":
                 cv_detection_model = GroundingDino(
                     config=config.GROUNDING_DINO,
@@ -79,7 +88,9 @@ for i in range(10):
                 manual_confidence_probability=float(manual_confidence_probability),
             )
 
-            benchmark_video: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+            benchmark_video: BenchmarkLTLFrame = (
+                benchmark_video_processor.benchmark_image_frames
+            )
 
             video_automata_builder = VideotoAutomaton(
                 detector=cv_detection_model,
@@ -103,7 +114,9 @@ for i in range(10):
 
             true_foi_list = benchmark_video.frames_of_interest
             # matching_accuracy
-            flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
+            flattened_true_foi = set(
+                [item for sublist in true_foi_list for item in sublist]
+            )
             flattened_predicted_foi = set(
                 [item for sublist in frame_of_interest.foi_list for item in sublist]
             )
@@ -111,7 +124,8 @@ for i in range(10):
             # classification_metrics
             search_result_per_video = get_classification_score(search_result_per_video)
             accuracy, precision, recall, f1 = classification_metrics(
-                actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
+                actual_result=flattened_true_foi,
+                predicted_result=flattened_predicted_foi,
             )
             result["accuracy"] = accuracy
             result["precision"] = precision
@@ -121,7 +135,9 @@ for i in range(10):
             # store result
             result_file = get_file_or_dir_with_datetime("result", ".csv")
             write_to_csv_from_dict(
-                dict_data=result, csv_file_path=str(ROOTDIR / "results"), file_name=result_file
+                dict_data=result,
+                csv_file_path=str(ROOTDIR / "results"),
+                file_name=result_file,
             )
 
             print(result)
@@ -134,5 +150,7 @@ for i in range(10):
         max_probability = 1
 # - # - # - # - # - # - # - # - # - # - # - # - # - # - # - # - #
 save_dict_to_pickle(
-    result, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/", file_name="all_test_result.pkl"
+    result,
+    path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/",
+    file_name="all_test_result.pkl",
 )

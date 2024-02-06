@@ -15,7 +15,9 @@ config = load_config()
 benchmark_frame_video_root_dir = Path(
     "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_validated_waymo_video"
 )  # waymo_banchmark_with_ltl_label # _validated_benchmark_video
-benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
+benchmark_image_set_dir = [
+    x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()
+]
 
 
 # ltl_video_dir_set = [x for x in benchmark_image_set_dir[0].iterdir() if x.is_dir()]
@@ -23,14 +25,20 @@ benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() i
 csv_result = {}
 
 ############### Variable
-root_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/yolo")
-weight_path = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/weights/")
+root_path = Path(
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/yolo"
+)
+weight_path = Path(
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/weights/"
+)
 weight = "yolox_x.pth"
 cv_model_list = ["yolo"]
 mapping_threshold = (0.45, 0.60)  # (0.10, 0.58)
 mapping_param_x0 = 0.25  # 0.10
 mapping_param_k = 50
-save_csv_file_name = get_file_or_dir_with_datetime(base_name="yolo_benchmark_search_result", ext=".csv")
+save_csv_file_name = get_file_or_dir_with_datetime(
+    base_name="yolo_benchmark_search_result", ext=".csv"
+)
 ###############
 
 for image_set in benchmark_image_set_dir:
@@ -43,8 +51,12 @@ for image_set in benchmark_image_set_dir:
         ####################################################
         for benchmark_video_file in benchmark_video_file_list:
             ltl_formula = benchmark_video_file.name.split(".")[0].split("_ltl_")[-1]
-            csv_result["ltl_formula"] = "".join(ltl_formula.split('"')[:-1]).replace(" ", "")
-            csv_result["number_of_frame"] = int(ltl_formula.split('"')[-1].split("_")[1])
+            csv_result["ltl_formula"] = "".join(ltl_formula.split('"')[:-1]).replace(
+                " ", ""
+            )
+            csv_result["number_of_frame"] = int(
+                ltl_formula.split('"')[-1].split("_")[1]
+            )
 
             # result[ltl_formula] = {}
             cv_detection_model = YoloX(
@@ -54,10 +66,13 @@ for image_set in benchmark_image_set_dir:
             csv_result["cv_model"] = "yolo-x"
             csv_result["cv_model_weight"] = str(weight)
             benchmark_video_processor = BenchmarkVideoFrameProcessor(
-                video_path=benchmark_video_file, artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH
+                video_path=benchmark_video_file,
+                artifact_dir=config.VERSION_AND_PATH.ARTIFACTS_PATH,
             )
 
-            benchmark_video: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+            benchmark_video: BenchmarkLTLFrame = (
+                benchmark_video_processor.benchmark_image_frames
+            )
 
             video_automata_builder = VideotoAutomaton(
                 detector=cv_detection_model,
@@ -96,7 +111,9 @@ for image_set in benchmark_image_set_dir:
 
             # save as csv
             write_to_csv_from_dict(
-                dict_data=csv_result, csv_file_path=root_path, file_name=save_csv_file_name
+                dict_data=csv_result,
+                csv_file_path=root_path,
+                file_name=save_csv_file_name,
             )
 
             # store results

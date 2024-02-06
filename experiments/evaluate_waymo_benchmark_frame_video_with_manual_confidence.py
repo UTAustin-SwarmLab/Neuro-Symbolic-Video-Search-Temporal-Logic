@@ -10,7 +10,9 @@ from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
 from ns_vfs.frame_searcher import FrameSearcher
 from ns_vfs.model.vision.dummy import DummyVisionModel
-from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
+from ns_vfs.processor.benchmark_video_processor import (
+    BenchmarkVideoFrameProcessor,
+)
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 
@@ -44,12 +46,16 @@ def evaluate_frame_of_interest(
     true_foi_list = benchmark_video.frames_of_interest
     total_num_true_foi = len(true_foi_list)
 
-    num_of_mathching_frame_set = sum(1 for a, b in zip(true_foi_list, frame_of_interest.foi_list) if a == b)
+    num_of_mathching_frame_set = sum(
+        1 for a, b in zip(true_foi_list, frame_of_interest.foi_list) if a == b
+    )
     frame_set_accuracy = num_of_mathching_frame_set / total_num_true_foi
 
     # matching_accuracy
     flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
-    flattened_predicted_foi = set([item for sublist in frame_of_interest.foi_list for item in sublist])
+    flattened_predicted_foi = set(
+        [item for sublist in frame_of_interest.foi_list for item in sublist]
+    )
     accuracy, precision, recall, f1 = classification_metrics(
         actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
     )
@@ -72,14 +78,18 @@ def evaluate_frame_of_interest(
     result["groud_truth_frame"] = benchmark_video.frames_of_interest
     result["predicted_frame"] = frame_of_interest.foi_list
 
-    result["total_number_of_framer_of_interest"] = len(benchmark_video.frames_of_interest)
+    result["total_number_of_framer_of_interest"] = len(
+        benchmark_video.frames_of_interest
+    )
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
 
     if save_predicted_frame:
         for idx in list(flattened_predicted_foi):
             img = benchmark_video.images_of_frames[idx]
             path = (
-                Path(directory_path) / benchmark_video_file.name.split(".pkl")[0] / f"video_frame_{idx}.png"
+                Path(directory_path)
+                / benchmark_video_file.name.split(".pkl")[0]
+                / f"video_frame_{idx}.png"
             )
             plt.imshow(img)
             plt.axis("off")
@@ -133,7 +143,9 @@ if __name__ == "__main__":
             manual_confidence_probability=1.0,
         )
 
-        benchmark_img_frame: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+        benchmark_img_frame: BenchmarkLTLFrame = (
+            benchmark_video_processor.benchmark_image_frames
+        )
 
         video_automata_builder = VideotoAutomaton(
             detector=DummyVisionModel(),
