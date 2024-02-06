@@ -95,15 +95,15 @@ class FramesofInterest:
         if len(self.frame_buffer) > 1:
             frame_interval = list()
             for frame in self.frame_buffer:
-                frame_interval.append(frame.frame_index)
-                self.frame_idx_to_real_idx[frame.frame_index] = frame.real_frame_idx
+                frame_interval.append(frame.frame_idx)
+                self.frame_idx_to_real_idx[frame.frame_idx] = frame.timestamp
                 self.frame_images.append(frame.frame_image)
                 self.save_annotated_images(frame.annotated_image)
             self.foi_list.append(frame_interval)
         else:
             for frame in self.frame_buffer:
-                self.foi_list.append([frame.frame_index])
-                self.frame_idx_to_real_idx[frame.frame_index] = frame.real_frame_idx
+                self.foi_list.append([frame.frame_idx])
+                self.frame_idx_to_real_idx[frame.frame_idx] = frame.timestamp
                 self.frame_images.append(frame.frame_image)
                 self.save_annotated_images(frame.annotated_image)
         self.frame_buffer = list()

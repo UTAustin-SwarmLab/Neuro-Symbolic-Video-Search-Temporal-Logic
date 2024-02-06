@@ -1,6 +1,10 @@
 import dataclasses  # noqa: D100
 from typing import Any, List, Optional
 
+import supervision as sv
+
+from ns_vfs.enums.status import Status
+
 
 @dataclasses.dataclass
 class DetectedObject:
@@ -14,8 +18,9 @@ class DetectedObject:
     bounding_box_of_all_obj: Optional[List[Any]] = None
     all_obj_detected: Optional[List[Any]] = None
     number_of_detection: int = 0
-    is_detected: bool = False
+    is_detected: Optional[bool, Status] = Status.UNKNOWN
     model_name: Optional[str] = None
+    supervision_detections: Optional[sv.Detections] = None
 
     def __post_init__(self):
         if len(self.confidence_of_all_obj) > 0:
