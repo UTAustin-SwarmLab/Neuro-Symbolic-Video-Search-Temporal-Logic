@@ -27,19 +27,16 @@ classifiers = [
 ]
 dependencies = [
     "omegaconf",
-    "numpy==1.22.0",
+    "numpy==1.21.5",
     "pandas",
+    "regex",
     "supervision==0.6.0",
     "roboflow",
     "einops",
     "pytorch-lightning==1.4.2",
     "torchmetrics==0.5",
     "ultralytics",
-    "k-diffusion@git+https://github.com/crowsonkb/k-diffusion.git",
-    "segment_anything@git+https://github.com/facebookresearch/segment-anything.git",
-    "groundingdino@git+https://github.com/IDEA-Research/GroundingDINO#egg=57535c5a79791cb76e36fdb64975271354f10251",
-    "taming-transformers@git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers"
-    # -> we used git submodule to add this repo (GroundingDINO API Structure Issue)
+    "clip@git+https://github.com/openai/CLIP.git",
 ]
 
 [project.urls]
@@ -49,28 +46,3 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["black", "ruff", "mypy"]
 test = ["pytest", "pytest-cov", "pytest-mock"]
-
-[tool.black]
-line-length = 110
-
-[tool.ruff]
-select = [
-  "E",   # pycodestyle
-  "F",   # pyflakes
-  "UP",  # pyupgrade
-  "D",   # pydocstyle
-]
-line-length = 110
-
-ignore = ["ANN101", "ANN102", "D100"]
-
-extend-exclude = [".venv", "venv", "vscode"]
-
-[tool.ruff.pydocstyle]
-convention = "google"
-
-# [tool.poetry.dependencies]
-# We need further investigation on the following dependencies and how to use poetry
-# python = "^3.8"
-# segment-anything = { git = "https://github.com/facebookresearch/segment-anything.git" }
-# GroundingDINO = { path = "video_to_automaton/GrundingDINO", develop = false }

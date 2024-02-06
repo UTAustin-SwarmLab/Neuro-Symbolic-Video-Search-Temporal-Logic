@@ -10,7 +10,9 @@ from ns_vfs.config.loader import load_config
 from ns_vfs.data.frame import BenchmarkLTLFrame, FramesofInterest
 from ns_vfs.frame_searcher import FrameSearcher
 from ns_vfs.model.vision.dummy import DummyVisionModel
-from ns_vfs.processor.benchmark_video_processor import BenchmarkVideoFrameProcessor
+from ns_vfs.processor.benchmark_video_processor import (
+    BenchmarkVideoFrameProcessor,
+)
 from ns_vfs.video_to_automaton import VideotoAutomaton
 
 
@@ -44,12 +46,16 @@ def evaluate_frame_of_interest(
     true_foi_list = benchmark_video.frames_of_interest
     total_num_true_foi = len(true_foi_list)
 
-    num_of_mathching_frame_set = sum(1 for a, b in zip(true_foi_list, frame_of_interest.foi_list) if a == b)
+    num_of_mathching_frame_set = sum(
+        1 for a, b in zip(true_foi_list, frame_of_interest.foi_list) if a == b
+    )
     frame_set_accuracy = num_of_mathching_frame_set / total_num_true_foi
 
     # matching_accuracy
     flattened_true_foi = set([item for sublist in true_foi_list for item in sublist])
-    flattened_predicted_foi = set([item for sublist in frame_of_interest.foi_list for item in sublist])
+    flattened_predicted_foi = set(
+        [item for sublist in frame_of_interest.foi_list for item in sublist]
+    )
     accuracy, precision, recall, f1 = classification_metrics(
         actual_result=flattened_true_foi, predicted_result=flattened_predicted_foi
     )
@@ -63,7 +69,7 @@ def evaluate_frame_of_interest(
 
     result["ltl_formula"] = benchmark_video.ltl_formula
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
-    result["exact_frame_accuracy"] = frame_set_accuracy
+    result["exact_frame_acc"] = frame_set_accuracy
     result["accuracy"] = accuracy
     result["precision"] = precision
     result["recall"] = recall
@@ -72,24 +78,23 @@ def evaluate_frame_of_interest(
     result["groud_truth_frame"] = benchmark_video.frames_of_interest
     result["predicted_frame"] = frame_of_interest.foi_list
 
-    result["total_number_of_framer_of_interest"] = len(benchmark_video.frames_of_interest)
+    result["total_number_of_framer_of_interest"] = len(
+        benchmark_video.frames_of_interest
+    )
     result["total_number_of_frame"] = len(benchmark_video.labels_of_frames)
 
     if save_predicted_frame:
         for idx in list(flattened_predicted_foi):
             img = benchmark_video.images_of_frames[idx]
             path = (
-                Path(directory_path) / benchmark_video_file.name.split(".pkl")[0] / f"video_frame_{idx}.png"
+                Path(directory_path)
+                / benchmark_video_file.name.split(".pkl")[0]
+                / f"video_frame_{idx}.png"
             )
             plt.imshow(img)
             plt.axis("off")
             plt.savefig(path)
 
-    # save_dict_to_pickle(
-    #     path=Path(directory_path) / benchmark_video_file.name.split(".pkl")[0],
-    #     dict_obj=result,
-    #     file_name="result.pkl",
-    # )
     # Specifying the file name
     csv_file_name = Path(directory_path) / "data.csv"
 
@@ -104,7 +109,7 @@ def evaluate_frame_of_interest(
     acc_file = Path(directory_path) / "accuracy.txt"
     with acc_file.open("a") as f:
         f.write(
-            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_accuracy: {result["exact_frame_accuracy"]}
+            f"""{result["ltl_formula"]} - total num frame: {result["total_number_of_frame"]} - exact_frame_acc: {result["exact_frame_acc"]}
             accuracy: {result["accuracy"]}, precision: {result["precision"]} recall: {result["recall"]}, f1: {result["f1"]}\n"""
         )
 
@@ -121,10 +126,11 @@ def get_available_benchmark_video(path_to_directory: str):
 if __name__ == "__main__":
     config = load_config()
     benchmark_frame_video_root_dir = Path(
-        "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video/"
+        "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/_validated_benchmark_video"
     )
-
-    benchmark_image_set_dir = [x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()]
+    benchmark_image_set_dir = [
+        x for x in benchmark_frame_video_root_dir.iterdir() if x.is_dir()
+    ]
 
     for benchmark_name_dir in benchmark_image_set_dir:
         ltl_video_dir_set = [x for x in benchmark_name_dir.iterdir() if x.is_dir()]
@@ -133,7 +139,9 @@ if __name__ == "__main__":
             print(f"number of ltl rule: {len(ltl_video_dir_set)}")
             for ltl_video_dir in ltl_video_dir_set:
                 benchmark_video_file_list = get_available_benchmark_video(ltl_video_dir)
-                print(f"number of examples of {ltl_video_dir.name}: {len(benchmark_video_file_list)}")
+                print(
+                    f"number of examples of {ltl_video_dir.name}: {len(benchmark_video_file_list)}"
+                )
 
                 for benchmark_video_file in benchmark_video_file_list:
                     benchmark_video_processor = BenchmarkVideoFrameProcessor(
@@ -142,7 +150,9 @@ if __name__ == "__main__":
                         manual_confidence_probability=1.0,
                     )
 
-                    benchmark_img_frame: BenchmarkLTLFrame = benchmark_video_processor.benchmark_image_frames
+                    benchmark_img_frame: BenchmarkLTLFrame = (
+                        benchmark_video_processor.benchmark_image_frames
+                    )
 
                     video_automata_builder = VideotoAutomaton(
                         detector=DummyVisionModel(),
@@ -166,5 +176,5 @@ if __name__ == "__main__":
                         benchmark_video=benchmark_img_frame,
                         frame_of_interest=frame_of_interest,
                         save_predicted_frame=False,
-                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/benchmark_frame_video_results",
+                        directory_path="/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/benchmark_frame_video_generated_results",
                     )
