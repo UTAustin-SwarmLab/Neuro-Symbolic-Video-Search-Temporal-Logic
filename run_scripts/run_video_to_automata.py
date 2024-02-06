@@ -19,21 +19,22 @@ def main():
     config = load_config()
     video_path = "/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/titanic_scene.mp4"  # Replace with your video path
     ltl_formula = 'P>=0.80 [F "person"]'
+    proposition_set = ["person", "apple"]
     # Initialize the video processor
     processor = RealVideoProcessor(video_path, frame_duration_sec=1, frame_scale=2)
     cv_model = {
         "yolo": Yolo(
             weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
         ),
-        "clip": ClipPerception(config=config, weight_path=None),
+        "clip": ClipPerception(config=config),
     }
     percepter = MultiVisionPercepter(cv_models=cv_model)
     frame_validator = FrameValidator(ltl_formula=ltl_formula)
     automaton = ProbabilisticAutomaton(
-        include_initial_state=False, proposition_set=["person", "apple"]
+        include_initial_state=False, proposition_set=proposition_set
     )
     model_checker = StormModelChecker(
-        proposition_set=["person", "apple"], ltl_formula=ltl_formula
+        proposition_set=proposition_set, ltl_formula=ltl_formula
     )
     frame_of_interest = FramesofInterest(ltl_formula=ltl_formula)
 
@@ -42,8 +43,10 @@ def main():
     while True:
         # Get the next frame
         frame_img = processor.get_next_frame()
+        if frame_img is None:
+            break  # No more frames or end of video
         detected_objects: list = percepter.perceive(
-            image=frame_img, object_of_interest=["person", "apple"]
+            image=frame_img, object_of_interest=proposition_set
         )
         detected_activity = None
 
@@ -70,9 +73,6 @@ def main():
                 # specification satisfied
                 frame_of_interest.flush_frame_buffer()
                 automaton.reset()
-
-        if frame_img is None:
-            break  # No more frames or end of video
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):
