@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-import supervision as sv
 
 
 class ComputerVisionModel(abc.ABC):
@@ -23,28 +22,6 @@ class ComputerVisionDetector(ComputerVisionModel):
         """
         self._weight_path = weight_path
         self.load_model(weight_path)
-
-    def load_model(self, weight_path):
-        """Load weight."""
-        self._weight = weight_path
-
-    def get_weight(self):
-        """Get weight."""
-        return self._weight
-
-    def get_labels(self) -> list:
-        """Return sv.Detections"""
-        return self._labels
-
-    def get_detections(self) -> sv.Detections:
-        """Return sv.Detections"""
-        return self._detection
-
-    def get_confidence(self) -> np.ndarray:
-        return self._confidence
-
-    def get_size(self) -> int:
-        return self._size
 
     def _sigmoid_mapping_estimation_function(self, x, a=1, k=1, x0=0) -> float:
         """Sigmoid function.

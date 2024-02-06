@@ -9,23 +9,30 @@ import torch
 from omegaconf import DictConfig
 from PIL import Image
 
+from ns_vfs.data.detected_object import DetectedObject
+from ns_vfs.enums.status import Status
 from ns_vfs.model.vision._base import ComputerVisionDetector
 
 warnings.filterwarnings("ignore")
 
 
 class ClipPerception(ComputerVisionDetector):
-    """Yolo."""
+    """CLIP Perception Model."""
 
-    def __init__(self, config: DictConfig, weight_path: str) -> None:
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model, self.preprocess = clip.load("ViT-B/32", device=self.device) #ViT-L/14
-        self._config = config
-        # self._classes_reversed = {v: k for k, v in self.model.names.items()}
+    def __init__(self, config: DictConfig, gpu_device: int = 0) -> None:
+        self._config = config.CLIP
+        self.device = f"cuda:{gpu_device}" if torch.cuda.is_available() else "cpu"
+        self.model, self.preprocess = clip.load(
+            self._config.CLIP_MODEL, device=self.device
+        )
 
-    def load_model(self, weight_path) -> None:
-        """Not Needed For CLIP."""
-        pass
+    def validate_object(self, object_name: str) -> bool:
+        """Validate object (always true for CLIP).
+
+        Returns:
+            bool: True if object is valid.
+        """
+        return True
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Parse class name.
@@ -52,26 +59,46 @@ class ClipPerception(ComputerVisionDetector):
         Returns:
             any: Detections.
         """
-        image = Image.fromarray(frame_img.astype("uint8"), "RGB")
-        image = self.preprocess(image).unsqueeze(0).to(self.device)
-        text = clip.tokenize(self._parse_class_name(classes)).to(self.device)
+
+        class_name = classes[0].replace("_", " ")
+        image_rgb = Image.fromarray(frame_img.astype("uint8"), "RGB")
+        image = self.preprocess(image_rgb).unsqueeze(0).to(self.device)
+        text = clip.tokenize(class_name).to(self.device)
 
         with torch.no_grad():
             image_features = self.model.encode_image(image)
             text_features = self.model.encode_text(text)
 
-            image_features = image_features / image_features.norm(dim=1, keepdim=True)
-            text_features = text_features / text_features.norm(dim=1, keepdim=True)
-            scores = image_features @ text_features.t()
-            scores = scores[0].detach().cpu().numpy()
+            # Normalize features
+            image_features_norm = image_features / image_features.norm(
+                dim=1, keepdim=True
+            )
+            text_features_norm = text_features / text_features.norm(dim=1, keepdim=True)
 
-            # logits_per_image, logits_per_text = self.model(image, text)
-            # probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+            # Calculate similarity scores
+            scores = (
+                (image_features_norm @ text_features_norm.T)
+                .squeeze(0)
+                .detach()
+                .cpu()
+                .numpy()
+            )
+
+            logits_per_image, logits_per_text = self.model(image, text)
+            probs = logits_per_text.softmax(dim=-1).cpu().numpy()
+
         self._labels = []
         if len(scores) > 0:
             self._labels.append(f"{classes[0]} {scores[0]:0.4f}")
         else:
             self._labels.append({None}, {None})
+
+        cllp_detection = {
+            classes[0]: {
+                "image_features": image_features,
+                "text_features": text_features,
+            }
+        }
 
         self._detection = None  # Todo: Figure out what to do about it
 
@@ -79,7 +106,22 @@ class ClipPerception(ComputerVisionDetector):
 
         self._size = len(scores)
 
-        return self._detection
+        probability = self._mapping_probability(int(scores))
+
+        if probability > 0:
+            is_detected = True
+        else:
+            is_detected = False
+
+        return DetectedObject(
+            name=class_name,
+            model_name="clip",
+            confidence_of_all_obj=list(self._confidence),
+            probability_of_all_obj=[probability],
+            all_obj_detected=cllp_detection,
+            number_of_detection=Status.UNKNOWN,
+            is_detected=is_detected,
+        )
 
     def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
         # TODO: What is this about? It was not being called for YOLO
