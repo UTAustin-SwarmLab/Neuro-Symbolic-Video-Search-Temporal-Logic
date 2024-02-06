@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
-from omegaconf import DictConfig, ListConfig, OmegaConf
+from omegaconf import DictConfig, OmegaConf
 
 def load_config_from_yaml(config_path: str, read_only=False) -> DictConfig:
     """Load a yaml config file and return a DictConfig object."""
