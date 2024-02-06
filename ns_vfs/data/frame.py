@@ -87,7 +87,7 @@ class FramesofInterest:
                     Image.fromarray(self.annotated_images[idx]).save(
                         f"{path}/{idx}_annotated.png"
                     )
-            except:
+            except:  # noqa: E722
                 pass
 
     def flush_frame_buffer(self):
