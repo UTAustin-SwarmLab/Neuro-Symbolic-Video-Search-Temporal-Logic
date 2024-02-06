@@ -49,15 +49,8 @@ class Yolo(ComputerVisionDetector):
         return object_name in list(self._available_classes.keys())
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
-        """Parse class name.
-
-        Args:
-            class_names (list[str]): List of class names.
-
-        Returns:
-            list[str]: List of class names.
-        """
-        return [f"all {class_name}s" for class_name in class_names]
+        """Doest not need to parse class name."""
+        ...
 
     def detect(self, frame_img: np.ndarray, classes: list) -> any:
         """Detect object in frame.
@@ -73,38 +66,31 @@ class Yolo(ComputerVisionDetector):
         class_ids = [self._available_classes[c.replace("_", " ")] for c in classes]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
-        self._labels = []
-        for i in range(len(detected_obj[0].boxes)):
-            class_id = int(detected_obj[0].boxes.cls[i])
-            confidence = float(detected_obj[0].boxes.conf[i])
-            self._labels.append(
-                f"{detected_obj[0].names[class_id] if class_id is not None else None} {confidence:0.2f}"
-            )
-
-        self._detection = sv.Detections(
+        supervision_detections = sv.Detections(
             xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy()
         )
 
-        self._confidence = detected_obj[0].boxes.conf.cpu().detach().numpy()
+        confidence_from_model = detected_obj[0].boxes.conf.cpu().detach().numpy()
 
-        self._size = len(detected_obj[0].boxes)
-        if self._size > 0:
+        num_detections = len(detected_obj[0].boxes)
+        if num_detections > 0:
             is_detected = True
         else:
             is_detected = False
 
         probability = []
-        for confidence in self._confidence:
+        for confidence in confidence_from_model:
             probability.append(self._mapping_probability(confidence))
 
         return DetectedObject(
             name=class_name,
             model_name="yolo",
-            confidence_of_all_obj=list(self._confidence),
+            confidence_of_all_obj=list(confidence_from_model),
             probability_of_all_obj=list(probability),
             all_obj_detected=detected_obj,
-            number_of_detection=self._size,
+            number_of_detection=num_detections,
             is_detected=is_detected,
+            supervision_detections=supervision_detections,
         )
 
     def _mapping_probability(
@@ -140,16 +126,3 @@ class Yolo(ComputerVisionDetector):
                 ),
                 2,
             )
-
-    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
-        max_conf = 0
-        class_ids = [self._available_classes[c.replace("_", " ")] for c in [true_label]]
-        detected_obj = self.model.predict(source=frame_img, classes=class_ids)[0]
-        all_detected_object_list = detected_obj.boxes.cls
-        all_detected_object_confidence = detected_obj.boxes.conf
-
-        for i in range(len(all_detected_object_list)):
-            if all_detected_object_list[i] == class_ids[0]:
-                if all_detected_object_confidence[i] > max_conf:
-                    max_conf = all_detected_object_confidence[i].cpu().item()
-        return max_conf
