@@ -17,6 +17,13 @@ class FrameValidator:
     def validate_frame(self, frame: Frame):
         """Validate frame."""
         if frame.is_any_object_detected():
+            all_below_threshold = all(
+                frame.object_of_interest[obj_name].probability
+                < self._threshold_of_probability
+                for obj_name in frame.detected_object
+            )
+            if all_below_threshold:
+                return False
             if self.symbolic_verification(frame):
                 return True
             else:
