@@ -5,6 +5,8 @@ import random
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
+
 
 def list_flatten(lst):
     flattened = []
@@ -22,7 +24,9 @@ def get_file_or_dir_with_datetime(base_name, ext="."):
 
 
 def save_frames(
-    frames: list, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/result", file_label: str = ""
+    frames: list,
+    path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts/result",
+    file_label: str = "",
 ) -> None:
     """Save image to path.
 
@@ -37,7 +41,20 @@ def save_frames(
         Image.fromarray(img).save(f"{path}/{file_label}_{idx}.png")
 
 
-def save_dict_to_pickle(dict_obj: dict | object, path: str, file_name: str = "data.pkl"):
+def save_image(image: np.ndarray, file_path: str):
+    """Save image to path.
+
+    Args:
+        path (str, optional): Path to save image.
+    """
+    import matplotlib.pyplot as plt
+
+    plt.imsave("test.png", image)
+
+
+def save_dict_to_pickle(
+    dict_obj: dict | object, path: str, file_name: str = "data.pkl"
+):
     # Decode the JSON data into a Python object
     # data_python = json.loads(dict_obj)
     full_path = Path(path) / file_name

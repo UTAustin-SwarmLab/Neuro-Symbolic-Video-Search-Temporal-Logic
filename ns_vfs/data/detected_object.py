@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses  # noqa: D100
 from typing import Any, List, Optional
 
@@ -18,7 +20,7 @@ class DetectedObject:
     bounding_box_of_all_obj: Optional[List[Any]] = None
     all_obj_detected: Optional[List[Any]] = None
     number_of_detection: int = 0
-    is_detected: Optional[bool, Status] = Status.UNKNOWN
+    is_detected: bool | Status = Status.UNKNOWN
     model_name: Optional[str] = None
     supervision_detections: Optional[sv.Detections] = None
 

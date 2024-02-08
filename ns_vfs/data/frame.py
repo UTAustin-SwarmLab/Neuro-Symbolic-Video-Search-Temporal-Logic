@@ -6,7 +6,9 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from ns_vfs.common.utility import get_file_or_dir_with_datetime
+from ns_vfs.common.utility import (
+    get_file_or_dir_with_datetime,
+)
 
 
 @dataclasses.dataclass
@@ -17,9 +19,8 @@ class Frame:
     timestamp: Optional[int] = None
     frame_image: Optional[np.ndarray] = None
     annotated_image: Dict[str, np.ndarray] = dataclasses.field(default_factory=dict)
-    object_detection: Optional[dict] = None
-    activity_detection: Optional[dict] = None
-    propositional_probability: dict = dataclasses.field(default_factory=dict)
+    object_of_interest: Optional[dict] = None
+    activity_of_interest: Optional[dict] = None
 
     def is_any_object_detected(self):
         """Check if object is detected."""
@@ -32,15 +33,10 @@ class Frame:
     def detected_object(self):
         """Get detected object."""
         detected_obj = []
-        for obj_name, obj_value in self.object_detection.items():
+        for obj_name, obj_value in self.object_of_interest.items():
             if obj_value.is_detected:
                 detected_obj.append(obj_name)
         return detected_obj
-
-    @property
-    def propositional_confidence(self):
-        """Get propositional confidence."""
-        return list(self.propositional_probability.values())
 
 
 @dataclasses.dataclass

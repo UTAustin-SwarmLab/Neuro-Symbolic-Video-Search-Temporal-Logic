@@ -24,9 +24,13 @@ class ClipPerception(ComputerVisionObjectDetector):
     def __init__(self, config: DictConfig, gpu_device: int = 0) -> None:
         self._config = config.CLIP
         self.device = f"cuda:{gpu_device}" if torch.cuda.is_available() else "cpu"
-        self.model, self.preprocess = clip.load(
-            self._config.CLIP_MODEL, device=self.device
+        self.model, self.preprocess = self.load_model(
+            model_name=self._config.CLIP_MODEL, device=self.device
         )
+
+    def load_model(self, model_name, device) -> any:
+        model, preprocess = clip.load(model_name, device=device)
+        return model, preprocess
 
     def validate_object(self, object_name: str) -> bool:
         """Validate object (always true for CLIP).

@@ -7,7 +7,7 @@ from ns_vfs.processor._base import BaseVideoProcessor
 
 
 class RealVideoProcessor(BaseVideoProcessor):
-    """Video Processor."""
+    """Real Video Processor."""
 
     def __init__(
         self,
@@ -19,7 +19,8 @@ class RealVideoProcessor(BaseVideoProcessor):
 
         Args:
             video_path (str): Path to video file.
-            artifact_dir (str): Path to artifact directory.
+            frame_duration_sec (int, optional): Frame duration in seconds. Defaults to 1.
+            frame_scale (int | None, optional): Frame scale. Defaults to None.
         """
         self._video_path = video_path
         self._frame_duration_sec = frame_duration_sec
@@ -34,7 +35,6 @@ class RealVideoProcessor(BaseVideoProcessor):
         Args:
             frame_img (np.ndarray): Frame image.
             frame_scale (int): Scale of frame.
-
 
         Returns:
             np.ndarray: Resized frame image.
