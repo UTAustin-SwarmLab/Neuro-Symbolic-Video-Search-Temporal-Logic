@@ -48,7 +48,7 @@ class Yolo(ComputerVisionObjectDetector):
         Returns:
             bool: True if object name is valid.
         """
-        return object_name in list(self._available_classes.keys())
+        return object_name.replace("_", " ") in list(self._available_classes.keys())
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Doest not need to parse class name."""

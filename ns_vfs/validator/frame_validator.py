@@ -16,7 +16,7 @@ class FrameValidator:
 
     def validate_frame(self, frame: Frame):
         """Validate frame."""
-        if frame.is_any_object_detected:
+        if frame.is_any_object_detected():
             if self.symbolic_verification(frame):
                 return True
             else:
