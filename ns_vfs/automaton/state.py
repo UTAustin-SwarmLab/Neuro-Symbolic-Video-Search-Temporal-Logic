@@ -44,7 +44,7 @@ class State:
         for i in range(len(self.proposition_set)):
             if label[i] == "T":
                 labels.append(self.proposition_set[i])
-        if self.state_index == 0 and len(labels) == 0:
+        if self.state_index == 0 and label == "init":
             labels.append("init")
         return labels
 

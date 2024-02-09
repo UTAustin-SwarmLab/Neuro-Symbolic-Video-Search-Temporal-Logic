@@ -22,7 +22,7 @@ class ProbabilisticAutomaton:
         if include_initial_state:
             self._current_state = State(
                 state_index=0,
-                frame_index=-1,
+                frame_index_in_automaton=-1,
                 proposition_status_set="init",
                 proposition_set=proposition_set,
             )
@@ -40,7 +40,7 @@ class ProbabilisticAutomaton:
         if self.include_initial_state:
             self._current_state = State(
                 state_index=0,
-                frame_index=-1,
+                frame_index_in_automaton=-1,
                 proposition_status_set="init",
                 proposition_set=self.proposition_set,
             )
@@ -101,7 +101,7 @@ class ProbabilisticAutomaton:
         """Update the probability of propositions."""
         for i, prop in enumerate(self.proposition_set):
             self.probability_of_propositions[i].append(
-                frame.object_detection[prop].probability
+                frame.object_of_interest[prop].probability
             )
 
     def _create_proposition_combinations(self, num_props: int):
