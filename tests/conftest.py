@@ -9,10 +9,10 @@ from ns_vfs.data.frame import Frame
 def prob_1_detected_object():
     return DetectedObject(
         name="object 1",
-        confidence=0.6,
-        probability=0.8,
-        confidence_of_all_obj=[0.3, 0.4, 0.6],
-        probability_of_all_obj=[0.6, 0.7, 0.8],
+        confidence=0.8,
+        probability=1.0,
+        confidence_of_all_obj=[0.3, 0.4, 0.8],
+        probability_of_all_obj=[0.6, 0.7, 1.0],
         bounding_box_of_all_obj=None,
         all_obj_detected=None,
         number_of_detection=3,
