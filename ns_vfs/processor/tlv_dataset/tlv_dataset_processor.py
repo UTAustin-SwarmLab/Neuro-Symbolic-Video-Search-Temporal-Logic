@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ns_vfs.processor._base import BaseVideoProcessor
+from ns_vfs.processor._base_video_processor import BaseVideoProcessor
 
 
 class TLVDatasetProcessor(BaseVideoProcessor):
@@ -29,10 +29,14 @@ class TLVDatasetProcessor(BaseVideoProcessor):
         """Get all frames of video."""
         return self.tlv_dataset["images_of_frames"]
 
-    def get_next_frame(self, return_format: str = "ndarray") -> np.ndarray | None:
+    def get_next_frame(
+        self, return_format: str = "ndarray"
+    ) -> np.ndarray | None:
         """Get next frame of video."""
         if self.current_frame_index < len(self.tlv_dataset["images_of_frames"]):
-            frame = self.tlv_dataset["images_of_frames"][self.current_frame_index]
+            frame = self.tlv_dataset["images_of_frames"][
+                self.current_frame_index
+            ]
             self.current_frame_index += 1
             return frame
         else:

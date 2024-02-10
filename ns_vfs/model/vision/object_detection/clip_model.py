@@ -6,7 +6,6 @@ import clip
 import cv2
 import numpy as np
 import torch
-from omegaconf import DictConfig
 from PIL import Image
 
 from ns_vfs.data.detected_object import DetectedObject
@@ -21,11 +20,12 @@ warnings.filterwarnings("ignore")
 class ClipPerception(ComputerVisionObjectDetector):
     """CLIP Perception Model."""
 
-    def __init__(self, config: DictConfig, gpu_device: int = 0) -> None:
-        self._config = config.CLIP
-        self.device = f"cuda:{gpu_device}" if torch.cuda.is_available() else "cpu"
+    def __init__(self, model_name, gpu_device: int = 0) -> None:
+        self.device = (
+            f"cuda:{gpu_device}" if torch.cuda.is_available() else "cpu"
+        )
         self.model, self.preprocess = self.load_model(
-            model_name=self._config.CLIP_MODEL, device=self.device
+            model_name=model_name, device=self.device
         )
 
     def load_model(self, model_name, device) -> any:
@@ -79,7 +79,9 @@ class ClipPerception(ComputerVisionObjectDetector):
             image_features_norm = image_features / image_features.norm(
                 dim=1, keepdim=True
             )
-            text_features_norm = text_features / text_features.norm(dim=1, keepdim=True)
+            text_features_norm = text_features / text_features.norm(
+                dim=1, keepdim=True
+            )
 
             # Calculate similarity scores
             scores = (
@@ -129,7 +131,9 @@ class ClipPerception(ComputerVisionObjectDetector):
             is_detected=is_detected,
         )
 
-    def get_confidence_score(self, frame_img: np.ndarray, true_label: str) -> any:
+    def get_confidence_score(
+        self, frame_img: np.ndarray, true_label: str
+    ) -> any:
         # TODO: What is this about? It was not being called for YOLO
         self.detect(frame_img, true_label)
         return float(self._confidence[0])
@@ -171,7 +175,9 @@ class ClipPerception(ComputerVisionObjectDetector):
 
 def main():
     test = ClipPerception(None, None)
-    img = cv2.imread("/opt/Neuro-Symbolic-Video-Frame-Search/ship_on_the_sea.png")
+    img = cv2.imread(
+        "/opt/Neuro-Symbolic-Video-Frame-Search/ship_on_the_sea.png"
+    )
     test.detect(img, ["sunset", "dog", "person", "table"])
     print("Testing with 4 labels:")
     print(test._confidence)

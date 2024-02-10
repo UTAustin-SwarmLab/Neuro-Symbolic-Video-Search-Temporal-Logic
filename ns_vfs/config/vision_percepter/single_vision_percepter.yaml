@@ -1,0 +1,6 @@
+_target_: ns_vfs.percepter.single_vision_percepter.SingleVisionPercepter
+cv_models: 
+  _target_: ns_vfs.model.vision.object_detection.dummy.DummyVisionModel
+  detection_probability: ${model.vision.dummy.detection_probability}
+  random_greater_than: ${model.vision.dummy.random_greater_than}
+  random_prob_less_than: ${model.vision.dummy.random_prob_less_than}
