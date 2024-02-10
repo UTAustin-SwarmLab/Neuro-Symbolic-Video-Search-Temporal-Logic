@@ -3,7 +3,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from ns_vfs.processor._base import BaseVideoProcessor
+from ns_vfs.processor._base_video_processor import BaseVideoProcessor
 
 
 class RealVideoProcessor(BaseVideoProcessor):
@@ -29,7 +29,9 @@ class RealVideoProcessor(BaseVideoProcessor):
         self.video_ended = False
         self.import_video(video_path)
 
-    def _resize_frame(self, frame_img: np.ndarray, frame_scale: int) -> np.ndarray:
+    def _resize_frame(
+        self, frame_img: np.ndarray, frame_scale: int
+    ) -> np.ndarray:
         """Resize frame image.
 
         Args:
@@ -71,7 +73,9 @@ class RealVideoProcessor(BaseVideoProcessor):
         """
         all_frames = list()
         frame_step = int(self.original_vidoe_fps * self._frame_duration_sec)
-        for real_frame_idx in range(0, int(self.original_frame_count), int(frame_step)):
+        for real_frame_idx in range(
+            0, int(self.original_frame_count), int(frame_step)
+        ):
             self._cap.set(cv2.CAP_PROP_POS_FRAMES, real_frame_idx)
             ret, frame_img = self._cap.read()
             if not ret:
@@ -86,7 +90,9 @@ class RealVideoProcessor(BaseVideoProcessor):
         cv2.destroyAllWindows()
         return all_frames
 
-    def get_next_frame(self, return_format: str = "ndarray") -> np.ndarray | None:
+    def get_next_frame(
+        self, return_format: str = "ndarray"
+    ) -> np.ndarray | None:
         """Get the next video frame based on frame step.
 
         Args:

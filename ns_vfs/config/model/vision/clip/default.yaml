@@ -1,0 +1,2 @@
+model_name: "ViT-B/32" #ViT-L/14
+gpu_device: 0 

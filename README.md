@@ -1,5 +1,7 @@
 # Neuro Symbolic Video Frame Search
 
+python3 ns_vfs/main.py nsvs_cfg.video_file_path=
+
 ## CV23 Fall Evaluator 
 1. Follow the installation guide below.
 

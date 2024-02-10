@@ -27,6 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "omegaconf",
+    "hydra-core>=1.2.0",
     "numpy==1.21.5",
     "pandas",
     "regex",
@@ -38,6 +39,8 @@ dependencies = [
     "ultralytics",
     "clip@git+https://github.com/openai/CLIP.git",
 ]
+[tool.black]
+line-length = 80
 
 [project.urls]
 "Homepage" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
