@@ -42,6 +42,10 @@ class TLVDatasetProcessor(BaseVideoProcessor):
         else:
             return None
 
+    def get_ground_truth_label(self, frame_idx: int) -> str:
+        """Get ground truth label."""
+        return self.tlv_dataset["labels_of_frames"][frame_idx]
+
     @property
     def ltl_formula(self) -> str:
         """Get LTL formula."""

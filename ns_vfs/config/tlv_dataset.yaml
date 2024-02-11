@@ -1,0 +1,24 @@
+defaults:
+  - node: tlv_dataset
+  - video_processor: tlv_dataset
+  - vision_percepter: single_vision_percepter
+  - automaton: probabilistic
+  - model: default
+  - override hydra/launcher: local
+  - override hydra/output: local
+  - _self_
+
+hydra:
+  job:
+    chdir: True
+
+ns_vfs_system_cfg:
+  model_checker:
+    is_filter: False
+    verbose: False
+
+video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/outputs/tlv_dataset_ImageNet2017-1K_ltl_F "clock"_30_0.pkl'
+ltl_formula: 
+proposition_set:
+  #- Proposition 1
+  #- Proposition 2

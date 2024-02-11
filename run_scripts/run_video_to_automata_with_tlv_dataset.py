@@ -28,7 +28,7 @@ def main():
         "yolo": Yolo(
             weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,
         ),
-        "clip": ClipPerception(config=config),
+        "clip": ClipPerception(model_name="ViT-B/32"),
     }
     percepter = MultiVisionPercepter(cv_models=cv_model)
     frame_validator = FrameValidator(ltl_formula=ltl_formula)

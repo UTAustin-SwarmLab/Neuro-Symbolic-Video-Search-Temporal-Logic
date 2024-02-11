@@ -42,7 +42,9 @@ class StormModelChecker:
 
         state_labeling = self._build_label_func(states, self.proposition_set)
 
-        markovian_states = stormpy.BitVector(len(states), list(range(len(states))))
+        markovian_states = stormpy.BitVector(
+            len(states), list(range(len(states)))
+        )
 
         components = stormpy.SparseModelComponents(
             transition_matrix=transition_matrix,
@@ -60,7 +62,9 @@ class StormModelChecker:
             print(markov_automata)
 
         # Check the model (Markov Automata)
-        result = self._model_checking(markov_automata, self.ltl_formula, is_filter)
+        result = self._model_checking(
+            markov_automata, self.ltl_formula, is_filter
+        )
         return self._verification_result_eval(verification_result=result)
 
     def _verification_result_eval(
@@ -81,7 +85,10 @@ class StormModelChecker:
         return result
 
     def _model_checking(
-        self, model: stormpy.storage.SparseMA, formula_str: str, is_filter: bool = False
+        self,
+        model: stormpy.storage.SparseMA,
+        formula_str: str,
+        is_filter: bool = False,
     ) -> any:
         """Model checking.
 
@@ -120,7 +127,9 @@ class StormModelChecker:
         matrix = np.zeros((len(states), len(states)))
         for t in transitions:
             matrix[int(t[0]), int(t[1])] = float(t[2])
-        trans_matrix = stormpy.build_sparse_matrix(matrix, list(range(len(states))))
+        trans_matrix = stormpy.build_sparse_matrix(
+            matrix, list(range(len(states)))
+        )
         return trans_matrix
 
     def _build_label_func(
