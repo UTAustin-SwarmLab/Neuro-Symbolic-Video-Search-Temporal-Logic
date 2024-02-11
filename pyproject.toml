@@ -49,3 +49,4 @@ line-length = 80
 [project.optional-dependencies]
 dev = ["black", "ruff", "mypy"]
 test = ["pytest", "pytest-cov", "pytest-mock"]
+

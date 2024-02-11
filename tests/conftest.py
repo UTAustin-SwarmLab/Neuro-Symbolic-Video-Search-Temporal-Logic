@@ -1,8 +1,14 @@
-import numpy as np
 import pytest
 
 from ns_vfs.data.detected_object import DetectedObject
 from ns_vfs.data.frame import Frame
+
+
+@pytest.fixture
+def test_np_ndraary_image():
+    import numpy as np
+
+    return np.zeros((100, 100, 3), dtype=np.uint8)
 
 
 @pytest.fixture
@@ -74,11 +80,11 @@ def prob_0_detected_object():
 
 
 @pytest.fixture
-def frame_with_detected_object(prob_1_detected_object):
+def frame_with_detected_object(prob_1_detected_object, test_np_ndraary_image):
     return Frame(
         frame_idx=0,
         timestamp=0,
-        frame_image=np.zeros((100, 100, 3), dtype=np.uint8),
+        frame_image=test_np_ndraary_image,
         annotated_image={},
         object_of_interest={
             prob_1_detected_object.name: prob_1_detected_object,
@@ -88,11 +94,13 @@ def frame_with_detected_object(prob_1_detected_object):
 
 
 @pytest.fixture
-def frame_without_detected_object(prob_0_detected_object):
+def frame_without_detected_object(
+    prob_0_detected_object, test_np_ndraary_image
+):
     return Frame(
         frame_idx=0,
         timestamp=0,
-        frame_image=np.zeros((100, 100, 3), dtype=np.uint8),
+        frame_image=test_np_ndraary_image,
         annotated_image={},
         object_of_interest={
             prob_0_detected_object.name: prob_0_detected_object,
@@ -103,12 +111,12 @@ def frame_without_detected_object(prob_0_detected_object):
 
 @pytest.fixture
 def frame_with_and_without_detected_object(
-    prob_1_detected_object, prob_0_detected_object
+    prob_1_detected_object, prob_0_detected_object, test_np_ndraary_image
 ):
     return Frame(
         frame_idx=0,
         timestamp=0,
-        frame_image=np.zeros((100, 100, 3), dtype=np.uint8),
+        frame_image=test_np_ndraary_image,
         annotated_image={},
         object_of_interest={
             prob_1_detected_object.name: prob_1_detected_object,

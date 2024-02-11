@@ -1,25 +1,32 @@
 from typing import List
 
+from ns_vfs.automaton._base import Automaton
 from ns_vfs.automaton.state import State
 from ns_vfs.data.frame import Frame
 
 
-class ProbabilisticAutomaton:
+class ProbabilisticAutomaton(Automaton):
     def __init__(
-        self, include_initial_state: bool = False, proposition_set: List[str] = None
+        self,
+        include_initial_state: bool = False,
+        proposition_set: List[str] = None,
     ) -> None:
-        self.proposition_combinations = self._create_proposition_combinations(
-            len(proposition_set)
-        )
+
         self.previous_states = list()
         self.states = list()
         self.transitions = list()
-        self.proposition_set = proposition_set
-        self.probability_of_propositions = [[] for _ in range(len(proposition_set))]
         self.frame_index_in_automaton = 0
         self.include_initial_state = include_initial_state
 
-        if include_initial_state:
+    def set_up(self, proposition_set: List[str]):
+        self.proposition_combinations = self._create_proposition_combinations(
+            len(proposition_set)
+        )
+        self.proposition_set = proposition_set
+        self.probability_of_propositions = [
+            [] for _ in range(len(proposition_set))
+        ]
+        if self.include_initial_state:
             self._current_state = State(
                 state_index=0,
                 frame_index_in_automaton=-1,
@@ -35,6 +42,9 @@ class ProbabilisticAutomaton:
         self.previous_states = list()
         self.states = list()
         self.transitions = list()
+        self.probability_of_propositions = [
+            [] for _ in range(len(self.proposition_set))
+        ]
         self.frame_index_in_automaton = 0
 
         if self.include_initial_state:

@@ -54,7 +54,9 @@ class DummyVisionModel(ComputerVisionObjectDetector):
         """
         pass
 
-    def detect(self, frame_img: np.ndarray, classes: list) -> any:
+    def detect(
+        self, frame_img: np.ndarray, classes: list, ground_truth: bool = True
+    ) -> any:
         """Detect object in frame.
 
         Args:
@@ -72,16 +74,28 @@ class DummyVisionModel(ComputerVisionObjectDetector):
 
         self._size = 0
 
-        return DetectedObject(
-            name=classes[0],
-            model_name=self.name,
-            confidence_of_all_obj=[self._detection_probability - 0.1],
-            probability_of_all_obj=[self._detection_probability],
-            all_obj_detected=None,
-            number_of_detection=1,
-            is_detected=True,
-            supervision_detections=None,
-        )
+        if ground_truth:
+            return DetectedObject(
+                name=classes[0],
+                model_name=self.name,
+                confidence_of_all_obj=[self._detection_probability - 0.1],
+                probability_of_all_obj=[self._detection_probability],
+                all_obj_detected=None,
+                number_of_detection=1,
+                is_detected=True,
+                supervision_detections=None,
+            )
+        else:
+            return DetectedObject(
+                name=classes[0],
+                model_name=self.name,
+                confidence_of_all_obj=[0],
+                probability_of_all_obj=[0],
+                all_obj_detected=None,
+                number_of_detection=0,
+                is_detected=True,
+                supervision_detections=None,
+            )
 
     def get_confidence_score(
         self, frame_img: np.ndarray, true_lable: str

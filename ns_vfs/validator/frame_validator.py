@@ -1,6 +1,7 @@
 import re
 
 from ns_vfs.data.frame import Frame
+from ns_vfs.enums.symbolic_filter_rule import SymbolicFilterRule
 
 
 class FrameValidator:
@@ -10,11 +11,13 @@ class FrameValidator:
         threshold_of_probability: float = 0.5,
     ):
         self._threshold_of_probability = threshold_of_probability
-        self._symbolic_verification_rule = self.get_symbolic_rule_from_ltl_formula(
-            ltl_formula
+        self._symbolic_verification_rule = (
+            self.get_symbolic_rule_from_ltl_formula(ltl_formula)
         )
 
-    def validate_frame(self, frame: Frame):
+    def validate_frame(
+        self, frame: Frame, is_symbolic_verification: bool = True
+    ):
         """Validate frame."""
         if frame.is_any_object_detected():
             all_below_threshold = all(
@@ -24,25 +27,35 @@ class FrameValidator:
             )
             if all_below_threshold:
                 return False
-            if self.symbolic_verification(frame):
-                return True
+            if is_symbolic_verification:
+                if self.symbolic_verification(frame):
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return True
         else:
             return False
 
     def symbolic_verification(self, frame: Frame):
         """Symbolic verification."""
-        self._symbolic_verification_rule = {}
-        avoid_props = self._symbolic_verification_rule.get("avoid_proposition")
-        associated_props = self._symbolic_verification_rule.get("and_associated_props")
+        avoid_props = self._symbolic_verification_rule.get(
+            SymbolicFilterRule.AVOID_PROPOSITION
+        )
+        associated_props = self._symbolic_verification_rule.get(
+            SymbolicFilterRule.AND_ASSOCIATED_PROPS
+        )
         if avoid_props:
             for avoid_p in avoid_props:
                 if frame.propositional_probability[str(avoid_p)] > 0:
                     return False
-        associated_props = self._symbolic_verification_rule.get("and_associated_props")
+        associated_props = self._symbolic_verification_rule.get(
+            SymbolicFilterRule.AND_ASSOCIATED_PROPS
+        )
         if associated_props:
-            if not all(props in frame.detected_object for props in associated_props):
+            if not all(
+                props in frame.detected_object for props in associated_props
+            ):
                 return False
         return True
 
@@ -52,9 +65,13 @@ class FrameValidator:
             avoid_proposition = ltl_formula.split("!")[-1][1:].split('"')[
                 0
             ]  # [1:-2].replace('"', "")
-            symbolic_verification_rule["avoid_proposition"] = avoid_proposition
+            symbolic_verification_rule[SymbolicFilterRule.AVOID_PROPOSITION] = (
+                avoid_proposition
+            )
         else:
-            symbolic_verification_rule["avoid_proposition"] = None
+            symbolic_verification_rule[SymbolicFilterRule.AVOID_PROPOSITION] = (
+                None
+            )
 
         if "&" in ltl_formula:
             # if A,B are associated by &
@@ -63,6 +80,8 @@ class FrameValidator:
             A, B = re.findall(r"\"(.*?)\"", A.split("(")[-1]), re.findall(
                 r"\"(.*?)\"", B.split(")")[0]
             )
-            symbolic_verification_rule["and_associated_props"] = A + B
+            symbolic_verification_rule[
+                SymbolicFilterRule.AND_ASSOCIATED_PROPS
+            ] = (A + B)
 
         return symbolic_verification_rule

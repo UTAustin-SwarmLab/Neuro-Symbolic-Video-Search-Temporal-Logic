@@ -7,41 +7,25 @@ from ns_vfs.data.frame import Frame
 
 @pytest.fixture
 def probabilistic_automaton_with_initial_state():
-    return ProbabilisticAutomaton(
+    automaton = ProbabilisticAutomaton(
         include_initial_state=True, proposition_set=["object 1", "object 0"]
     )
+    automaton.set_up(proposition_set=["object 1", "object 0"])
+    return automaton
 
 
 @pytest.fixture
 def probabilistic_automaton_without_initial_state():
-    return ProbabilisticAutomaton(
+    automaton = ProbabilisticAutomaton(
         include_initial_state=False, proposition_set=["object 1", "object 0"]
     )
+    automaton.set_up(proposition_set=["object 1", "object 0"])
+    return automaton
 
 
-def test_probabilistic_automaton_with_initial_state(
-    probabilistic_automaton_with_initial_state,
-):
-    automaton = probabilistic_automaton_with_initial_state
-    assert len(automaton.previous_states) == 1
-    assert len(automaton.states) == 1
-    assert len(automaton.transitions) == 0
-    assert automaton.proposition_set == ["object 1", "object 0"]
-    assert automaton.probability_of_propositions == [[], []]
-
-
-def test_probabilistic_automaton_without_initial_state(
+def test_create_proposition_combinations(
     probabilistic_automaton_without_initial_state,
 ):
-    automaton = probabilistic_automaton_without_initial_state
-    assert len(automaton.previous_states) == 0
-    assert len(automaton.states) == 0
-    assert len(automaton.transitions) == 0
-    assert automaton.proposition_set == ["object 1", "object 0"]
-    assert automaton.probability_of_propositions == [[], []]
-
-
-def test_create_proposition_combinations(probabilistic_automaton_without_initial_state):
     automaton = probabilistic_automaton_without_initial_state
     assert automaton._create_proposition_combinations(
         len(automaton.proposition_set)
@@ -58,6 +42,40 @@ def test_update_probability_of_propositions(
     assert automaton.probability_of_propositions == [[1.0], [0.0]]
 
 
+def test_probabilistic_automaton_with_initial_state(
+    probabilistic_automaton_with_initial_state,
+    frame_with_and_without_detected_object,
+):
+    # test case 1: init test
+    # test case 2: rest test
+    frame = frame_with_and_without_detected_object
+    automaton = probabilistic_automaton_with_initial_state
+    assert len(automaton.previous_states) == 1
+    assert len(automaton.states) == 1
+    assert len(automaton.transitions) == 0
+    assert automaton.proposition_set == ["object 1", "object 0"]
+    assert automaton.probability_of_propositions == [[], []]
+
+    automaton.add_frame_to_automaton(frame)
+
+    automaton.reset()
+    assert len(automaton.previous_states) == 1
+    assert len(automaton.states) == 1
+    assert len(automaton.transitions) == 0
+    assert automaton.probability_of_propositions == [[], []]
+
+
+def test_probabilistic_automaton_without_initial_state(
+    probabilistic_automaton_without_initial_state,
+):
+    automaton = probabilistic_automaton_without_initial_state
+    assert len(automaton.previous_states) == 0
+    assert len(automaton.states) == 0
+    assert len(automaton.transitions) == 0
+    assert automaton.proposition_set == ["object 1", "object 0"]
+    assert automaton.probability_of_propositions == [[], []]
+
+
 def test_add_frame_to_automaton_1(
     prob_1_detected_object,
     prob_0_8_detected_object,
@@ -65,9 +83,13 @@ def test_add_frame_to_automaton_1(
     # prob 1 and prob 0.8 are detected
     automaton_no_init = ProbabilisticAutomaton(
         include_initial_state=False,
-        proposition_set=[prob_1_detected_object.name, prob_0_8_detected_object.name],
     )
-
+    automaton_no_init.set_up(
+        proposition_set=[
+            prob_1_detected_object.name,
+            prob_0_8_detected_object.name,
+        ]
+    )
     frame_1 = Frame(
         frame_idx=0,
         timestamp=0,
@@ -94,9 +116,15 @@ def test_add_frame_to_automaton_2(
 ):
     # test case 1: prob 0.8 and prob 0.3 are detected
     # test case 2: add frame twice
+    # test case 3: reset
     automaton_no_init = ProbabilisticAutomaton(
         include_initial_state=False,
-        proposition_set=[prob_0_3_detected_object.name, prob_0_8_detected_object.name],
+    )
+    automaton_no_init.set_up(
+        proposition_set=[
+            prob_0_3_detected_object.name,
+            prob_0_8_detected_object.name,
+        ]
     )
     frame_2 = Frame(
         frame_idx=0,
@@ -124,3 +152,9 @@ def test_add_frame_to_automaton_2(
     print(automaton_no_init.transitions)
 
     assert len(automaton_no_init.transitions) == 20
+
+    automaton_no_init.reset()
+    assert len(automaton_no_init.previous_states) == 0
+    assert len(automaton_no_init.states) == 0
+    assert len(automaton_no_init.transitions) == 0
+    assert automaton_no_init.probability_of_propositions == [[], []]
