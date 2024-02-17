@@ -2,6 +2,7 @@
 test_scripts/runs/
 artifacts/
 store/
+libs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
