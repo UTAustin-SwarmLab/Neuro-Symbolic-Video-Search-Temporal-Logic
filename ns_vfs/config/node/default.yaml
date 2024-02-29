@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+_target_: ns_vfs.system.node.NSVSNode
+video_processor: ${video_processor}
+vision_percepter: ${vision_percepter}
+ltl_formula: ${ltl_formula}
+proposition_set: ${proposition_set}
+
+

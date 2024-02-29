@@ -1,0 +1,4 @@
+defaults:
+  - yolo: default
+  - clip: default
+  - dummy: default

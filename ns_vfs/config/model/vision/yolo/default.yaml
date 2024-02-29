@@ -1,0 +1,2 @@
+weight_path: /opt/Neuro-Symbolic-Video-Frame-Search/artifacts/weights/yolov8n.pt
+gpu_number: 0 
