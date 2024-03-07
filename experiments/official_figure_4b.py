@@ -3,8 +3,18 @@ import pandas as pd
 import seaborn as sns
 from swarm_visualizer.utility.general_utils import set_plot_properties
 
-LLMModels = ["gpt-3.5-turbo-instuct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
-LLMPlotColors = ["#a31621", "#2a7d2b", "#6a60d5", "#e7984a"]  # ["#de1028", "#07610b", "#760af2", "#ff9100"]
+LLMModels = [
+    "gpt-3.5-turbo-instruct",
+    "gpt-3.5-turbo",
+    "gpt-4",
+    "NSVS-TL (Ours)",
+]
+LLMPlotColors = [
+    "#a31621",
+    "#2a7d2b",
+    "#6a60d5",
+    "#e7984a",
+]  # ["#de1028", "#07610b", "#760af2", "#ff9100"]
 
 data_loc_delta = {
     LLMModels[
@@ -46,7 +56,9 @@ for k, v in data_loc_delta.items():
         print(df)
         result_dict_delta[k] = df
         result_dict_delta[k]["model"] = k
-        result_dict_delta[k] = result_dict_delta[k][result_dict_delta[k]["cv_model_weight"] == "yolov8x"]
+        result_dict_delta[k] = result_dict_delta[k][
+            result_dict_delta[k]["cv_model_weight"] == "yolov8x"
+        ]
     else:
         df = pd.read_csv(v)
         header = [
@@ -95,12 +107,30 @@ for j, (k, v) in enumerate(data_loc_delta.items()):
     df["f1_score_bw"] = df["f1_score"]
     df["mean_number_frames"] = df["number_of_frame"]
     for _ in range(meaning):
-        df["f1_score_mean"] = df["f1_score_mean"].rolling(window=window, min_periods=1, closed="both").mean()
-        df["f1_score_max"] = df["f1_score_max"].rolling(window=window, min_periods=1, closed="both").max()
-        df["f1_score_std"] = df["f1_score_std"].rolling(window=window, min_periods=1, closed="both").std()
-        df["f1_score_min"] = df["f1_score_min"].rolling(window=window, min_periods=1, closed="both").min()
+        df["f1_score_mean"] = (
+            df["f1_score_mean"]
+            .rolling(window=window, min_periods=1, closed="both")
+            .mean()
+        )
+        df["f1_score_max"] = (
+            df["f1_score_max"]
+            .rolling(window=window, min_periods=1, closed="both")
+            .max()
+        )
+        df["f1_score_std"] = (
+            df["f1_score_std"]
+            .rolling(window=window, min_periods=1, closed="both")
+            .std()
+        )
+        df["f1_score_min"] = (
+            df["f1_score_min"]
+            .rolling(window=window, min_periods=1, closed="both")
+            .min()
+        )
         df["mean_number_frames"] = (
-            df["mean_number_frames"].rolling(window=window, min_periods=1, closed="both").mean()
+            df["mean_number_frames"]
+            .rolling(window=window, min_periods=1, closed="both")
+            .mean()
         )
         df["f1_score_bw"] = 0.5 * (df["f1_score_max"] + df["f1_score_min"])
     print(df["f1_score_mean"])
@@ -158,7 +188,8 @@ plt.xlabel("Length of video clip (s)")
 # fig.set_size_inches(8, 8)
 
 # Place the legend below the plot
-plt.legend(fontsize=10, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
+# plt.legend(fontsize=10, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
+plt.legend(fontsize=9.20, loc="lower center", ncol=4)
 plt.tight_layout()
 # plt.subplots_adjust(bottom=0.20)
 # Adjust the margins and layout

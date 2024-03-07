@@ -12,7 +12,9 @@ from swarm_visualizer.utility.general_utils import set_plot_properties
 
 # %%
 #  Set Data Path
-root_dir = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/")
+root_dir = Path(
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/"
+)
 clip_csv_dir = root_dir / "clip/false_positive_threshold_experiment_0_to_1"
 dino_csv_dir = root_dir / "dino/false_positive_threshold_experiment"
 yolo_csv_dir = root_dir / "yolo/false_positive_threshold_experiment"
@@ -73,7 +75,7 @@ mrcnn_color = "#cc06ab"
 # Create a line plot for accuracy over number of frames for yolo8x weight
 set_plot_properties()
 confidence_interval = 68
-plt.figure(figsize=(8, 5))
+plt.figure(figsize=(8, 6))
 
 sns.lineplot(
     x="number_of_frame",
@@ -120,7 +122,7 @@ sns.lineplot(
     errorbar=("ci", confidence_interval),
 )
 # sns.lineplot(x='number_of_frame', y='accuracy', data=df_yolo8n, marker="o", markersize=8, color="red", label='yolo8n', alpha=0.5, ci=20)
-plt.title("NSVS-TL Performance Comparison (Different NNs)")
+plt.title("Performance with different vision models)")
 plt.ylabel("F1 Score")
 plt.xlabel("Length of video clip (s)")
 
@@ -128,4 +130,9 @@ plt.xlabel("Length of video clip (s)")
 plt.ylim(0.0, 1.0)
 plt.tight_layout()
 plt.legend(fontsize=10)
-plt.savefig("figure4_a.png")
+
+# plt.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
+# plt.tight_layout()
+plt.savefig(
+    "/opt/Neuro-Symbolic-Video-Frame-Search/fig5a_performance_different_nn"
+)
