@@ -17,7 +17,7 @@ ns_vfs_system_cfg:
     is_filter: False
     verbose: False
 
-video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/outputs/tlv_dataset_ImageNet2017-1K_ltl_F "clock"_30_0.pkl'
+video_file_path: ''
 ltl_formula: 
 proposition_set:
   #- Proposition 1
