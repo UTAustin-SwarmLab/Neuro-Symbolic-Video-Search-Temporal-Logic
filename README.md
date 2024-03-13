@@ -2,11 +2,11 @@
 
 ## Installation Guide
 **Prerequisites** <br>
-No need to worry about the prerequisites below if you are using a UT Swarm Lab cluster.
+No need to worry about the prerequisites below if you are using a ****** cluster.
 
 * CUDA Driver: Version 11.8.0 or higher
 * Docker: Nvidia Driver
-**evelopment Environment Setup**
+**Development Environment Setup**
 
 1. Clone this repository.
 2. Navigate to the makefile and modify the user input section.
