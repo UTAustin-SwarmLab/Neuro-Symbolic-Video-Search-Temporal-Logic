@@ -11,7 +11,7 @@ hydra:
   job:
     chdir: True
 
-video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/ouputs/benchmark_ImageNet2017-1K_ltl_"stop_sign" U "sheep"_5_0.pkl'
+video_file_path: ''
 ltl_formula: 
 proposition_set:
   #- Proposition 1

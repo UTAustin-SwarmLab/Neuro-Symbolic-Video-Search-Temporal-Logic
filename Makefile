@@ -9,12 +9,11 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 # No space at the end
 CODE_PATH := <<YOUR PATH>>
 
-# ONLY FOR UT SWARM LAB DEVELOPERS
 DS_PATH := /store/
 
 # Custom Image
 DOCKER_IMG := ns_vfs
-MY_DOCKER_IMG := ${USER}_ns_vfs_cv24
+MY_DOCKER_IMG := ${USER}_ns_vfs
 TAG := latest
 
 pull_docker_image:

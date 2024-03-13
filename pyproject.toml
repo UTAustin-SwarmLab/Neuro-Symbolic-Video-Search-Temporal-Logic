@@ -15,7 +15,7 @@ submodule_path = "ns_vfs/model/diffusion/stable_diffusion"
 name = "ns-vfs"
 version = "0.0.1"
 authors = [
-  { name="Minkyu Choi", email="minkyu.choi@utexas.edu" },
+  { name="Anonymous Authors", email="anoymousu1@gmail.com" },
 ]
 description = "The pipeline to convert video to automaton"
 readme = "README.md"
@@ -43,8 +43,8 @@ dependencies = [
 line-length = 80
 
 [project.urls]
-"Homepage" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
-"Bug Tracker" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
+"Homepage" = ""
+"Bug Tracker" = ""
 
 [project.optional-dependencies]
 dev = ["black", "ruff", "mypy"]
