@@ -129,3 +129,13 @@ class RealVideoProcessor(BaseVideoProcessor):
             pass
 
         return frame_img
+
+    def insert_annotation_to_current_frame(
+        self, annotations: list[str]
+    ) -> None:
+        """Insert annotations to the current frame.
+
+        Args:
+            annotations (list[str]): List of annotations.
+        """
+        pass

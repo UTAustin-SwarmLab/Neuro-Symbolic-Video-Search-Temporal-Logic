@@ -25,7 +25,7 @@ class DetectedObject:
     supervision_detections: Optional[sv.Detections] = None
 
     def __post_init__(self):
-        if len(self.confidence_of_all_obj) > 0:
+        if self.confidence_of_all_obj and len(self.confidence_of_all_obj) > 0:
             self.confidence = max(self.confidence_of_all_obj)
-        if len(self.confidence_of_all_obj) > 0:
+        if self.confidence_of_all_obj and len(self.confidence_of_all_obj) > 0:
             self.probability = max(self.probability_of_all_obj)

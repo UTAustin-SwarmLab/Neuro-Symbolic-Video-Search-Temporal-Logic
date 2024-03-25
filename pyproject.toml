@@ -30,6 +30,7 @@ dependencies = [
     "hydra-core>=1.2.0",
     "numpy==1.21.5",
     "pandas",
+    "sympy",
     "regex",
     "supervision==0.6.0",
     "roboflow",

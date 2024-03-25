@@ -48,7 +48,9 @@ class Yolo(ComputerVisionObjectDetector):
         Returns:
             bool: True if object name is valid.
         """
-        return object_name.replace("_", " ") in list(self._available_classes.keys())
+        return object_name.replace("_", " ") in list(
+            self._available_classes.keys()
+        )
 
     def _parse_class_name(self, class_names: list[str]) -> list[str]:
         """Doest not need to parse class name."""
@@ -65,14 +67,18 @@ class Yolo(ComputerVisionObjectDetector):
             any: Detections.
         """
         class_name = classes[0].replace("_", " ")
-        class_ids = [self._available_classes[c.replace("_", " ")] for c in classes]
+        class_ids = [
+            self._available_classes[c.replace("_", " ")] for c in classes
+        ]
         detected_obj = self.model.predict(source=frame_img, classes=class_ids)
 
         supervision_detections = sv.Detections(
             xyxy=detected_obj[0].boxes.xyxy.cpu().detach().numpy()
         )
 
-        confidence_from_model = detected_obj[0].boxes.conf.cpu().detach().numpy()
+        confidence_from_model = (
+            detected_obj[0].boxes.conf.cpu().detach().numpy()
+        )
 
         num_detections = len(detected_obj[0].boxes)
         if num_detections > 0:
@@ -98,8 +104,8 @@ class Yolo(ComputerVisionObjectDetector):
     def _mapping_probability(
         self,
         confidence_per_video: float,
-        true_threshold=0.60,
-        false_threshold=0.40,
+        true_threshold=0.90,  # 0.60,
+        false_threshold=0.10,  # 0.40,
         a=0.971,
         k=7.024,
         x0=0.117,

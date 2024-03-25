@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
 import numpy as np
 
 from ns_vfs.data.detected_object import DetectedObject
@@ -10,7 +8,7 @@ from ns_vfs.percepter._base import VisionPercepter
 
 
 class SingleVisionPercepter(VisionPercepter):
-    def __init__(self, cv_models: Dict[str, ComputerVisionModel]):
+    def __init__(self, cv_models: dict[str, ComputerVisionModel]):
         super().__init__()
         self.cv_model = cv_models
 
@@ -19,7 +17,7 @@ class SingleVisionPercepter(VisionPercepter):
         image: np.ndarray,
         object_of_interest: list[str],
         ground_truth_object: list[str] | str | None = None,
-    ) -> Dict[str, DetectedObject]:
+    ) -> dict[str, DetectedObject]:
         """Perceive the environment and return the perception."""
         detected_objects = {}
         for object in object_of_interest:

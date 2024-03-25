@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses  # noqa: D100
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -18,7 +20,9 @@ class Frame:
     frame_idx: int
     timestamp: Optional[int] = None
     frame_image: Optional[np.ndarray] = None
-    annotated_image: Dict[str, np.ndarray] = dataclasses.field(default_factory=dict)
+    annotated_image: Dict[str, np.ndarray] = dataclasses.field(
+        default_factory=dict
+    )
     object_of_interest: Optional[dict] = None
     activity_of_interest: Optional[dict] = None
 
@@ -50,24 +54,9 @@ class FramesofInterest:
     frame_idx_to_real_idx: dict = dataclasses.field(default_factory=dict)
     frame_buffer: List[Frame] = dataclasses.field(default_factory=list)
 
-    def __post_init__(self):
-        if "!" in self.ltl_formula:
-            self._reverse_search = True
-        else:
-            self._reverse_search = False
-
     def save_annotated_images(self, annotated_image: Dict[str, np.ndarray]):
         for a_img in list(annotated_image.values()):
             self.annotated_images.append(a_img)
-
-    def reorder_frame_of_interest(self):
-        if self._reverse_search:
-            # flattened_list = [item for sublist in self.foi_list for item in sublist]
-            # self.foi_list = [x for x in range(len(self.frame_images)) if x not in flattened_list]
-            pass
-        else:
-            # self.foi_list = combine_consecutive_lists(self.foi_list)
-            pass
 
     def save_frames_of_interest(self, path):
         path = Path(path)
@@ -104,12 +93,16 @@ class FramesofInterest:
                 self.save_annotated_images(frame.annotated_image)
         self.frame_buffer = list()
 
-    def save_frames(self, path):
+    def save(self, path: str | Path):
         from PIL import Image
 
-        root_path = Path(get_file_or_dir_with_datetime(path))
-        frame_path = root_path / "frame"
-        annotation_path = root_path / "annotation"
+        if isinstance(path, str):
+            root_path = Path(path)
+        else:
+            root_path = path
+        dir_name = get_file_or_dir_with_datetime("foi_result")
+        frame_path = root_path / dir_name / "frame"
+        annotation_path = root_path / dir_name / "annotation"
 
         frame_path.mkdir(parents=True, exist_ok=True)
         annotation_path.mkdir(parents=True, exist_ok=True)
