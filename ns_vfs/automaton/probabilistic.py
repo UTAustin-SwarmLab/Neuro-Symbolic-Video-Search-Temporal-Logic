@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 from ns_vfs.automaton._base import Automaton
 from ns_vfs.automaton.state import State
@@ -9,16 +9,16 @@ class ProbabilisticAutomaton(Automaton):
     def __init__(
         self,
         include_initial_state: bool = False,
-        proposition_set: List[str] = None,
+        proposition_set: list[str] = None,
     ) -> None:
-
+        self.proposition_set = proposition_set
         self.previous_states = list()
         self.states = list()
         self.transitions = list()
         self.frame_index_in_automaton = 0
         self.include_initial_state = include_initial_state
 
-    def set_up(self, proposition_set: List[str]):
+    def set_up(self, proposition_set: list[str]):
         self.proposition_combinations = self._create_proposition_combinations(
             len(proposition_set)
         )

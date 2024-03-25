@@ -3,7 +3,9 @@ from omegaconf import DictConfig
 
 
 @hydra.main(
-    config_path="config", config_name="tlv_dataset", version_base="1.2.0"
+    config_path="config",
+    config_name="constrained_video_streaming",
+    version_base="1.2.0",
 )
 def main(cfg: DictConfig):
     print(cfg)

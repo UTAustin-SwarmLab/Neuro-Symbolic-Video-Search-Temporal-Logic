@@ -6,6 +6,7 @@ class State:
         frame_index_in_automaton,
         proposition_status_set,
         proposition_set,
+        probability=1,
     ) -> None:
         """State class.
 
@@ -19,12 +20,12 @@ class State:
         self.frame_index_in_automaton = frame_index_in_automaton
         self.proposition_set = proposition_set
         self.current_proposition_combination = (
-            proposition_status_set  # "initial", TTT, TFT, FTT, etc.
+            proposition_status_set  # "init", "terminal", TTT, TFT, FTT, etc.
         )
         self.current_descriptive_label = self._get_descriptive_label(
             label=proposition_status_set
         )
-        self.probability = 1
+        self.probability = probability
 
     def __repr__(self):
         """Representation of state."""
@@ -46,6 +47,8 @@ class State:
                 labels.append(self.proposition_set[i])
         if self.state_index == 0 and label == "init":
             labels.append("init")
+        elif label == "terminal":
+            labels.append("terminal")
         return labels
 
     def update(self, frame_index_in_automaton, proposition_combinations):
@@ -77,5 +80,7 @@ class State:
             if self.current_proposition_combination[i] == "T":
                 probability *= probabilities[i][self.frame_index_in_automaton]
             else:
-                probability *= 1 - probabilities[i][self.frame_index_in_automaton]
+                probability *= (
+                    1 - probabilities[i][self.frame_index_in_automaton]
+                )
         self.probability = round(probability, 2)
