@@ -1,0 +1,26 @@
+defaults:
+  - node: default
+  - video_processor: real_video
+  - vision_percepter: single_vision_percepter
+  - automaton: probabilistic
+  - model: default
+  - override hydra/launcher: local
+  - override hydra/output: local
+  - _self_
+
+hydra:
+  job:
+    chdir: True
+
+ns_vfs_system_cfg:
+  # if None, the result will not be saved
+  save_result_dir: /opt/Neuro-Symbolic-Video-Frame-Search/output
+  model_checker:
+    is_filter: False
+    verbose: False
+
+video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/titanic_scene.mp4'
+ltl_formula: F "person"
+proposition_set:
+  - person
+  - car
