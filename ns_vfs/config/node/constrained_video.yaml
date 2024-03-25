@@ -1,6 +1,6 @@
 defaults:
   - _self_
-_target_: ns_vfs.system.real_video_file.NSVSNodeRealVideoFile
+_target_: ns_vfs.system.constrained_video_streaming.ConstrainedVideoStreaming
 video_processor: ${video_processor}
 vision_percepter: ${vision_percepter}
 automaton: ${automaton}
