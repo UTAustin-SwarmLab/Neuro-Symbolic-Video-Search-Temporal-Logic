@@ -6,6 +6,7 @@ import numpy as np
 from omegaconf import DictConfig
 from PIL import Image, ImageDraw, ImageFilter
 from swarm_cv.image.annotator.text_annotator import TextAnnotator
+from swarm_cv.image.filter.image_filter import ImageFilter
 
 from ns_vfs.automaton._base import Automaton
 from ns_vfs.data.frame import Frame, FramesofInterest
@@ -14,22 +15,6 @@ from ns_vfs.processor._base_video_processor import BaseVideoProcessor
 from ns_vfs.system.node import Node
 
 IS_BLUR = True
-
-
-def apply_gaussian_blur(image, bboxes, blur_radius=30):
-    if isinstance(image, np.ndarray):
-        image = Image.fromarray(image)
-    fully_blurred_image = image.copy().filter(
-        ImageFilter.GaussianBlur(blur_radius)
-    )
-    mask = Image.new("L", image.size, 0)
-    draw = ImageDraw.Draw(mask)
-    for bbox in bboxes:
-        x1, y1, x2, y2 = bbox
-        draw.rectangle([x1, y1, x2, y2], fill=255)
-    final_image = Image.composite(fully_blurred_image, image, mask)
-    return final_image
-
 
 class ConstrainedVideoStreaming(Node):
     def __init__(
@@ -53,6 +38,7 @@ class ConstrainedVideoStreaming(Node):
         self.frame_idx = 0
 
     def start(self) -> None:
+        image_filter = ImageFilter()
         while True:
             frame_img = self.video_processor.get_next_frame()
             if frame_img is None:
@@ -77,12 +63,15 @@ class ConstrainedVideoStreaming(Node):
                         "class_id": class_id,
                     }
                 )
-            blurred = apply_gaussian_blur(frame_img, bboxes_to_blur)
+            blurred = image_filter.apply_filter_to_bbox(
+                image=frame_img,
+                bboxes=bboxes_to_blur,
+                blur_radius=int(max(frame_img.shape[0], frame_img.shape[1])/40)
+            )
             blurred.save(
                 "/opt/Neuro-Symbolic-Video-Frame-Search/yolo_test_image_blurred.jpg"
             )
             np_blurred_image = np.array(blurred)
-
             # # # <<< DEV <<< # # #
             frame = Frame(
                 frame_idx=self.frame_idx,
