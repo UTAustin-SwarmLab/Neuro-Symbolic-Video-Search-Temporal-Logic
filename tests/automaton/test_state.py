@@ -44,7 +44,7 @@ def test_compute_probability_1(init_state):
     init_state.compute_probability(
         probabilities=[object_1_probabilities, object_2_probabilities]
     )
-    assert init_state.probability == 0.40
+    assert init_state.probability == 0.40  # 0.8 * 0.5
 
 
 def test_compute_probability_2(init_state):
@@ -55,4 +55,4 @@ def test_compute_probability_2(init_state):
     init_state.compute_probability(
         probabilities=[object_1_probabilities, object_2_probabilities]
     )
-    assert init_state.probability == 0.10
+    assert init_state.probability == 0.10  # (1-0.8) * 0.5

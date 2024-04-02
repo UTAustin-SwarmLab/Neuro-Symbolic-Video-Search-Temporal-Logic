@@ -29,8 +29,13 @@ params = {
 }
 
 pylab.rcParams.update(params)
-LLMModels = ["gpt-3.5-turbo-instuct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
-LLMPlotColors = ["#a31621", "#2a7d2b", "#6a60d5", "#e7984a"]  # ["#de1028", "#07610b", "#760af2", "#ff9100"]
+LLMModels = ["gpt-3.5-turbo-instruct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
+LLMPlotColors = [
+    "#a31621",
+    "#2a7d2b",
+    "#6a60d5",
+    "#e7984a",
+]  # ["#de1028", "#07610b", "#760af2", "#ff9100"]
 
 data_loc = {
     LLMModels[
@@ -192,26 +197,42 @@ plt.xlabel("TL Specification")
 
 
 ##########################################################################################################################################################
-desired_order = ["gpt-3.5-turbo-instuct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
+desired_order = ["gpt-3.5-turbo-instruct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
 all_data_syn = pd.concat([result_dict[key] for key in desired_order], ignore_index=True)
-all_data_waymo = pd.concat([result_dict_waymo[key] for key in desired_order], ignore_index=True)
-all_data_ns = pd.concat([result_dict_ns[key] for key in desired_order], ignore_index=True)
-all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("Fprop1", "Eventually\nEvent A")
-all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("Gprop1", "Always\nEvent A")
-#all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("prop1Uprop2", "A until B\nA U B")
-all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("prop1Uprop2", "Event A\nuntil B")
-all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("prop1&prop2", "Event A\nand B")
+all_data_waymo = pd.concat(
+    [result_dict_waymo[key] for key in desired_order], ignore_index=True
+)
+all_data_ns = pd.concat(
+    [result_dict_ns[key] for key in desired_order], ignore_index=True
+)
+all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
+    "Fprop1", "Eventually\nEvent A"
+)
+all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
+    "Gprop1", "Always\nEvent A"
+)
+# all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace("prop1Uprop2", "A until B\nA U B")
+all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
+    "prop1Uprop2", "Event A\nuntil B"
+)
+all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
+    "prop1&prop2", "Event A\nand B"
+)
 # all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
 #     "(prop1&prop2)Uprop3", "A and B Until C\n(A & B) U C"
 # )
 all_data_syn["ltl_group"] = all_data_syn["ltl_group"].replace(
     "(prop1&prop2)Uprop3", "Event A and B\nUntil Event C"
 )
-all_data_ns["ltl_group"] = all_data_ns["ltl_group"].replace("prop1Uprop2", "Event A\nuntil B")
+all_data_ns["ltl_group"] = all_data_ns["ltl_group"].replace(
+    "prop1Uprop2", "Event A\nuntil B"
+)
 all_data_ns["ltl_group"] = all_data_ns["ltl_group"].replace(
     "(prop1&prop2)Uprop3", "Event A and B\nUntil Event C"
 )
-all_data_waymo["ltl_group"] = all_data_waymo["ltl_group"].replace("prop1Uprop2", "Event A\nuntil B")
+all_data_waymo["ltl_group"] = all_data_waymo["ltl_group"].replace(
+    "prop1Uprop2", "Event A\nuntil B"
+)
 all_data_waymo["ltl_group"] = all_data_waymo["ltl_group"].replace(
     "(prop1&prop2)Uprop3", "Event A and B\nUntil Event C"
 )
@@ -260,14 +281,16 @@ for i, (title, data) in enumerate(data_for_subplots.items()):
         ax=axes[i],
         order_list=order_list,
     )
-    axes[i].set_xticklabels(axes[i].get_xticklabels(), horizontalalignment="center", fontsize=25)
+    axes[i].set_xticklabels(
+        axes[i].get_xticklabels(), horizontalalignment="center", fontsize=25
+    )
     axes[i].set_title(title, fontsize=40)
     axes[i].set_xlabel("TL Specification", fontsize=25)
     axes[i].set_ylabel("F1 Score", fontsize=35)
     axes[i].legend().set_visible(False)
 
 # Adjust legend to display model names
-desired_order = ["gpt-3.5-turbo-instuct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
+desired_order = ["gpt-3.5-turbo-instruct", "gpt-3.5-turbo", "gpt-4", "NSVS-TL (Ours)"]
 handles, labels = axes[0].get_legend_handles_labels()
 new_handles = [handles[labels.index(label)] for label in desired_order]
 # Adjust legend to display model names
