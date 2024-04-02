@@ -59,7 +59,7 @@ class NSVSNodeTLVDataset(Node):
             else:
                 ground_truth_object = None
 
-            detected_objects: list = self.vision_percepter.perceive(
+            detected_objects: dict = self.vision_percepter.perceive(
                 image=frame_img,
                 object_of_interest=self.proposition_set,
                 ground_truth_object=ground_truth_object,
