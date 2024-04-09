@@ -34,13 +34,49 @@ class Frame:
             return True
 
     @property
-    def detected_object(self):
+    def detected_object_list(self):
         """Get detected object."""
         detected_obj = []
         for obj_name, obj_value in self.object_of_interest.items():
             if obj_value.is_detected:
                 detected_obj.append(obj_name)
         return detected_obj
+
+    @property
+    def detected_object_dict(self):
+        """Get detected object info as dict."""
+        detected_obj = {}
+        for obj_name, obj_value in self.object_of_interest.items():
+            if obj_value.is_detected:
+                detected_obj[obj_name] = {}
+                detected_obj[obj_name]["total_number_of_detection"] = (
+                    obj_value.number_of_detection
+                )
+                detected_obj[obj_name]["maximum_probability"] = max(
+                    obj_value.probability_of_all_obj
+                )
+                detected_obj[obj_name]["minimum_probability"] = min(
+                    obj_value.probability_of_all_obj
+                )
+                detected_obj[obj_name]["maximum_confidence"] = max(
+                    obj_value.confidence_of_all_obj
+                )
+                detected_obj[obj_name]["minimum_confidence"] = min(
+                    obj_value.confidence_of_all_obj
+                )
+
+        return detected_obj
+
+    @property
+    def detected_bboxes(self):
+        """Get detected object."""
+        bboxes = []
+        for obj_name, obj_value in self.object_of_interest.items():
+            if obj_value.is_detected:
+                for obj_prob in obj_value.probability_of_all_obj:
+                    if obj_prob > 0:
+                        bboxes += obj_value.bounding_box_of_all_obj
+        return bboxes
 
 
 @dataclasses.dataclass

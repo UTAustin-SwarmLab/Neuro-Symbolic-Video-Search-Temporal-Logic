@@ -10,7 +10,9 @@ from ns_vfs.model.vision._base import ComputerVisionModel
 class ComputerVisionObjectDetector(ComputerVisionModel):
     """Computer Vision Detector."""
 
-    def __init__(self, weight_path: Union[Path, str], gpu_number: int = 0) -> None:
+    def __init__(
+        self, weight_path: Union[Path, str], gpu_number: int = 0
+    ) -> None:
         """Computer Vision Detector.
 
         Args:
