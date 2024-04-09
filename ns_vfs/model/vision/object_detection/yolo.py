@@ -56,6 +56,21 @@ class Yolo(ComputerVisionObjectDetector):
         """Doest not need to parse class name."""
         ...
 
+    def get_bounding_boxes(self, detected_obj) -> list:
+        """Get bounding boxes.
+
+        Args:
+            detected_obj (DetectedObject): Detected object.
+
+        Returns:
+            list: Bounding boxes.
+        """
+        bboxes = []
+        for row in detected_obj[0].boxes.data.cpu().numpy():
+            bbox = row[:4].tolist()
+            bboxes.append(bbox)
+        return bboxes
+
     def detect(self, frame_img: np.ndarray, classes: list) -> any:
         """Detect object in frame.
 
@@ -99,13 +114,14 @@ class Yolo(ComputerVisionObjectDetector):
             number_of_detection=num_detections,
             is_detected=is_detected,
             supervision_detections=supervision_detections,
+            bounding_box_of_all_obj=self.get_bounding_boxes(detected_obj),
         )
 
     def _mapping_probability(
         self,
         confidence_per_video: float,
-        true_threshold=0.90,  # 0.60,
-        false_threshold=0.10,  # 0.40,
+        true_threshold=0.60,  # 0.60,
+        false_threshold=0.40,  # 0.40,
         a=0.971,
         k=7.024,
         x0=0.117,
@@ -121,9 +137,9 @@ class Yolo(ComputerVisionObjectDetector):
             float: Mapped probability.
         """
         if confidence_per_video >= true_threshold:
-            return 1
+            return 1.0
         elif confidence_per_video < false_threshold:
-            return 0
+            return 0.0
         else:
             return round(
                 self._sigmoid_mapping_estimation_function(

@@ -20,7 +20,9 @@ def get_not_operator_mapping(ltl_formula):
     return not_operator_proposition_list
 
 
-def verification_result_eval(verification_result: ExplicitQualitativeCheckResult):
+def verification_result_eval(
+    verification_result: ExplicitQualitativeCheckResult,
+):
     # string result is "true" when is absolutely true
     # but it returns "true, false" when we have some true and false
     verification_result_str = str(verification_result)

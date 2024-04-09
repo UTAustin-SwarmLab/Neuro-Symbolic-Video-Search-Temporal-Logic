@@ -7,7 +7,9 @@ def predict():
     source = "data/yolo_test_image.jpg"
     print(model.names)
 
-    results = model.predict(source, save=True, classes=[0, 2, 9])  # 0-person, 2-car, 9-trafficlight
+    results = model.predict(
+        source, save=True, classes=[0, 2, 9]
+    )  # 0-person, 2-car, 9-trafficlight
     print(results[0])
     print(results[0].boxes.conf)
     print(results[0].boxes.cls)
