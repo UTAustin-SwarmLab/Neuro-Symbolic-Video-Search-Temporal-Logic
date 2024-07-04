@@ -18,8 +18,13 @@ ns_vfs_system_cfg:
   model_checker:
     is_filter: False
     verbose: False
+  constrained_video_streaming:
+    property_constrained: True
+    filter_type: blur
 
-video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/av.mp4'
-ltl_formula: 'P>=0.80 G [~person]'
+video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/av2.mp4'
+ltl_formula: 'P>=0.80 G [~person & ~car]'
 proposition_set:
   - person
+  - car
+

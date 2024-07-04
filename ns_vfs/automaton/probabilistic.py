@@ -19,6 +19,7 @@ class ProbabilisticAutomaton(Automaton):
         self.include_initial_state = include_initial_state
 
     def set_up(self, proposition_set: list[str]):
+        self.frame_index_in_automaton = 0
         self.proposition_combinations = self._create_proposition_combinations(
             len(proposition_set)
         )

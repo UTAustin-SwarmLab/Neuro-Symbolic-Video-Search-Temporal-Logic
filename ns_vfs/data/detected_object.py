@@ -23,6 +23,7 @@ class DetectedObject:
     is_detected: bool | Status = Status.UNKNOWN
     model_name: Optional[str] = None
     supervision_detections: Optional[sv.Detections] = None
+    bounding_box_of_all_obj: Optional[List[Any]] = None
 
     def __post_init__(self):
         if self.confidence_of_all_obj and len(self.confidence_of_all_obj) > 0:

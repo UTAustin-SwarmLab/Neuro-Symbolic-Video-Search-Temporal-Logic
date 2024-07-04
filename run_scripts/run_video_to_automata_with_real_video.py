@@ -21,7 +21,9 @@ def main():
     ltl_formula = 'P>=0.80 [F "ship"]'
     proposition_set = ["ship", "apple"]
     # Initialize the video processor
-    processor = RealVideoProcessor(video_path, frame_duration_sec=1, frame_scale=2)
+    processor = RealVideoProcessor(
+        video_path, frame_duration_sec=1, frame_scale=2
+    )
     cv_model = {
         "yolo": Yolo(
             weight_path=config.YOLO.YOLO_CHECKPOINT_PATH,

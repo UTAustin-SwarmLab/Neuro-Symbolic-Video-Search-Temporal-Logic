@@ -18,7 +18,6 @@ Discrete Real Time (DRT) Markov Chain (DRTMC).
 
 
 class DRTMarkovChain(Automaton):
-
     def __init__(
         self,
         tl_specification: str,
@@ -214,7 +213,7 @@ class DRTMarkovChain(Automaton):
 
     def add_safety_states(self):
         # Check if the automaton satisfies the specification.
-        probability_of_safety = 0
+        probability_of_safety = 0.0
         safe_state_indices = []
         safe_state = State(
             state_index=len(self.states),

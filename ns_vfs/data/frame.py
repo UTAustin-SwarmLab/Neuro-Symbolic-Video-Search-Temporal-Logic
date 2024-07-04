@@ -28,19 +28,55 @@ class Frame:
 
     def is_any_object_detected(self):
         """Check if object is detected."""
-        if len(self.detected_object) == 0:
+        if len(self.detected_object_list) == 0:
             return False
         else:
             return True
 
     @property
-    def detected_object(self):
+    def detected_object_list(self):
         """Get detected object."""
         detected_obj = []
         for obj_name, obj_value in self.object_of_interest.items():
             if obj_value.is_detected:
                 detected_obj.append(obj_name)
         return detected_obj
+
+    @property
+    def detected_object_dict(self):
+        """Get detected object info as dict."""
+        detected_obj = {}
+        for obj_name, obj_value in self.object_of_interest.items():
+            if obj_value.is_detected:
+                detected_obj[obj_name] = {}
+                detected_obj[obj_name]["total_number_of_detection"] = (
+                    obj_value.number_of_detection
+                )
+                detected_obj[obj_name]["maximum_probability"] = max(
+                    obj_value.probability_of_all_obj
+                )
+                detected_obj[obj_name]["minimum_probability"] = min(
+                    obj_value.probability_of_all_obj
+                )
+                detected_obj[obj_name]["maximum_confidence"] = max(
+                    obj_value.confidence_of_all_obj
+                )
+                detected_obj[obj_name]["minimum_confidence"] = min(
+                    obj_value.confidence_of_all_obj
+                )
+
+        return detected_obj
+
+    @property
+    def detected_bboxes(self):
+        """Get detected object."""
+        bboxes = []
+        for obj_name, obj_value in self.object_of_interest.items():
+            if obj_value.is_detected:
+                for obj_prob in obj_value.probability_of_all_obj:
+                    if obj_prob > 0:
+                        bboxes += obj_value.bounding_box_of_all_obj
+        return bboxes
 
 
 @dataclasses.dataclass
@@ -119,3 +155,59 @@ class FramesofInterest:
                     )
             except:  # noqa: E722
                 pass
+
+
+@dataclasses.dataclass
+class BenchmarkLTLFrame:
+    """Benchmark image frame class.
+
+    ground_truth (bool): Ground truth answer of LTL condition for frames
+    ltl_frame (str): LTL formula
+    number_of_frame (int): Number of frame
+    frames_of_interest (list): List of frames that satisfy LTL condition
+    - [[0]] -> Frame 0 satisfy LTL condition;
+      [[4,5,6,7]] -> Frame 4 to 7 satisfy LTL condition
+      [[0],[4,5,6,7]] -> Frame 0 and Frame 4 to 7 satisfy LTL condition.
+    labels_of_frame: list of labels of frame
+    """
+
+    ground_truth: bool
+    ltl_formula: str
+    proposition: list
+    number_of_frame: int
+    frames_of_interest: Optional[List[List[int]]]
+    labels_of_frames: List[str]
+    images_of_frames: List[np.ndarray] = dataclasses.field(default_factory=list)
+
+    # def __post_init__(self):
+    #     """Post init."""
+    #     self.frames_of_interest = combine_consecutive_lists(
+    #         data=self.frames_of_interest
+    #     )
+    def __getitem__(self, key: str):
+        """Allow access to attributes using bracket notation."""
+        return getattr(self, key)
+
+    def save_frames(
+        self, path="/opt/Neuro-Symbolic-Video-Frame-Search/artifacts"
+    ) -> None:
+        """Save image to path.
+
+        Args:
+        path (str, optional): Path to save image.
+        """
+        from PIL import Image
+
+        for idx, img in enumerate(self.images_of_frames):
+            Image.fromarray(img).save(f"{path}/{idx}.png")
+
+    def save(
+        self,
+        save_path: str = "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts",
+    ) -> None:
+        """Save the current instance to a pickle file."""
+        import pickle
+
+        """Save the current instance to a pickle file."""
+        with open(save_path, "wb") as f:
+            pickle.dump(self, f)

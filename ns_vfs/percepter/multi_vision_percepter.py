@@ -17,7 +17,9 @@ class MultiVisionPercepter(VisionPercepter):
         for object in object_of_interest:
             for model_name, cv_model in self._cv_models.items():
                 if cv_model.validate_object(object):
-                    detected_object = cv_model.detect(frame_img=image, classes=[object])
+                    detected_object = cv_model.detect(
+                        frame_img=image, classes=[object]
+                    )
                     detected_objects[object] = detected_object
                     break
         return detected_objects
