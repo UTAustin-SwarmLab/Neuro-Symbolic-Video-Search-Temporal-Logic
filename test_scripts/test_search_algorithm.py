@@ -4,7 +4,10 @@ import copy
 
 import numpy as np
 
-from ns_vfs.common.ltl_utility import get_not_operator_mapping, verification_result_eval
+from ns_vfs.common.ltl_utility import (
+    get_not_operator_mapping,
+    verification_result_eval,
+)
 from ns_vfs.data.frame import Frame, FramesofInterest
 from ns_vfs.state import State
 from ns_vfs.verification import check_automaton
@@ -33,19 +36,25 @@ def _create_proposition_status(num_props):
     return label_list
 
 
-def update_frame_of_interest(frame_set: list[Frame], frame_of_interest: FramesofInterest) -> FramesofInterest:
+def update_frame_of_interest(
+    frame_set: list[Frame], frame_of_interest: FramesofInterest
+) -> FramesofInterest:
     if len(frame_set) > 1:
         frame_interval = list()
         for frame in frame_set:
             frame_interval.append(frame.frame_index)
-            frame_of_interest.frame_idx_to_real_idx[frame.frame_index] = frame.real_frame_idx
+            frame_of_interest.frame_idx_to_real_idx[frame.frame_index] = (
+                frame.real_frame_idx
+            )
             frame_of_interest.frame_images.append(frame.frame_image)
             frame_of_interest.save_annotated_images(frame.annotated_image)
         frame_of_interest.foi_list.append(frame_interval)
     else:
         for frame in frame_set:
             frame_of_interest.foi_list.append([frame.frame_index])
-            frame_of_interest.frame_idx_to_real_idx[frame.frame_index] = frame.real_frame_idx
+            frame_of_interest.frame_idx_to_real_idx[frame.frame_index] = (
+                frame.real_frame_idx
+            )
             frame_of_interest.frame_images.append(frame.frame_image)
             frame_of_interest.save_annotated_images(frame.annotated_image)
 
@@ -173,7 +182,9 @@ else:
 
 manual_confidence_probability = 1
 frame_idx = 0
-frame_set, interim_confidence_set = _reset_frame_set_and_confidence(proposition_set)
+frame_set, interim_confidence_set = _reset_frame_set_and_confidence(
+    proposition_set
+)
 frame_of_interest = FramesofInterest(ltl_formula=ltl_formula)
 propositional_probability = {}
 proposition_combinations = _create_proposition_status(len(proposition_set))
@@ -196,7 +207,9 @@ for idx in range(len(label_set)):
                 propositional_confidence = manual_confidence_probability
             else:
                 propositional_confidence = 1 - manual_confidence_probability
-        frame.propositional_probability[str(proposition)] = propositional_confidence
+        frame.propositional_probability[str(proposition)] = (
+            propositional_confidence
+        )
 
     propositional_confidence_of_frame = frame.propositional_confidence
     proposition_condition = sum(propositional_confidence_of_frame)
@@ -209,7 +222,9 @@ for idx in range(len(label_set)):
         #             frame_set.pop()
 
         for i in range(len(proposition_set)):
-            interim_confidence_set[i].append(propositional_confidence_of_frame[i])
+            interim_confidence_set[i].append(
+                propositional_confidence_of_frame[i]
+            )
 
         states, transitions = build_automaton(
             frame_set,
@@ -245,7 +260,9 @@ for idx in range(len(label_set)):
                 frame_set=frame_set, frame_of_interest=frame_of_interest
             )
             # 2.2 Reset frame set
-            frame_set, interim_confidence_set = _reset_frame_set_and_confidence(proposition_set)
+            frame_set, interim_confidence_set = _reset_frame_set_and_confidence(
+                proposition_set
+            )
     frame_idx += 1
 frame_of_interest.reorder_frame_of_interest()
 print(test_result)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 from omegaconf import DictConfig
 
 from ns_vfs.automaton._base import Automaton
@@ -27,7 +29,7 @@ class NSVSNodeTLVDataset(Node):
     ) -> None:
         self.video_processor = video_processor
         if isinstance(video_processor, TLVDatasetProcessor):
-            self.ltl_formula = f"Pmin=? [{video_processor.ltl_formula}]"
+            self.ltl_formula = f"Pmin>=.80 [{video_processor.ltl_formula}]"
             self.proposition_set = video_processor.proposition_set
         else:
             self.ltl_formula = ltl_formula
@@ -44,6 +46,8 @@ class NSVSNodeTLVDataset(Node):
 
         self.ns_vfs_system_cfg = ns_vfs_system_cfg
         self.frame_idx = 0
+        # Initialize latency measurement storage
+        self.latency_measurement = {"yolo": [], "fv_ac": [], "mc": []}
 
     def start(self) -> None:
         while True:
@@ -59,11 +63,16 @@ class NSVSNodeTLVDataset(Node):
             else:
                 ground_truth_object = None
 
+            # Measure latency
+            start_time_yolo = time.time()
             detected_objects: dict = self.vision_percepter.perceive(
                 image=frame_img,
                 object_of_interest=self.proposition_set,
                 ground_truth_object=ground_truth_object,
             )
+            end_time_yolo = time.time()
+            latency_yolo = round((end_time_yolo - start_time_yolo) * 1000, 1)
+            self.latency_measurement["yolo"].append(latency_yolo)
             activity_of_interest = None
 
             frame = Frame(
@@ -76,25 +85,45 @@ class NSVSNodeTLVDataset(Node):
             self.frame_idx += 1
 
             # 1. frame validation
+            start_time_fv_ac = time.time()
             if self.frame_validator.validate_frame(frame=frame):
                 # 2. dynamic automaton construction
                 self.automaton.add_frame_to_automaton(frame=frame)
                 self.frame_of_interest.frame_buffer.append(frame)
+                end_time_fv_ac = time.time()
+                latency_fv_ac = round(
+                    (end_time_fv_ac - start_time_fv_ac) * 1000, 1
+                )
+                self.latency_measurement["fv_ac"].append(latency_fv_ac)
                 # 3. model checking
+                start_time_mc = time.time()
                 model_checking_result = self.model_checker.check_automaton(
                     transitions=self.automaton.transitions,
                     states=self.automaton.states,
                     verbose=self.ns_vfs_system_cfg.model_checker.verbose,
                     is_filter=self.ns_vfs_system_cfg.model_checker.is_filter,
                 )
+                end_time_mc = time.time()
+                latency_mc = round((end_time_mc - start_time_mc) * 1000, 1)
+                self.latency_measurement["mc"].append(latency_mc)
+
                 if model_checking_result:
                     # specification satisfied
                     self.frame_of_interest.flush_frame_buffer()
                     self.automaton.reset()
+            else:
+                end_time_fv_ac = time.time()
+                latency_fv_ac = round(
+                    (end_time_fv_ac - start_time_fv_ac) * 1000, 1
+                )
+                self.latency_measurement["fv_ac"].append(latency_fv_ac)
+                self.latency_measurement["mc"].append(0)
 
+        print(self.ltl_formula)
         print(self.frame_of_interest.foi_list)
         print(self.video_processor.frames_of_interest)
         print(self.video_processor.labels_of_frames)
+        print(self.latency_measurement)
 
     def stop(self) -> None:
         print("NSVS Node stopped")

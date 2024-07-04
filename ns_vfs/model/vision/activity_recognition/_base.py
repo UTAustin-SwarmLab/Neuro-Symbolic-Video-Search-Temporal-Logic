@@ -7,7 +7,7 @@ import numpy as np
 from ns_vfs.model.vision._base import ComputerVisionModel
 
 
-class ComputerVisionObjectDetector(ComputerVisionModel):
+class ActivityDetector(ComputerVisionModel):
     """Computer Vision Detector."""
 
     def __init__(

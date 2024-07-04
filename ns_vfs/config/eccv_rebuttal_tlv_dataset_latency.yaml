@@ -1,6 +1,6 @@
 defaults:
-  - node: default
-  - video_processor: real_video
+  - node: eccv_rebuttal_tlv_dataset_latency
+  - video_processor: tlv_dataset
   - vision_percepter: single_vision_percepter
   - automaton: probabilistic
   - model: default
@@ -13,14 +13,12 @@ hydra:
     chdir: True
 
 ns_vfs_system_cfg:
-  # if None, the result will not be saved
-  save_result_dir: /opt/Neuro-Symbolic-Video-Frame-Search/output
   model_checker:
     is_filter: False
     verbose: False
 
-video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/titanic_scene.mp4'
-ltl_formula: F "person"
+video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/outputs/tlv_dataset_ImageNet2017-1K_ltl_F "clock"_30_0.pkl'
+ltl_formula: 
 proposition_set:
-  - person
-  - car
+  #- Proposition 1
+  #- Proposition 2

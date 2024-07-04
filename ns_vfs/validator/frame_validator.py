@@ -23,7 +23,7 @@ class FrameValidator:
             all_below_threshold = all(
                 frame.object_of_interest[obj_name].probability
                 < self._threshold_of_probability
-                for obj_name in frame.detected_object
+                for obj_name in frame.detected_object_list
             )
             if all_below_threshold:
                 return False
@@ -54,7 +54,8 @@ class FrameValidator:
         )
         if associated_props:
             if not all(
-                props in frame.detected_object for props in associated_props
+                props in frame.detected_object_list
+                for props in associated_props
             ):
                 return False
         return True
@@ -77,11 +78,12 @@ class FrameValidator:
             # if A,B are associated by &
             # and there's no A,B in the formula
             A, B = ltl_formula.split("&")[0], ltl_formula.split("&")[1]
-            A, B = re.findall(r"\"(.*?)\"", A.split("(")[-1]), re.findall(
-                r"\"(.*?)\"", B.split(")")[0]
+            A, B = (
+                re.findall(r"\"(.*?)\"", A.split("(")[-1]),
+                re.findall(r"\"(.*?)\"", B.split(")")[0]),
             )
             symbolic_verification_rule[
                 SymbolicFilterRule.AND_ASSOCIATED_PROPS
-            ] = (A + B)
+            ] = A + B
 
         return symbolic_verification_rule
