@@ -14,7 +14,9 @@ from swarm_visualizer.lineplot import plot_overlaid_ts
 
 # %%
 #  Set Data Path
-root_dir = Path("/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/")
+root_dir = Path(
+    "/opt/Neuro-Symbolic-Video-Frame-Search/store/nsvs_artifact/experiment_2.1_nsvs_ltl/"
+)
 clip_csv_dir = root_dir / "clip/false_positive_threshold_experiment_0_to_1"
 dino_csv_dir = root_dir / "dino/false_positive_threshold_experiment"
 yolo_csv_dir = root_dir / "yolo/false_positive_threshold_experiment"
@@ -27,8 +29,12 @@ mrcnn_csv_dir = root_dir / "mrcnn/false_positive_threshold_experiment"
 clip_csv_files = sorted([f for f in os.listdir(clip_csv_dir) if f.startswith("conf_")])
 dino_csv_files = sorted([f for f in os.listdir(dino_csv_dir) if f.startswith("conf_")])
 yolo_csv_files = sorted([f for f in os.listdir(yolo_csv_dir) if f.startswith("conf_")])
-yolox_csv_files = sorted([f for f in os.listdir(yolox_csv_dir) if f.startswith("conf_")])
-mrcnn_csv_files = sorted([f for f in os.listdir(mrcnn_csv_dir) if f.startswith("conf_")])
+yolox_csv_files = sorted(
+    [f for f in os.listdir(yolox_csv_dir) if f.startswith("conf_")]
+)
+mrcnn_csv_files = sorted(
+    [f for f in os.listdir(mrcnn_csv_dir) if f.startswith("conf_")]
+)
 
 # Header of the CSV file
 header = [
@@ -402,7 +408,6 @@ def compute_confidence_interval(data, conf_interval=0.95):
 # # Swarm Visualizer
 
 # %%
-from swarm_visualizer.lineplot import plot_overlaid_ts
 
 # %%
 yolo_avg_f1 = yolo_df.groupby("mapping_false_threshold")["f1_score"].mean()
@@ -411,21 +416,21 @@ clip_avg_f1 = clip_df.groupby("mapping_false_threshold")["f1_score"].mean()
 yolox_avg_f1 = yolo_x_df.groupby("mapping_false_threshold")["f1_score"].mean()
 mrcnn_avg_f1 = mrcnn_df.groupby("mapping_false_threshold")["f1_score"].mean()
 # Calculating the confidence intervals for each model and mapping_false_threshold
-yolo_confidence_intervals = yolo_df.groupby("mapping_false_threshold")["f1_score"].apply(
-    compute_confidence_interval
-)
-dino_confidence_intervals = dino_df.groupby("mapping_false_threshold")["f1_score"].apply(
-    compute_confidence_interval
-)
-clip_confidence_intervals = clip_df.groupby("mapping_false_threshold")["f1_score"].apply(
-    compute_confidence_interval
-)
-yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")["f1_score"].apply(
-    compute_confidence_interval
-)
-mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")["f1_score"].apply(
-    compute_confidence_interval
-)
+yolo_confidence_intervals = yolo_df.groupby("mapping_false_threshold")[
+    "f1_score"
+].apply(compute_confidence_interval)
+dino_confidence_intervals = dino_df.groupby("mapping_false_threshold")[
+    "f1_score"
+].apply(compute_confidence_interval)
+clip_confidence_intervals = clip_df.groupby("mapping_false_threshold")[
+    "f1_score"
+].apply(compute_confidence_interval)
+yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")[
+    "f1_score"
+].apply(compute_confidence_interval)
+mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")[
+    "f1_score"
+].apply(compute_confidence_interval)
 # Plotting for clip with confidence intervals
 yolo_f1_mean, yolo_f1_lower, yolo_f1_upper = zip(*yolo_confidence_intervals)
 dino_f1_mean, dino_f1_lower, dino_f1_upper = zip(*dino_confidence_intervals)
@@ -479,27 +484,37 @@ clip_avg_precision = clip_df.groupby("mapping_false_threshold")["precision"].mea
 yolox_avg_precision = yolo_x_df.groupby("mapping_false_threshold")["precision"].mean()
 mrcnn_avg_precision = mrcnn_df.groupby("mapping_false_threshold")["precision"].mean()
 # Calculating the confidence intervals for each model and mapping_false_threshold
-yolo_confidence_intervals = yolo_df.groupby("mapping_false_threshold")["precision"].apply(
-    compute_confidence_interval
-)
-dino_confidence_intervals = dino_df.groupby("mapping_false_threshold")["precision"].apply(
-    compute_confidence_interval
-)
-clip_confidence_intervals = clip_df.groupby("mapping_false_threshold")["precision"].apply(
-    compute_confidence_interval
-)
-yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")["precision"].apply(
-    compute_confidence_interval
-)
-mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")["precision"].apply(
-    compute_confidence_interval
-)
+yolo_confidence_intervals = yolo_df.groupby("mapping_false_threshold")[
+    "precision"
+].apply(compute_confidence_interval)
+dino_confidence_intervals = dino_df.groupby("mapping_false_threshold")[
+    "precision"
+].apply(compute_confidence_interval)
+clip_confidence_intervals = clip_df.groupby("mapping_false_threshold")[
+    "precision"
+].apply(compute_confidence_interval)
+yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")[
+    "precision"
+].apply(compute_confidence_interval)
+mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")[
+    "precision"
+].apply(compute_confidence_interval)
 # Plotting for clip with confidence intervals
-yolo_precision_mean, yolo_precision_lower, yolo_precision_upper = zip(*yolo_confidence_intervals)
-dino_precision_mean, dino_precision_lower, dino_precision_upper = zip(*dino_confidence_intervals)
-clip_precision_mean, clip_precision_lower, clip_precision_upper = zip(*clip_confidence_intervals)
-yolox_precision_mean, yolox_precision_lower, yolox_precision_upper = zip(*yolox_confidence_intervals)
-mrcnn_precision_mean, mrcnn__precision_ower, mrcnn_precision_upper = zip(*mrcnn_confidence_intervals)
+yolo_precision_mean, yolo_precision_lower, yolo_precision_upper = zip(
+    *yolo_confidence_intervals
+)
+dino_precision_mean, dino_precision_lower, dino_precision_upper = zip(
+    *dino_confidence_intervals
+)
+clip_precision_mean, clip_precision_lower, clip_precision_upper = zip(
+    *clip_confidence_intervals
+)
+yolox_precision_mean, yolox_precision_lower, yolox_precision_upper = zip(
+    *yolox_confidence_intervals
+)
+mrcnn_precision_mean, mrcnn__precision_ower, mrcnn_precision_upper = zip(
+    *mrcnn_confidence_intervals
+)
 
 precision_false_positive = {
     "yolov8": {
@@ -557,19 +572,23 @@ dino_confidence_intervals = dino_df.groupby("mapping_false_threshold")["recall"]
 clip_confidence_intervals = clip_df.groupby("mapping_false_threshold")["recall"].apply(
     compute_confidence_interval
 )
-yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")["recall"].apply(
-    compute_confidence_interval
-)
-mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")["recall"].apply(
-    compute_confidence_interval
-)
+yolox_confidence_intervals = yolo_x_df.groupby("mapping_false_threshold")[
+    "recall"
+].apply(compute_confidence_interval)
+mrcnn_confidence_intervals = mrcnn_df.groupby("mapping_false_threshold")[
+    "recall"
+].apply(compute_confidence_interval)
 
 # Plotting for clip with confidence intervals
 yolo_recall_mean, yolo_recall_lower, yolo_recall_upper = zip(*yolo_confidence_intervals)
 dino_recall_mean, dino_recall_lower, dino_recall_upper = zip(*dino_confidence_intervals)
 clip_recall_mean, clip_recall_lower, clip_recall_upper = zip(*clip_confidence_intervals)
-yolox_recall_mean, yolox_recall_lower, yolox_recall_upper = zip(*yolox_confidence_intervals)
-mrcnn_recall_mean, mrcnn_recall_lower, mrcnn_recall_upper = zip(*mrcnn_confidence_intervals)
+yolox_recall_mean, yolox_recall_lower, yolox_recall_upper = zip(
+    *yolox_confidence_intervals
+)
+mrcnn_recall_mean, mrcnn_recall_lower, mrcnn_recall_upper = zip(
+    *mrcnn_confidence_intervals
+)
 
 recall_false_positive = {
     "yolov8": {
@@ -616,7 +635,7 @@ mrcnn_recall_mean
 from ns_vfs.common.utility import load_pickle_to_dict
 
 data = load_pickle_to_dict(
-    "/opt/Neuro-Symbolic-Video-Frame-Search/experiments/mapping_estimiation_plot_data.pkl"
+    "/opt/Neuro-Symbolic-Video-Frame-Search/experiments/data/mapping_estimiation_plot_data.pkl"
 )
 
 # Converting array to a Pandas Series
@@ -755,12 +774,26 @@ fig.subplots_adjust(bottom=0.30)
 # Manually setting the bbox_to_anchor to ensure the legend is outside the plots
 # Reordering
 
-desired_order = ["yolov8", "yolov8-est.", "clip", "clip-est.", "grounding-dino", "grounding-dino-est."]
+desired_order = [
+    "yolov8",
+    "yolov8-est.",
+    "clip",
+    "clip-est.",
+    "grounding-dino",
+    "grounding-dino-est.",
+]
 
 new_handles = [handles[labels.index(label)] for label in desired_order]
 new_labels = desired_order
 
-fig.legend(new_handles, new_labels, loc="lower center", bbox_to_anchor=(0.5, 0.020), ncol=3, fontsize=15)
+fig.legend(
+    new_handles,
+    new_labels,
+    loc="lower center",
+    bbox_to_anchor=(0.5, 0.020),
+    ncol=3,
+    fontsize=15,
+)
 # fig.tight_layout()
 # Display the plot
 plt.show()
