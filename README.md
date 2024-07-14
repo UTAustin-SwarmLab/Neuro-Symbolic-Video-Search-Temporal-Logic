@@ -120,39 +120,6 @@ Welcome to my profile! Below are the links to my professional profiles and conta
   <a href="https://minkyuchoi-07.github.io" target="_blank"><img src="https://img.icons8.com/bubbles/50/brown-hair-lady-window.png" alt="Website" width="48" height="48"/></a>
   <a href="https://x.com/MinkyuChoi7" target="_blank"><img src="https://img.icons8.com/ios-filled/50/twitterx--v1.png" alt="Twitter" width="48" height="48"/></a>
 </p>
-<!-- 
-<p align="center">
-  <div style="display: inline-block; text-align: center; margin-right: 20px;">
-    <a href="https://www.linkedin.com/in/mchoi07/" target="_blank">
-      <img width="64" height="64" src="https://img.icons8.com/color/linkedin.png" alt="LinkedIn"/>
-    </a>
-    <div>LinkedIn</div>
-  </div>
-  <div style="display: inline-block; text-align: center; margin-right: 20px;">
-    <a href="mailto:minkyu.choi@utexas.edu">
-      <img width="64" height="64" src="https://img.icons8.com/emoji/96/000000/e-mail.png" alt="Email"/>
-    </a>
-    <div>Email</div>
-  </div>
-  <div style="display: inline-block; text-align: center; margin-right: 20px;">
-    <a href="https://scholar.google.com/citations?user=ai4daB8AAAAJ&hl" target="_blank">
-      <img width="64" height="64" src="https://img.icons8.com/color/96/google-scholar--v3.png" alt="Google Scholar"/>
-    </a>
-    <div>Google Scholar</div>
-  </div>
-  <div style="display: inline-block; text-align: center; margin-right: 20px;">
-    <a href="https://minkyuchoi-07.github.io" target="_blank">
-      <img width="64" height="64" src="https://img.icons8.com/bubbles/50/brown-hair-lady-window.png" alt="Website"/>
-    </a>
-    <div>Website</div>
-  </div>
-  <div style="display: inline-block; text-align: center;">
-    <a href="https://x.com/MinkyuChoi7" target="_blank">
-      <img width="64" height="64" src="https://img.icons8.com/ios-filled/50/twitterx--v1.png" alt="Twitter"/>
-    </a>
-    <div>Twitter</div>
-  </div>
-</p> -->
 
 ## Citation
 
