@@ -1,7 +1,5 @@
 # Neuro Symbolic Video Search with Temporal Logic (NSVS-TL)
 
-[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![MIT License][license-shield]][license-url]
-
 ## Overview
 <!-- PROJECT LOGO -->
 <br />
@@ -112,6 +110,41 @@ To run the system with the `real_video` configuration:
 python3 main.py +config_name=real_video
 ```
 
+## Connect with Me
+Welcome to my profile! Below are the links to my professional profiles and contact methods. Feel free to connect with me!
+<p align="center">
+  <div style="display: inline-block; text-align: center; margin-right: 20px;">
+    <a href="https://www.linkedin.com/in/mchoi07/" target="_blank">
+      <img width="64" height="64" src="https://img.icons8.com/color/linkedin.png" alt="LinkedIn"/>
+    </a>
+    <div>LinkedIn</div>
+  </div>
+  <div style="display: inline-block; text-align: center; margin-right: 20px;">
+    <a href="mailto:minkyu.choi@utexas.edu">
+      <img width="64" height="64" src="https://img.icons8.com/emoji/96/000000/e-mail.png" alt="Email"/>
+    </a>
+    <div>Email</div>
+  </div>
+  <div style="display: inline-block; text-align: center; margin-right: 20px;">
+    <a href="https://scholar.google.com/citations?user=ai4daB8AAAAJ&hl" target="_blank">
+      <img width="64" height="64" src="https://img.icons8.com/color/96/google-scholar--v3.png" alt="Google Scholar"/>
+    </a>
+    <div>Google Scholar</div>
+  </div>
+  <div style="display: inline-block; text-align: center; margin-right: 20px;">
+    <a href="https://minkyuchoi-07.github.io" target="_blank">
+      <img width="64" height="64" src="https://img.icons8.com/bubbles/50/brown-hair-lady-window.png" alt="Website"/>
+    </a>
+    <div>Website</div>
+  </div>
+  <div style="display: inline-block; text-align: center;">
+    <a href="https://x.com/MinkyuChoi7" target="_blank">
+      <img width="64" height="64" src="https://img.icons8.com/ios-filled/50/twitterx--v1.png" alt="Twitter"/>
+    </a>
+    <div>Twitter</div>
+  </div>
+</p>
+
 ## Citation
 
 If you find this repo useful, please cite our paper:
@@ -125,12 +158,3 @@ If you find this repo useful, please cite our paper:
   year={2024}
 }
 ```
-
-[contributors-shield]: https://img.shields.io/github/contributors/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic.svg?style=for-the-badge
-[contributors-url]: https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic.svg?style=for-the-badge
-[forks-url]: https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic/network/members
-[stars-shield]: https://img.shields.io/github/stars/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic.svg?style=for-the-badge
-[stars-url]: https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic/stargazers
-[license-shield]: https://img.shields.io/github/license/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic.svg?style=for-the-badge
-[license-url]: https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic/blob/master/LICENSE.txt
