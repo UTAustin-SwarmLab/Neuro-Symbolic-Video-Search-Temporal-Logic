@@ -3,7 +3,7 @@ test_scripts/runs/
 artifacts/
 store/
 libs
-
+ns_vfs/output/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

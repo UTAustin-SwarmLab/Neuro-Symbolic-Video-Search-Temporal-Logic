@@ -14,13 +14,13 @@ hydra:
 
 ns_vfs_system_cfg:
   # if None, the result will not be saved
-  save_result_dir: /opt/Neuro-Symbolic-Video-Frame-Search/output
+  save_result_dir: 
   model_checker:
     is_filter: False
     verbose: False
 
-video_file_path: '/opt/Neuro-Symbolic-Video-Frame-Search/sample_data/titanic_scene.mp4'
-ltl_formula: F "person"
+video_file_path: # your video file path
+ltl_formula: # your LTL formula
 proposition_set:
-  - person
-  - car
+  #- Proposition 1
+  #- Proposition 2
