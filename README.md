@@ -1,6 +1,5 @@
 # Neuro Symbolic Video Search with Temporal Logic (NSVS-TL)
 
-## Overview
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
