@@ -46,6 +46,27 @@ class TLVDatasetProcessor(BaseVideoProcessor):
         """Get ground truth label."""
         return self.tlv_dataset["labels_of_frames"][frame_idx]
 
+    def save_as_dict(
+        self,
+        save_path: str = "/opt/Neuro-Symbolic-Video-Frame-Search/artifacts",
+    ) -> None:
+        """Save the current instance to a pickle file."""
+        import pickle
+
+        dict_format = dict(
+            ground_truth=self.tlv_dataset.ground_truth,
+            ltl_formula=self.tlv_dataset.ltl_formula,
+            proposition=self.tlv_dataset.proposition,
+            number_of_frame=self.tlv_dataset.number_of_frame,
+            frames_of_interest=self.tlv_dataset.frames_of_interest,
+            labels_of_frames=self.tlv_dataset.labels_of_frames,
+            images_of_frames=self.tlv_dataset.images_of_frames,
+        )
+
+        """Save the current instance to a pickle file."""
+        with open(save_path, "wb") as f:
+            pickle.dump(dict_format, f)
+
     @property
     def ltl_formula(self) -> str:
         """Get LTL formula."""
