@@ -44,9 +44,10 @@ The unprecedented surge in video data production in recent years necessitates ef
 ### System Overview
 <div align="center">
   <a href="https://github.com/UTAustin-SwarmLab/temporal-logic-video-dataset">
-    <img src="images/fig1_teaser.png" alt="Logo" width="840" height="440">
+    <img src="images/fig1_teaser.png" alt="Logo" width="640" height="440">
   </a>
 </div>
+
 The input query --- "Find the `I'm Flying scene from Titanic" --- is first decomposed into semantically meaningful atomic propositions such as ``man hugging woman``, ``ship on the sea``, and ``kiss`` from a high-level user query. SOTA vision and vision-language models are then employed to annotate the existence of these atomic propositions in each video frame. Subsequently, we construct a probabilistic automaton that models the video's temporal evolution based on the list of per-frame atomic propositions detected in the video. Finally, we evaluate when and where this automaton satisfies the user's query. We do this by expressing it in a formal specification language that incorporates temporal logic. The TL equivalent of the above query is ALWAYS ($\Box$) ``man hugging woman`` UNTIL ($\mathsf{U}$) ``ship on the sea`` UNTIL ($\mathsf{U}$) ``kiss``. Formal verification techniques are utilized on the automaton to retrieve scenes that satisfy the TL specification.
 
 ## Installation Guide
