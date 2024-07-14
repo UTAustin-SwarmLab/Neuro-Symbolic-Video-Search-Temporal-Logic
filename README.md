@@ -1,4 +1,8 @@
+<div align="center">
+
 # Neuro Symbolic Video Search with Temporal Logic (NSVS-TL)
+
+</div>
 
 <!-- PROJECT LOGO -->
 <br />
