@@ -29,6 +29,9 @@
 - [TL;DR](#TL;DR)
 - [Abstract](#abstract)
 - [Installation Guide](#installation-guide)
+- [System Setup and Execution Guide](#system-setup-and-execution-guide)
+- [Running the System](#running-the-system)
+- [Citation](#citation)
 
 ## TL;DR
 
@@ -43,9 +46,13 @@ The unprecedented surge in video data production in recent years necessitates ef
 
 ### System Overview
 
-![NSVS-TL System Overview](https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic/images/fig1_teaser.png)
+<div align="center">
+  <a href="https://github.com/UTAustin-SwarmLab/temporal-logic-video-dataset">
+    <img src="images/fig1_teaser.png" alt="Logo" width="640" height="440">
+  </a>
+</div>
 
-The input query --- "Find the `I'm Flying scene from Titanic" --- is first decomposed into semantically meaningful atomic propositions such as ``man hugging woman``, ``ship on the sea``, and ``kiss`` from a high-level user query. SOTA vision and vision-language models are then employed to annotate the existence of these atomic propositions in each video frame. Subsequently, we construct a probabilistic automaton that models the video's temporal evolution based on the list of per-frame atomic propositions detected in the video. Finally, we evaluate when and where this automaton satisfies the user's query. We do this by expressing it in a formal specification language that incorporates temporal logic. The TL equivalent of the above query is ALWAYS ($\Box$) ``man hugging woman`` UNTIL ($\mathsf{U}$) ``ship on the sea`` UNTIL ($\mathsf{U}$) ``kiss``. Formal verification techniques are utilized on the automaton to retrieve scenes that satisfy the TL specification.
+The input query --- "Find the I'm Flying scene from Titanic" --- is first decomposed into semantically meaningful atomic propositions such as ``man hugging woman``, ``ship on the sea``, and ``kiss`` from a high-level user query. SOTA vision and vision-language models are then employed to annotate the existence of these atomic propositions in each video frame. Subsequently, we construct a probabilistic automaton that models the video's temporal evolution based on the list of per-frame atomic propositions detected in the video. Finally, we evaluate when and where this automaton satisfies the user's query. We do this by expressing it in a formal specification language that incorporates temporal logic. The TL equivalent of the above query is ALWAYS ($\Box$) ``man hugging woman`` UNTIL ($\mathsf{U}$) ``ship on the sea`` UNTIL ($\mathsf{U}$) ``kiss``. Formal verification techniques are utilized on the automaton to retrieve scenes that satisfy the TL specification.
 
 ## Installation Guide
 
@@ -72,19 +79,52 @@ Enjoy your development environment inside the container!
 
 Please avoid stopping and removing the container, as you will need to reinstall the dependencies. If the container is stopped or removed, repeat steps 5 to 8.
 
-## How to run
+## System Setup and Execution Guide
 
-We manage a configuration through hydra python package. You must config properly to use the system. We provide example (default) config for 1) real-video (`real_video.yaml`) and 2) TLV dataset (`tlv_dataset.yaml`). Please config the values to the following fields:
+### Configuration Management
 
-- save_result_dir
-- video_file_path:
-- ltl_formula:
-- proposition_set:
+This system utilizes the Hydra Python package to manage configurations effectively. Ensure you configure the system correctly to use it as intended.
 
-The main system node files for these two cases are in `ns_vfs/system`.
+#### Example Configurations
 
-```python
-python3 main.py config_name=constrained_video_streaming
+We provide default configurations for different use cases:
+
+1. **Real-Video Configuration** - `real_video.yaml`
+2. **TLV Dataset Configuration** - `tlv_dataset.yaml`
+
+#### Required Configuration Fields
+
+Update the following fields in your configuration file based on your specific needs:
+
+- `save_result_dir`: Directory to save the results
+- `video_file_path`: Path to the video file
+- `ltl_formula`: LTL formula specifications
+- `proposition_set`: Set of propositions
+
+## Running the System
+
+To launch the system, execute the `main.py` script from the `ns_vfs` directory. You will need to specify which configuration to use by setting the `config_name` parameter.
+
+#### Example Command
+
+To run the system with the `real_video` configuration:
+
+```bash
+python3 main.py +config_name=real_video
+```
+
+## Citation
+
+If you find this repo useful, please cite our paper:
+
+```bibtex
+@inproceedings{Choi_2024_ECCV,
+  author={Choi, Minkyu and Goel, Harsh and Omama, Mohammad and Yang, Yunhao and Shah, Sahil and Chinchali, Sandeep},
+  title={Towards Neuro-Symbolic Video Understanding},
+  booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
+  month={September},
+  year={2024}
+}
 ```
 
 [contributors-shield]: https://img.shields.io/github/contributors/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic.svg?style=for-the-badge
