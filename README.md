@@ -112,6 +112,15 @@ python3 main.py +config_name=real_video
 
 ## Connect with Me
 Welcome to my profile! Below are the links to my professional profiles and contact methods. Feel free to connect with me!
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/mchoi07/" target="_blank"><img src="https://img.icons8.com/color/48/000000/linkedin.png" alt="LinkedIn" width="48" height="48"/></a>
+  <a href="mailto:minkyu.choi@utexas.edu"><img src="https://img.icons8.com/emoji/96/000000/e-mail.png" alt="Email" width="48" height="48"/></a>
+  <a href="https://scholar.google.com/citations?user=ai4daB8AAAAJ&hl" target="_blank"><img src="https://img.icons8.com/color/48/000000/google-scholar--v3.png" alt="Google Scholar" width="48" height="48"/></a>
+  <a href="https://minkyuchoi-07.github.io" target="_blank"><img src="https://img.icons8.com/bubbles/50/brown-hair-lady-window.png" alt="Website" width="48" height="48"/></a>
+  <a href="https://x.com/MinkyuChoi7" target="_blank"><img src="https://img.icons8.com/ios-filled/50/twitterx--v1.png" alt="Twitter" width="48" height="48"/></a>
+</p>
+<!-- 
 <p align="center">
   <div style="display: inline-block; text-align: center; margin-right: 20px;">
     <a href="https://www.linkedin.com/in/mchoi07/" target="_blank">
@@ -143,7 +152,7 @@ Welcome to my profile! Below are the links to my professional profiles and conta
     </a>
     <div>Twitter</div>
   </div>
-</p>
+</p> -->
 
 ## Citation
 
