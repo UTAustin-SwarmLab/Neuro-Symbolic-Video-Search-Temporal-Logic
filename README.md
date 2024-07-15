@@ -8,7 +8,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic">
-    <img src="images/logo.png" alt="Logo" width="240" height="240">
+    <img src="images/logo.png" alt="Logo" width="340" height="340">
   </a>
 
   <h3 align="center">Neuro Symbolic Video Search with Temporal Logic</h3>
