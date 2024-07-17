@@ -1,6 +1,7 @@
 <div align="center">
 
 # Neuro Symbolic Video Search with Temporal Logic (NSVS-TL)
+
 [![arXiv](https://img.shields.io/badge/arXiv-2403.11021-b31b1b.svg)](https://arxiv.org/abs/2403.11021) [![Paper](https://img.shields.io/badge/Paper-pdf-green.svg)](https://arxiv.org/abs/2403.11021) [![Website](https://img.shields.io/badge/ProjectWebpage-nsvs--tl-orange.svg)](https://utaustin-swarmlab.github.io/nsvs-project-page.github.io/) [![GitHub](https://img.shields.io/badge/Code-Source--Code-blue.svg)](https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temporal-Logic) [![GitHub](https://img.shields.io/badge/Code-Dataset-blue.svg)](https://github.com/UTAustin-SwarmLab/Temporal-Logic-Video-Dataset)
 </div>
 
@@ -46,6 +47,7 @@ The unprecedented surge in video data production in recent years necessitates ef
 </details>
 
 ### System Overview
+
 <div align="center">
   <a href="https://github.com/UTAustin-SwarmLab/temporal-logic-video-dataset">
     <img src="images/fig1_teaser.png" alt="Logo" width="640" height="440">
@@ -65,14 +67,15 @@ No need to worry about the prerequisites below if you are using a UT Swarm Lab c
 
 1. Clone this repository.
 2. Navigate to the makefile and modify the user input section.
-    - For example: `CODE_PATH := /home/repos/Neuro-Symbolic-Video-Frame-Search/`
+    - For example: `CODE_PATH := /home/repos/Neuro-Symbolic-Video-Search-Temporal-Logic/`
 3. Execute `make pull_docker_image`
 4. Execute `make build_docker_image`
 5. Execute `make run_docker_container_gpu`
     - Note: If you are a developer: `make run_dev_docker_container_gpu`
 6. Execute `make exec_docker_container`
-7. Inside the container, navigate to `/opt/Neuro-Symbolic-Video-Frame-Search`
+7. Inside the container, navigate to `/opt/Neuro-Symbolic-Video-Search-Temporal-Logic`
 8. Inside the container, execute `bash install.sh`
+    - Note: If you are a developer: `bash install.sh dev`
 
 **Development Inside the Container**
 Enjoy your development environment inside the container!
@@ -114,6 +117,7 @@ python3 main.py +config_name=real_video
 ```
 
 ## Connect with Me
+
 <p align="center">
   <em>Feel free to connect with me through these professional channels:</em>
 <p align="center">

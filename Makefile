@@ -9,8 +9,8 @@ BASE_IMG=nvidia/cuda:11.8.0-devel-ubuntu20.04
 # No space at the end
 CODE_PATH := <<YOUR PATH>>
 
-# ONLY FOR UT SWARM LAB DEVELOPERS
-DS_PATH := /store/
+# IF YOU WANT TO MOUNT A DATASTORE -> YOU MUST USE DEV MODE.
+DS_PATH := <<YOUR PATH>>
 
 # Custom Image
 DOCKER_IMG := ns_vfs
