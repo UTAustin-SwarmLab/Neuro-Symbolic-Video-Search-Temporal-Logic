@@ -23,7 +23,7 @@ class FrameValidator:
             all_below_threshold = all(
                 frame.object_of_interest[obj_name].probability
                 < self._threshold_of_probability
-                for obj_name in frame.detected_object
+                for obj_name in frame.detected_object_list
             )
             if all_below_threshold:
                 return False
