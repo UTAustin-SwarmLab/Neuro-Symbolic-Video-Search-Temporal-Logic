@@ -31,7 +31,7 @@ class Frame:
 
     def is_any_object_detected(self):
         """Check if object is detected."""
-        if len(self.detected_object) == 0:
+        if len(self.detected_object_list) == 0:
             return False
         else:
             return True
