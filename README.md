@@ -101,8 +101,16 @@ Update the following fields in your configuration file based on your specific ne
 
 - `save_result_dir`: Directory to save the results
 - `video_file_path`: Path to the video file
-- `ltl_formula`: LTL formula specifications
+- `ltl_formula`: LTL formula specifications.
 - `proposition_set`: Set of propositions
+
+Example configuration for the ltl_formula and proposition_set:
+```
+ltl_formula: "\"prop1\" U \"prop2\""
+proposition_set:
+  - prop1
+  - prop2
+```
 
 ## Running the System
 
