@@ -92,7 +92,12 @@ class NSVSNodeTLVDataset(Node):
                     self.frame_of_interest.flush_frame_buffer()
                     self.automaton.reset()
 
+        print("--------------------------------")
+        print("Detected frames of interest:")
         print(self.frame_of_interest.foi_list)
+        if self.ns_vfs_system_cfg.save_result_dir:
+            print(f"\nResults saved in {self.ns_vfs_system_cfg.save_result_dir}")
+            
         print(self.video_processor.frames_of_interest)
         print(self.video_processor.labels_of_frames)
 
