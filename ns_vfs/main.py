@@ -4,7 +4,7 @@ from omegaconf import DictConfig
 
 @hydra.main(
     config_path="config",
-    config_name="constrained_video_streaming",
+    config_name="real_video",
     version_base="1.2.0",
 )
 def main(cfg: DictConfig):
