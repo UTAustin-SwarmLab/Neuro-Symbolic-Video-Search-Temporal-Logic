@@ -77,7 +77,11 @@ class NSVSNodeRealVideoFile(Node):
             self.frame_of_interest.save(
                 path=self.ns_vfs_system_cfg.save_result_dir
             )
+        print("--------------------------------")
+        print("Detected frames of interest:")
         print(self.frame_of_interest.foi_list)
+        if self.ns_vfs_system_cfg.save_result_dir:
+            print(f"\nResults saved in {self.ns_vfs_system_cfg.save_result_dir}")
 
     def stop(self) -> None:
         print("NSVS Node stopped")

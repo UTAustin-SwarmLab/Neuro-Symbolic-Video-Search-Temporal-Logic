@@ -2,7 +2,7 @@ import abc
 
 
 class Automaton(abc.ABC):
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def set_up(self): ...
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def reset(self): ...

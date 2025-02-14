@@ -54,7 +54,7 @@ class FrameValidator:
         )
         if associated_props:
             if not all(
-                props in frame.detected_object for props in associated_props
+                props in frame.detected_object_dict for props in associated_props
             ):
                 return False
         return True
