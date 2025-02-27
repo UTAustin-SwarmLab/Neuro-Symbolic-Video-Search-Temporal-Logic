@@ -13,14 +13,13 @@ hydra:
     chdir: True
 
 ns_vfs_system_cfg:
-  # if None, the result will not be saved
-  save_result_dir: 
+  save_result_dir: /opt/Neuro-Symbolic-Video-Frame-Search/_dev/tri/result
   model_checker:
     is_filter: False
     verbose: False
 
-video_file_path: # your video file path
-ltl_formula: # your LTL formula
+video_file_path: /opt/Neuro-Symbolic-Video-Frame-Search/_dev/tri/tri.mp4
+ltl_formula: '"car" U "truck"'
 proposition_set:
-  #- Proposition 1
-  #- Proposition 2
+  - "car"
+  - "truck"
