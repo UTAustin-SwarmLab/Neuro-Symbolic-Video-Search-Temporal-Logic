@@ -127,7 +127,7 @@ python3 main.py +config_name=real_video
 ## FAQ
 Q: We are receiving a smaller number of frames. For instance, we need frame 81 to be included in the frames of interest, but we have been provided with [...,21].
 
-A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters (/ns_vfs/config/video_processor/real_video.yaml).
+A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters (`/ns_vfs/config/video_processor/real_video.yaml`).
 
 
 ## Connect with Me
