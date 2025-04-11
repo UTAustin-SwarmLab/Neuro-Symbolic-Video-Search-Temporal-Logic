@@ -20,7 +20,7 @@
     <a href="https://arxiv.org/abs/2403.11021"><strong>» Read Paper »</strong></a>
     <br />
     <br />
-    <a href="https://utaustin-swarmlab.github.io/nsvs-project-page.github.io/">NSVS-TL Project Webpage</a>
+    <a href="https://utaustin-swarmlab.github.io/nsvs">NSVS-TL Project Webpage</a>
     ·
     <a href="https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic">TLV Dataset</a>
   </p>
