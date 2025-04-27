@@ -1,6 +1,6 @@
 import re
 
-from ns_vfs.data.frame import Frame
+from ns_vfs.data.frame import VideoFrame
 from ns_vfs.enums.symbolic_filter_rule import SymbolicFilterRule
 
 
@@ -16,14 +16,14 @@ class FrameValidator:
         )
 
     def validate_frame(
-        self, frame: Frame, is_symbolic_verification: bool = True
+        self, frame: VideoFrame, is_symbolic_verification: bool = True
     ):
         """Validate frame."""
         if frame.is_any_object_detected():
             all_below_threshold = all(
                 frame.object_of_interest[obj_name].probability
                 < self._threshold_of_probability
-                for obj_name in frame.detected_object_list
+                for obj_name in frame.list_of_detected_object_of_interest
             )
             if all_below_threshold:
                 return False
@@ -37,7 +37,7 @@ class FrameValidator:
         else:
             return False
 
-    def symbolic_verification(self, frame: Frame):
+    def symbolic_verification(self, frame: VideoFrame):
         """Symbolic verification."""
         avoid_props = self._symbolic_verification_rule.get(
             SymbolicFilterRule.AVOID_PROPOSITION
@@ -54,7 +54,8 @@ class FrameValidator:
         )
         if associated_props:
             if not all(
-                props in frame.detected_object_dict for props in associated_props
+                props in frame.detected_object_dict
+                for props in associated_props
             ):
                 return False
         return True

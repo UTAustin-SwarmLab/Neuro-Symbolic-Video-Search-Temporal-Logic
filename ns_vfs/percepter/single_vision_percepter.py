@@ -8,7 +8,7 @@ from ns_vfs.percepter._base import VisionPercepter
 
 
 class SingleVisionPercepter(VisionPercepter):
-    def __init__(self, cv_models: dict[str, ComputerVisionModel]):
+    def __init__(self, cv_models: ComputerVisionModel):
         super().__init__()
         self.cv_model = cv_models
 
