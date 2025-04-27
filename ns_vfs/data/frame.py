@@ -17,27 +17,35 @@ from ns_vfs.common.utility import (
 
 
 @dataclasses.dataclass
-class Frame:
+class VideoFrame:
     """Frame class."""
 
     frame_idx: int
-    timestamp: Optional[int] = None
-    frame_image: Optional[np.ndarray] = None
-    annotated_image: Dict[str, np.ndarray] = dataclasses.field(
+    timestamp: int | None = None
+    frame_image: np.ndarray | None = None
+    annotated_image: dict[str, np.ndarray] = dataclasses.field(
         default_factory=dict
     )
-    object_of_interest: Optional[dict] = None
-    activity_of_interest: Optional[dict] = None
+    detected_object_set: dict | None = None
+    object_of_interest: dict | None = None
+    activity_of_interest: dict | None = None
 
-    def is_any_object_detected(self):
+    def save_frame_img(self, save_path: str) -> None:
+        """Save frame image."""
+        if self.frame_image is not None:
+            cv2.imwrite(
+                save_path,
+                self.frame_image,
+            )
+
+    def is_any_object_detected(self) -> bool:
         """Check if object is detected."""
-        if len(self.detected_object_list) == 0:
-            return False
-        else:
-            return True
+        if self.detected_object_set is None:
+            self.detected_object_set = self.detected_object_dict
+        return len(self.detected_object_set) > 0
 
     @property
-    def detected_object_list(self):
+    def list_of_detected_object_of_interest(self) -> list:
         """Get detected object."""
         detected_obj = []
         for obj_name, obj_value in self.object_of_interest.items():
@@ -46,7 +54,7 @@ class Frame:
         return detected_obj
 
     @property
-    def detected_object_dict(self):
+    def detected_object_dict(self) -> dict:
         """Get detected object info as dict."""
         detected_obj = {}
         for obj_name, obj_value in self.object_of_interest.items():
@@ -70,15 +78,27 @@ class Frame:
 
         return detected_obj
 
-    @property
-    def detected_bboxes(self):
-        """Get detected object."""
+    def detected_bboxes(self, probability_threshold: bool = False) -> list:
+        """Get detected object.
+
+        Args:
+            probability_threshold (float | None): Probability threshold.
+            Defaults to None.
+
+        Returns:
+            list: Bounding boxes.
+        """
         bboxes = []
-        for obj_name, obj_value in self.object_of_interest.items():
+
+        for _, obj_value in self.object_of_interest.items():
             if obj_value.is_detected:
-                for obj_prob in obj_value.probability_of_all_obj:
-                    if obj_prob > 0:
-                        bboxes += obj_value.bounding_box_of_all_obj
+                if probability_threshold:
+                    for obj_prob in obj_value.probability_of_all_obj:
+                        if obj_prob > 0:
+                            bboxes += obj_value.bounding_box_of_all_obj
+                else:
+                    bboxes += obj_value.bounding_box_of_all_obj
+
         return bboxes
 
 
@@ -91,7 +111,7 @@ class FramesofInterest:
     frame_images: List[np.ndarray] = dataclasses.field(default_factory=list)
     annotated_images: List[np.ndarray] = dataclasses.field(default_factory=list)
     frame_idx_to_real_idx: dict = dataclasses.field(default_factory=dict)
-    frame_buffer: List[Frame] = dataclasses.field(default_factory=list)
+    frame_buffer: List[VideoFrame] = dataclasses.field(default_factory=list)
 
     def save_annotated_images(self, annotated_image: Dict[str, np.ndarray]):
         for a_img in list(annotated_image.values()):

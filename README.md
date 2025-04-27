@@ -9,7 +9,6 @@
 <br />
 <div align="center">
   <a href="https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic">
-    <img src="images/logo.png" alt="Logo" width="340" height="340">
   </a>
 
   <h3 align="center">Neuro Symbolic Video Search with Temporal Logic</h3>
@@ -28,12 +27,17 @@
 
 ## Table of Contents
 
-- [TL;DR](#TL;DR)
-- [Abstract](#abstract)
-- [Installation Guide](#installation-guide)
-- [System Setup and Execution Guide](#system-setup-and-execution-guide)
-- [Running the System](#running-the-system)
-- [Citation](#citation)
+- [Neuro Symbolic Video Search with Temporal Logic (NSVS-TL)](#neuro-symbolic-video-search-with-temporal-logic-nsvs-tl)
+  - [Table of Contents](#table-of-contents)
+  - [TL;DR](#tldr)
+  - [Abstract](#abstract)
+    - [System Overview](#system-overview)
+  - [Installation Guide](#installation-guide)
+  - [System Setup and Execution Guide](#system-setup-and-execution-guide)
+  - [Running the System](#running-the-system)
+  - [FAQ](#faq)
+  - [Connect with Me](#connect-with-me)
+  - [Citation](#citation)
 
 ## TL;DR
 
@@ -84,50 +88,32 @@ Please avoid stopping and removing the container, as you will need to reinstall 
 
 ## System Setup and Execution Guide
 
-### Configuration Management
-
-This system utilizes the Hydra Python package to manage configurations effectively. Ensure you configure the system correctly to use it as intended.
-
-#### Example Configurations
-
-We provide default configurations for different use cases:
-
-1. **Real-Video Configuration** - `real_video.yaml`
-2. **TLV Dataset Configuration** - `tlv_dataset.yaml`
-
-#### Required Configuration Fields
-
-Update the following fields in your configuration file based on your specific needs:
-
-- `save_result_dir`: Directory to save the results
-- `video_file_path`: Path to the video file
-- `ltl_formula`: LTL formula specifications.
-- `proposition_set`: Set of propositions
-
-Example configuration for the ltl_formula and proposition_set:
-```
-ltl_formula: "\"prop1\" U \"prop2\""
-proposition_set:
-  - prop1
-  - prop2
-```
+**Note that we've opted out the system run with the TLV dataset in the current version. If you're interested in running the code with TLV dataset, please use `v1.0.0` version. All versions after `v1.0.0` only supports for the real video.** 
 
 ## Running the System
 
-To launch the system, execute the `main.py` script from the `ns_vfs` directory. You will need to specify which configuration to use by setting the `config_name` parameter.
+```python
+from ns_vfs import run_nsvs_yolo
+from cvias.image.detection.object.yolo import Yolo
 
-#### Example Command
+model_list = Yolo.available_models()
 
-To run the system with the `real_video` configuration:
-
-```bash
-python3 main.py +config_name=real_video
+run_nsvs_yolo(
+   video_path="video_path",
+   desired_fps="fps", # optional: desired_interval_in_sec="You can get the frame by sec", 
+   proposition_set=["prop1", "prop2"], # e.g.["car", "truck"],
+   ltl_formula='"prop1" U "prop2"' # e.g.'"car" U "truck"'
+   yolo_model_name="model from model_list" # e.g. "YOLOv8x",
+   output_path="output dir",
+   threshold_satisfaction_probability=0.80,
+    )
 ```
 
-## FAQ
-Q: We are receiving a smaller number of frames. For instance, we need frame 81 to be included in the frames of interest, but we have been provided with [...,21].
 
-A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters (`/ns_vfs/config/video_processor/real_video.yaml`).
+## FAQ
+Q: We are receiving a smaller number of frames. For instance, we need frame 81 to be included in the frames of interest, but nsvs-tl results in [...,21].
+
+A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters. Make sure to use correct parameters for `desired_fps` or `desired_interval_in_sec`.
 
 
 ## Connect with Me
