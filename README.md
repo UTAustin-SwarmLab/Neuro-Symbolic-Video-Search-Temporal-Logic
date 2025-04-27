@@ -5,25 +5,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2403.11021-b31b1b.svg)](https://arxiv.org/abs/2403.11021) [![Paper](https://img.shields.io/badge/Paper-pdf-green.svg)](https://arxiv.org/abs/2403.11021) [![Website](https://img.shields.io/badge/ProjectWebpage-nsvs--tl-orange.svg)](https://utaustin-swarmlab.github.io/nsvs-project-page.github.io/) [![GitHub](https://img.shields.io/badge/Code-Source--Code-blue.svg)](https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temporal-Logic) [![GitHub](https://img.shields.io/badge/Code-Dataset-blue.svg)](https://github.com/UTAustin-SwarmLab/Temporal-Logic-Video-Dataset)
 </div>
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic">
-  </a>
 
-  <h3 align="center">Neuro Symbolic Video Search with Temporal Logic</h3>
-
-  <p align="center">
-    Unleashing Video Intelligence: Where Vision Meets Logic
-    <br />
-    <a href="https://arxiv.org/abs/2403.11021"><strong>» Read Paper »</strong></a>
-    <br />
-    <br />
-    <a href="https://utaustin-swarmlab.github.io/nsvs-project-page.github.io/">NSVS-TL Project Webpage</a>
-    ·
-    <a href="https://github.com/UTAustin-SwarmLab/Neuro-Symbolic-Video-Search-Temploral-Logic">TLV Dataset</a>
-  </p>
-</div>
 
 ## Table of Contents
 
@@ -92,6 +74,7 @@ Please avoid stopping and removing the container, as you will need to reinstall 
 
 ## Running the System
 
+Run NSVS-TL with single object detector, YOLO.
 ```python
 from ns_vfs import run_nsvs_yolo
 from cvias.image.detection.object.yolo import Yolo
