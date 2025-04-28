@@ -1,5 +1,0 @@
-_target_: ns_vfs.percepter.single_vision_percepter.SingleVisionPercepter
-cv_models: 
-  _target_: ns_vfs.model.vision.object_detection.yolo.Yolo
-  weight_path: ${model.vision.yolo.weight_path}
-  gpu_number: ${model.vision.yolo.gpu_number}
