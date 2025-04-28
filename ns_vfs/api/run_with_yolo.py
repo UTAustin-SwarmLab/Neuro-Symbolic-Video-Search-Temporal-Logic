@@ -58,3 +58,18 @@ def run_nsvs_yolo(
         desired_interval_in_sec=desired_interval_in_sec,
         desired_fps=desired_fps,
     )
+
+
+if __name__ == "__main__":
+    run_nsvs_yolo(
+        video_path="/home/mc76728/repo/Coargus/Neuro-Symbolic-Video-Search-Temporal-Logic/_dev_/toyota.mp4",
+        desired_interval_in_sec=None,
+        desired_fps=30,
+        proposition_set=["car", "truck"],
+        ltl_formula='"car" U "truck"',
+        yolo_model_name="YOLOv8x",
+        output_path="/home/mc76728/repo/Coargus/Neuro-Symbolic-Video-Search-Temporal-Logic/_dev_",
+        threshold_satisfaction_probability=0.80,
+        frame_scale=None,
+        calibration_method="temperature_scaling",
+    )

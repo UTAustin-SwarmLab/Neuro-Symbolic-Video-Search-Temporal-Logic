@@ -91,6 +91,7 @@ run_nsvs_yolo(
    threshold_satisfaction_probability=0.80,
     )
 ```
+Please see a notebook (`./notebook/Run NSVS with Yolo.ipynb`)
 
 
 ## FAQ
