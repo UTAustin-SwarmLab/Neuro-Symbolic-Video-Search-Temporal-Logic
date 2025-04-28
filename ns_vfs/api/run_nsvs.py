@@ -18,7 +18,6 @@ def run_nsvs(
     proposition_set: list[str],
     ltl_formula: str,
     output_path: str,
-    model_checker_verbose: bool = False,
     model_checker_is_filter: bool = False,
     model_checker_type: str = "sparse_ma",
     desired_interval_in_sec: float | None = None,
