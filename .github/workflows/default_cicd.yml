@@ -1,0 +1,63 @@
+name: Release CI Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ."[dev, test]"
+      - name: Prepare environment
+        id: set-matrix
+        run: echo "::set-output name=matrix::${{ toJson(github.ref) }}"
+
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Lint with Ruff
+        uses: chartboost/ruff-action@v1
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Run Tests
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ."[test]"
+          python -m pytest tests/
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_CD_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}  # Changed to use github.ref_name
+          release_name: Release ${{ github.ref_name }}  # Use the tag name without refs/tags/
+          draft: false
+          prerelease: false 
