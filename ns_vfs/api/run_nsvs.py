@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import vflow
 
-from ns_vfs.automaton._base import Automaton
+from ns_vfs.automaton.video_automaton import VideoAutomaton
 from ns_vfs.data.frame import FramesofInterest, VideoFrame
 from ns_vfs.model_checking.stormpy import StormModelChecker
 from ns_vfs.percepter._base import VisionPercepter
@@ -12,7 +12,7 @@ from ns_vfs.validator import FrameValidator
 def run_nsvs(
     video_path: str,
     vision_percepter: VisionPercepter,
-    automaton: Automaton,
+    automaton: VideoAutomaton,
     frame_of_interest: FramesofInterest,
     model_checker: StormModelChecker,
     proposition_set: list[str],
