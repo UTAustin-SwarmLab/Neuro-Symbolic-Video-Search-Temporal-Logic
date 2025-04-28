@@ -70,7 +70,7 @@ Please avoid stopping and removing the container, as you will need to reinstall 
 
 ## System Setup and Execution Guide
 
-**Note that we've opted out the system run with the TLV dataset in the current version. If you're interested in running the code with TLV dataset, please use `v1.0.0` version. All versions after `v1.0.0` only supports for the real video.** 
+**Note that we’ve opted out of running the system with the TLV dataset in the current version. If you're interested in running the code with TLV dataset, please use `v1.0.0` version. All versions after `v1.0.0` only support real videos.** 
 
 ## Running the System
 
@@ -97,7 +97,7 @@ Please see a notebook (`./notebook/Run NSVS with Yolo.ipynb`)
 ## FAQ
 Q: We are receiving a smaller number of frames. For instance, we need frame 81 to be included in the frames of interest, but nsvs-tl results in [...,21].
 
-A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters. Make sure to use correct parameters for `desired_fps` or `desired_interval_in_sec`.
+A: This issue involves video processing. You are looking at frames 0 to 81. However, the last frame index is 21 if you didn’t change the video processor's parameters. Make sure to use the correct parameters for `desired_fps` or `desired_interval_in_sec`.
 
 
 ## Connect with Me
