@@ -1,9 +1,0 @@
-# @package _global_
-
-hydra:
-  run:
-    dir: ./output/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
-    sibdir: ${hydra.run.num}_${hydra.job.override_dirname}
-  sweep:
-    dir: ./output/${hydra.job.name}/${now:%Y-%m-%d_%H-%M-%S}
-    subdir: ${hydra.sweep.dir}/${now:%Y-%m-%d_%H-%M-%S}

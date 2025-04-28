@@ -1,3 +1,0 @@
-_target_: ns_vfs.automaton.probabilistic.ProbabilisticAutomaton
-include_initial_state: True
-
