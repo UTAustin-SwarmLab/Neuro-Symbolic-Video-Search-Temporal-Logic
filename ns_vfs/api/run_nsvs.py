@@ -22,6 +22,7 @@ def run_nsvs(
     model_checker_type: str = "sparse_ma",
     desired_interval_in_sec: float | None = None,
     desired_fps: int | None = None,
+    **kwargs,
 ) -> list:
     frame_validator = FrameValidator(ltl_formula=ltl_formula)
     video_processor = vflow.read_video(video_path)
