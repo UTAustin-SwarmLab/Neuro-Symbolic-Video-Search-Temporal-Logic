@@ -17,6 +17,7 @@ class SingleVisionPercepter(VisionPercepter):
         image: np.ndarray,
         object_of_interest: list[str],
         ground_truth_object: list[str] | str | None = None,
+        extra_description_of_object: str | None = None,
     ) -> dict[str, DetectedObject]:
         """Perceive the environment and return the perception."""
         detected_objects = {}
@@ -33,6 +34,15 @@ class SingleVisionPercepter(VisionPercepter):
                     detected_objects[object] = self.cv_model.detect(
                         frame_img=image, classes=[object], ground_truth=False
                     )
+            elif extra_description_of_object:
+                # NSVQA experiment
+                custom_prompt = f"""Does the frame window contain the proposition: {object}?
+                The subtitle of the video is: {extra_description_of_object}."""
+                detected_objects[object] = self.cv_model.detect(
+                    frame_img=image,
+                    classes=[object],
+                    custom_prompt=custom_prompt,
+                )
             else:
                 detected_object = self.cv_model.detect(
                     frame_img=image, classes=[object]

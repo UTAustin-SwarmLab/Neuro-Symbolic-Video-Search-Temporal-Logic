@@ -22,6 +22,7 @@ def run_nsvs_vlm(
     calibration_method: str = "temperature_scaling",
     desired_interval_in_sec: float | None = None,
     desired_fps: int | None = None,
+    custom_prompt: str | None = None,
 ) -> None:
     # Yolo model initialization
     vllm_model = VLLMDetection(
