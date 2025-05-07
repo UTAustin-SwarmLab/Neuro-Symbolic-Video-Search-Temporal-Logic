@@ -1,5 +1,5 @@
+from typing import List, Dict, Union
 import abc
-
 
 class DatasetLoader(abc.ABC):
     """Base class for loading dataset."""
@@ -9,6 +9,6 @@ class DatasetLoader(abc.ABC):
         self.subtitle_path = subtitle_path
 
     @abc.abstractmethod
-    def load_all(self) -> any:
+    def load_all(self) -> List[Dict[str, Union[List[np.ndarray], None]]]:
         """Load video and subtitles."""
 
