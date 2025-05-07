@@ -39,7 +39,7 @@ dependencies = [
     "torchmetrics==0.5",
     "ultralytics",
     "clip@git+https://github.com/openai/CLIP.git",
-    "cvias@git+https://github.com/Coargus/Computer-Vision-Inference-and-Server.git@v0.1.4-dev",
+    "cvias@git+https://github.com/Coargus/Computer-Vision-Inference-and-Server.git@nsvqa-dev",
     "vflow@git+https://github.com/Coargus/vflow@v0.0.3-dev",
 ]
 [tool.black]
