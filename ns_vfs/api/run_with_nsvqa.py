@@ -102,7 +102,7 @@ def run_nsvs_nsvqa(
 
 
 if __name__ == "__main__":
-    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-updated.json"
+    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-fixed-specs-v2.json"
     with open(input_data_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 

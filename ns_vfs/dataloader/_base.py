@@ -1,5 +1,6 @@
 from typing import List, Dict, Union
 import abc
+import numpy as np
 
 class DatasetLoader(abc.ABC):
     """Base class for loading dataset."""
