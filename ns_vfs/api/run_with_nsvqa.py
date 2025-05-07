@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import json
 from cvias.image.detection.vllm_detection import VLLMDetection
 
 from ns_vfs.automaton.video_automaton import VideoAutomaton
@@ -101,42 +102,23 @@ def run_nsvs_nsvqa(
 
 
 if __name__ == "__main__":
-    video_path = "/nas/mars/dataset/LongVideoBench/videos/86CxyhFV9MI.mp4"
-    subtitle_path = "/nas/mars/dataset/LongVideoBench/subtitles/86CxyhFV9MI_en.json"
-    bench = LongVideoBench(video_path, subtitle_path)
+    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-updated.json"
+    with open(input_data_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
-    import sys
-    sys.exit(0)
-    sample_data = [
-        {
-            "frames": [
-                # Create a 224x224x3 RGB image with some pattern
-                np.random.randint(
-                    0, 255, (224, 224, 3), dtype=np.uint8
-                ),  # Random RGB image
-                np.random.randint(
-                    0, 255, (224, 224, 3), dtype=np.uint8
-                ),  # Random RGB image
-            ],
-            "subtitle": "test",
-        },
-        {
-            "frames": [
-                np.random.randint(
-                    0, 255, (224, 224, 3), dtype=np.uint8
-                ),  # Random RGB image
-            ],
-            "subtitle": "test",
-        },
-    ]
-    run_nsvs_nsvqa(
-        nsvqa_input_data=sample_data,
-        desired_interval_in_sec=None,
-        desired_fps=30,
-        proposition_set=["car", "truck"],
-        ltl_formula='"car" U "truck"',
-        output_path="/home/mc76728/repo/Coargus/Neuro-Symbolic-Video-Search-Temporal-Logic/_dev_",
-        threshold_satisfaction_probability=0.80,
-        frame_scale=None,
-        calibration_method="temperature_scaling",
-    )
+    for sample in data:
+        loader = LongVideoBench(sample["video_path"], sample["subtitle_path"])
+        nsvqa_input = loader.load_all()
+        extracted = sample["video_path"].split('/')[-1].split('.')[0]
+
+        run_nsvs_nsvqa(
+            nsvqa_input_data=nsvqa_input,
+            desired_interval_in_sec=None,
+            desired_fps=30,
+            proposition_set=sample["proposition"],
+            ltl_formula=sample["specification"],
+            output_path=f"/nas/mars/experiment_result/nsvqa/2_nsvs/longvideobench/{extracted}/",
+            threshold_satisfaction_probability=0.80,
+            frame_scale=None,
+            calibration_method="temperature_scaling",
+        )
