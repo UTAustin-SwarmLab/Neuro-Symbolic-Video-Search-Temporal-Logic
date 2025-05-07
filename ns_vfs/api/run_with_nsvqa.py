@@ -8,6 +8,7 @@ from ns_vfs.data.frame import FramesofInterest, VideoFrame
 from ns_vfs.model_checking.stormpy import StormModelChecker
 from ns_vfs.percepter.single_vision_percepter import SingleVisionPercepter
 from ns_vfs.validator import FrameValidator
+from ns_vfs.dataloader.longvideobench import LongVideoBench
 
 
 def run_nsvs_nsvqa(
@@ -100,6 +101,12 @@ def run_nsvs_nsvqa(
 
 
 if __name__ == "__main__":
+    video_path = "/nas/mars/dataset/LongVideoBench/videos/86CxyhFV9MI.mp4"
+    subtitle_path = "/nas/mars/dataset/LongVideoBench/subtitles/86CxyhFV9MI_en.json"
+    bench = LongVideoBench(video_path, subtitle_path)
+
+    import sys
+    sys.exit(0)
     sample_data = [
         {
             "frames": [
