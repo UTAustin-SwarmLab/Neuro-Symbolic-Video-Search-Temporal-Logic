@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-import numpy as np
 import json
+import time
+
+import numpy as np
 from cvias.image.detection.vllm_detection import VLLMDetection
 
 from ns_vfs.automaton.video_automaton import VideoAutomaton
 from ns_vfs.data.frame import FramesofInterest, VideoFrame
+from ns_vfs.dataloader.longvideobench import LongVideoBench
 from ns_vfs.model_checking.stormpy import StormModelChecker
 from ns_vfs.percepter.single_vision_percepter import SingleVisionPercepter
 from ns_vfs.validator import FrameValidator
-from ns_vfs.dataloader.longvideobench import LongVideoBench
-from ns_vfs.dataloader.nextqa import NextQA
 
 
 def run_nsvs_nsvqa(
@@ -28,6 +29,7 @@ def run_nsvs_nsvqa(
     desired_fps: int | None = None,
     custom_prompt: str | None = None,
 ) -> None:
+    print(f"THE LTL FORMULA IS: {ltl_formula}")
     # Yolo model initialization
     vllm_model = VLLMDetection(
         api_key=api_key,
@@ -52,11 +54,15 @@ def run_nsvs_nsvqa(
         cv_models=vllm_model,
     )
 
-    frame_validator = FrameValidator(ltl_formula=ltl_formula)
+    frame_validator = FrameValidator(
+        ltl_formula=ltl_formula,
+        threshold_of_probability=0.3,
+    )
     frame_idx = 0
-    model_checker_is_filter: bool = (False,)
-    model_checker_type: str = ("sparse_ma",)
+    model_checker_is_filter: bool = False
+    model_checker_type: str = "dtmc"  # "sparse_ma"
     for nsvqa_input in nsvqa_input_data:
+        start_time = time.time()
         sequence_of_frames = nsvqa_input["frames"]
         detected_objects: dict = vision_percepter.perceive(
             image=sequence_of_frames,
@@ -73,6 +79,8 @@ def run_nsvs_nsvqa(
             activity_of_interest=activity_of_interest,
         )
         frame_idx += 1
+        end_time = time.time()
+        print(f"Time taken to detect objects: {end_time - start_time} seconds")
 
         # 1. frame validation
         if frame_validator.validate_frame(frame=frame):
@@ -96,6 +104,15 @@ def run_nsvs_nsvqa(
     print(frame_of_interest.foi_list)
     # save result
     if output_path:
+        if output_path.endswith("/"):
+            foi_output_path = f"{output_path}frames_of_interest.txt"
+        else:
+            foi_output_path = f"{output_path}/frames_of_interest.txt"
+        with open(foi_output_path, "w") as f:
+            f.write("Detected frames of interest:\n")
+            f.write("--------------------------------\n")
+            for frame in frame_of_interest.foi_list:
+                f.write(f"{frame}\n")
         frame_of_interest.save(path=output_path)
         print(f"\nResults saved in {output_path}")
 
@@ -104,24 +121,28 @@ def run_nsvs_nsvqa(
 
 if __name__ == "__main__":
     # input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-fixed-specs-v2.json"
-    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/next-dataset/nextqa-outputs.json"
-    with open(input_data_path, 'r', encoding='utf-8') as f:
+    # input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/next-dataset/nextqa-outputs.json"
+    # input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-run1.json"
+    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-run2.json"
+
+    with open(input_data_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     for sample in data:
         # loader = LongVideoBench(sample["video_path"], sample["subtitle_path"])
-        loader = NextQA(sample["video_path"], sample["subtitle_path"])
+        loader = LongVideoBench(sample["video_path"], sample["subtitle_path"])
         nsvqa_input = loader.load_all()
-        extracted = sample["video_path"].split('/')[-1].split('.')[0]
+        extracted = sample["video_path"].split("/")[-1].split(".")[0]
 
         run_nsvs_nsvqa(
             nsvqa_input_data=nsvqa_input,
             desired_interval_in_sec=None,
+            api_base="http://localhost:8002/v1",
             desired_fps=30,
             proposition_set=sample["proposition"],
             ltl_formula=sample["specification"],
             output_path=f"/nas/mars/experiment_result/nsvqa/2_nsvs/longvideobench/{extracted}/",
             threshold_satisfaction_probability=0.80,
             frame_scale=None,
-            calibration_method="temperature_scaling",
+            calibration_method=None,  # "temperature_scaling",
         )
