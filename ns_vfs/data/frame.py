@@ -165,9 +165,14 @@ class FramesofInterest:
 
         frame_path.mkdir(parents=True, exist_ok=True)
         annotation_path.mkdir(parents=True, exist_ok=True)
-
         for idx, img in enumerate(self.frame_images):
-            Image.fromarray(img).save(f"{frame_path}/{idx}.png")
+            if isinstance(img, np.ndarray):
+                Image.fromarray(img).save(f"{frame_path}/{idx}.png")
+            else:
+                for i, img_i in enumerate(img):
+                    Image.fromarray(img_i).save(
+                        f"{frame_path}/frame_chunk_{idx}_{i}.png"
+                    )
             try:
                 if (
                     len(self.annotated_images) > 0
