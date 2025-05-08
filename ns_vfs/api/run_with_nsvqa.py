@@ -10,6 +10,7 @@ from ns_vfs.model_checking.stormpy import StormModelChecker
 from ns_vfs.percepter.single_vision_percepter import SingleVisionPercepter
 from ns_vfs.validator import FrameValidator
 from ns_vfs.dataloader.longvideobench import LongVideoBench
+from ns_vfs.dataloader.nextqa import NextQA
 
 
 def run_nsvs_nsvqa(
@@ -102,12 +103,14 @@ def run_nsvs_nsvqa(
 
 
 if __name__ == "__main__":
-    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-fixed-specs-v2.json"
+    # input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/longvideobench/longvideobench-outputs-fixed-specs-v2.json"
+    input_data_path = "/nas/mars/experiment_result/nsvqa/1_puls/next-dataset/nextqa-outputs.json"
     with open(input_data_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     for sample in data:
-        loader = LongVideoBench(sample["video_path"], sample["subtitle_path"])
+        # loader = LongVideoBench(sample["video_path"], sample["subtitle_path"])
+        loader = NextQA(sample["video_path"], sample["subtitle_path"])
         nsvqa_input = loader.load_all()
         extracted = sample["video_path"].split('/')[-1].split('.')[0]
 
