@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import pickle
+import json
 import os
 
 from ns_vfs.nsvs import run_nsvs
@@ -53,7 +54,6 @@ def readTLV():
                                 "number_of_frames": raw["number_of_frame"],
                             }
                             data.append(entry)
-                            return data
                             processed_files += 1
                             pbar.set_postfix({"loaded": processed_files})
                     except Exception as e:
@@ -92,21 +92,31 @@ def process_entry(entry):
         specification=entry['specification']
     )
 
-    print()
-    print(f"Specification: {entry['specification']}")
-    print(f"Ground Truth: {entry['ground_truth']}")
-    print(f"NSVS Output: {foi}")
-    import sys
-    sys.exit(0)
+    return foi
 
 def main():
     data = readTLV()
     if not data:
         return
 
+    output = []
     with tqdm(enumerate(data), total=len(data), desc="Processing entries") as pbar:
         for i, entry in pbar:
-            process_entry(entry)
+            foi = process_entry(entry)
+
+            addition = {
+                "propositions": entry['propositions'],
+                "specification": entry['specification'],
+                "ground_truth": entry['ground_truth'],
+                "nsvs_output": foi,
+                "type": entry['type'],
+                "number_of_frames": entry['number_of_frames'],
+            }
+            output.append(addition)
+
+            with open(f"junk/output_{i}", "w") as f:
+                json.dump(output, f, indent=4)
+
 
 if __name__ == "__main__":
     main()
