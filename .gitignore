@@ -1,10 +1,6 @@
-#ns_vfs_custom
-test_scripts/runs/
-artifacts/
-store/
-libs
-ns_vfs/output/
-_dev_/
+# NSVS-TL
+junk/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
