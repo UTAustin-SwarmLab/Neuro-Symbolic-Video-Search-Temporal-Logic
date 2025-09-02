@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import pickle
 import json
+import time
 import os
 
 from ns_vfs.nsvs import run_nsvs
@@ -24,6 +25,22 @@ def readTLV():
             for filename in os.listdir(format_path):
                 if filename.endswith(".pkl"):
                     total_files += 1
+
+    def formatter(spec):
+        spec = spec.replace("&", " and ")
+        spec = spec.replace("|", " or ")
+        spec = spec.replace("U", " until ")
+        spec = spec.replace("F", " eventually ")
+        spec = spec.replace("G", " always ")
+        spec = spec.replace("X", " next ")
+        spec = spec.replace('"', "")
+        spec = spec.replace("'", "")
+        spec = spec.replace("(", "")
+        spec = spec.replace(")", "")
+        while "  " in spec:
+            spec = spec.replace("  ", " ")
+        spec = spec.strip()
+        return spec
 
     with tqdm(total=total_files, desc="Loading dataset files") as pbar:
         for dataset_dir in os.listdir(base_path):
@@ -56,41 +73,22 @@ def readTLV():
                             data.append(entry)
                             processed_files += 1
                             pbar.set_postfix({"loaded": processed_files})
+                            return data
                     except Exception as e:
                         pass
                     finally:
                         pbar.update(1)
     return data
 
-
-def formatter(spec):
-    # Replace logical operators with natural language
-    spec = spec.replace("&", " and ")
-    spec = spec.replace("|", " or ")
-    spec = spec.replace("U", " until ")
-    spec = spec.replace("F", " eventually ")
-    spec = spec.replace("G", " always ")
-    spec = spec.replace("X", " next ")
-
-    # Remove quotes and parentheses
-    spec = spec.replace('"', "")
-    spec = spec.replace("'", "")
-    spec = spec.replace("(", "")
-    spec = spec.replace(")", "")
-
-    # Remove extra spaces
-    while "  " in spec:
-        spec = spec.replace("  ", " ")
-    spec = spec.strip()
-
-    return spec
-
 def process_entry(entry):
-    foi = run_nsvs(
-        frames=entry['images'], 
-        proposition=entry['propositions'],
-        specification=entry['specification']
-    )
+    try:
+        foi = run_nsvs(
+            frames=entry['images'], 
+            proposition=entry['propositions'],
+            specification=entry['specification']
+        )
+    except Exception as _:
+        foi = None
 
     return foi
 
@@ -99,23 +97,26 @@ def main():
     if not data:
         return
 
-    output = []
     with tqdm(enumerate(data), total=len(data), desc="Processing entries") as pbar:
         for i, entry in pbar:
+            start_time = time.time()
             foi = process_entry(entry)
+            end_time = time.time()
+            entry["processing_time_seconds"] = round(end_time - start_time, 3)
 
-            addition = {
-                "propositions": entry['propositions'],
-                "specification": entry['specification'],
-                "ground_truth": entry['ground_truth'],
-                "nsvs_output": foi,
-                "type": entry['type'],
-                "number_of_frames": entry['number_of_frames'],
-            }
-            output.append(addition)
+            if foi:
+                output = {
+                    "propositions": entry['propositions'],
+                    "specification": entry['specification'],
+                    "ground_truth": entry['ground_truth'],
+                    "frames_of_interest": foi,
+                    "type": entry['type'],
+                    "number_of_frames": entry['number_of_frames'],
+                    "processting_time_seconds": entry['processing_time_seconds'],
+                }
 
-            with open(f"junk/output_{i}", "w") as f:
-                json.dump(output, f, indent=4)
+                with open(f"junk/output_{i}.json", "w") as f:
+                    json.dump(output, f, indent=4)
 
 
 if __name__ == "__main__":
