@@ -1,0 +1,155 @@
+name: Build Test
+# Builds and tests stormpy with different versions of Storm
+# also deploys images to Dockerhub
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    # run weekly
+    - cron: '0 10 * * 3'
+  # needed to trigger the workflow manually
+  workflow_dispatch:
+  pull_request:
+
+env:
+  # GitHub runners currently have 4 cores
+  NR_JOBS: "4"
+
+jobs:
+  indepthTests:
+    name: Indepth Tests (${{ matrix.buildType.name }}, ${{ matrix.configuration.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildType:
+          - {name: "Debug", dockerTag: "ci-debug", stormTag: "ci-debug", buildArgs: "BUILD_TYPE=Debug", setupArgs: "--debug"}
+          - {name: "Release", dockerTag: "ci", stormTag: "ci", buildArgs: "BUILD_TYPE=Release", setupArgs: ""}
+        configuration:
+          - {name: "all libraries", disableFlags: "", optionalLibs: "[numpy,plot]", testOpt: ""}
+          - {name: "no libraries", disableFlags: "--disable-dft --disable-gspn --disable-pars --disable-pomdp", optionalLibs: "", testOpt: "tests"}
+    steps:
+      - name: Git clone
+        uses: actions/checkout@v4
+      - name: Build stormpy from Dockerfile
+        run: docker build -t movesrwth/stormpy:${{ matrix.buildType.dockerTag }} . --build-arg STORM_BASE=movesrwth/storm:${{ matrix.buildType.stormTag }} --build-arg build_type=${{ matrix.buildType.buildArgs }} --build-arg setup_args="${{ matrix.buildType.setupArgs }} ${{ matrix.configuration.disableFlags }}" --build-arg setup_args_pycarl=${{ matrix.buildType.setupArgs }} --build-arg no_threads=${NR_JOBS}
+      - name: Run Docker
+        run: docker run -d -it --name ci movesrwth/stormpy:${{ matrix.buildType.dockerTag }}
+      - name: Build optional stormpy libraries
+        run: docker exec ci bash -c "cd /opt/stormpy; pip3 install -e '.${{ matrix.configuration.optionalLibs }}'"
+      - name: Run tests
+        run: docker exec ci bash -c "cd /opt/stormpy; pip install -e '.[test]'; pytest ${{ matrix.configuration.testOpt }}"
+
+
+  stableTest:
+    name: Test on stable (${{ matrix.buildType.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildType:
+          - {name: "Debug", dockerTag: "ci-debug", stormTag: "stable-debug", buildArgs: "BUILD_TYPE=Debug", setupArgs: "--debug"}
+          - {name: "Release", dockerTag: "ci", stormTag: "stable", buildArgs: "BUILD_TYPE=Release", setupArgs: ""}
+
+    # Allow failures of stable versions as new features might have been added
+    steps:
+      - name: Git clone
+        uses: actions/checkout@v4
+      - name: Replace Dockerfile
+        run: cp .github/workflows/Dockerfile.stable Dockerfile
+      - name: Build dependencies
+        run: docker build -t movesrwth/stormpy:${{ matrix.buildType.dockerTag }} . --build-arg STORM_BASE=movesrwth/storm:${{ matrix.buildType.stormTag }} --build-arg build_type=${{ matrix.buildType.buildArgs }} --build-arg setup_args_pycarl=${{ matrix.buildType.setupArgs }} --build-arg no_threads=${NR_JOBS}
+
+      - name: Run Docker
+        run: docker run -d -it --name ci movesrwth/stormpy:${{ matrix.buildType.dockerTag }}
+      - name: Build stormpy
+        # Build stormpy explicitly to catch exit code
+        id: build_stormpy
+        shell: bash {0} // Deactivate fast-fail to handle exit code for incompatibility
+        run: |
+          docker exec ci bash -c "cd /opt/stormpy; python setup.py build_ext ${{ matrix.buildType.setupArgs }} -j ${NR_JOBS} develop"
+          status=$?
+          if [ $status -eq 42 ]; then
+            # Warn about incompatibility but do not handle as failure
+            echo "::warning file=setup.py,line=82::Stormpy is incompatible with stable version of Storm"
+            # Deactivate tests
+            echo "run_tests=false" >> $GITHUB_OUTPUT
+          else
+            echo "run_tests=true" >> $GITHUB_OUTPUT
+            exit $status
+          fi
+      - name: Run tests
+        if: steps.build_stormpy.outputs.run_tests == 'true'
+        run: docker exec ci bash -c "cd /opt/stormpy; pip install -e '.[test]'; pytest"
+
+
+  deploy:
+    name: Test and Deploy on latest (${{ matrix.buildType.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildType:
+          - {name: "Debug", dockerTag: "ci-debug", stormTag: "ci-debug", buildArgs: "BUILD_TYPE=Debug", setupArgs: "--debug"}
+          - {name: "Release", dockerTag: "ci", stormTag: "ci", buildArgs: "BUILD_TYPE=Release", setupArgs: ""}
+    steps:
+      - name: Git clone
+        uses: actions/checkout@v4
+      - name: Build stormpy from Dockerfile
+        run: docker build -t movesrwth/stormpy:${{ matrix.buildType.dockerTag }} . --build-arg STORM_BASE=movesrwth/storm:${{ matrix.buildType.stormTag }} --build-arg build_type=${{ matrix.buildType.buildArgs }} --build-arg setup_args=${{ matrix.buildType.setupArgs }} --build-arg setup_args_pycarl=${{ matrix.buildType.setupArgs }} --build-arg no_threads=${NR_JOBS}
+      - name: Run Docker
+        run: docker run -d -it --name ci movesrwth/stormpy:${{ matrix.buildType.dockerTag }}
+      - name: Run tests
+        run: docker exec ci bash -c "cd /opt/stormpy; pip install -e '.[test]'; pytest"
+
+      - name: Login into docker
+        # Only login if using master on original repo (and not for pull requests or forks)
+        if: github.repository_owner == 'moves-rwth' && github.ref == 'refs/heads/master'
+        run: echo "${{ secrets.STORM_CI_DOCKER_PASSWORD }}" | docker login -u "${{ secrets.STORM_CI_DOCKER_USERNAME }}" --password-stdin
+      - name: Deploy stormpy
+        # Only deploy if using master on original repo (and not for pull requests or forks)
+        if: github.repository_owner == 'moves-rwth' && github.ref == 'refs/heads/master'
+        run: |
+          docker commit ci movesrwth/stormpy:${{ matrix.buildType.dockerTag }}
+          docker push movesrwth/stormpy:${{ matrix.buildType.dockerTag }}
+
+      - name: Install documentation dependencies
+        if: matrix.buildType.name == 'Release'
+        run: |
+          docker exec ci apt-get install -qq -y pandoc
+          docker exec ci bash -c "cd /opt/stormpy; pip install -e '.[doc,numpy]'"
+      - name: Build documentation
+        if: matrix.buildType.name == 'Release'
+        run: |
+          docker exec ci bash -c "cd /opt/stormpy/doc; make html"
+          docker exec ci rm -r /opt/stormpy/doc/build/html/_sources
+          docker cp ci:/opt/stormpy/doc/build/html .
+      - name: Deploy documentation
+        # Only deploy for release version and using master on original repo (and not for pull requests or forks)
+        if: matrix.buildType.name == 'Release' && github.repository_owner == 'moves-rwth' && github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html
+
+  notify:
+    name: Email notification
+    runs-on: ubuntu-latest
+    needs: [indepthTests,stableTest, deploy]
+    # Only run in main repo and even if previous step failed
+    if: github.repository_owner == 'moves-rwth' && always()
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v3
+      - uses: dawidd6/action-send-mail@v5
+        with:
+          server_address: ${{ secrets.STORM_CI_MAIL_SERVER }}
+          server_port: 587
+          username: ${{ secrets.STORM_CI_MAIL_USERNAME }}
+          password: ${{ secrets.STORM_CI_MAIL_PASSWORD }}
+          subject: "[You broke it] CI run failed for ${{ github.repository }}"
+          body:
+            "CI job of ${{ github.repository }} has failed for commit ${{ github.sha }}.\n\
+            The error type is: ${{ env.WORKFLOW_CONCLUSION }}.\n\n\
+            For more information, see https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          to: ${{ secrets.STORM_CI_MAIL_RECIPIENTS }}
+          from: Github Actions <you-broke-it@stormchecker.org>
+        if: env.WORKFLOW_CONCLUSION != 'success' # notify only if failure
