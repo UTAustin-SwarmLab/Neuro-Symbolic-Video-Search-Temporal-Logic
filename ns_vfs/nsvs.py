@@ -16,7 +16,9 @@ def run_nsvs(
     proposition: list,
     specification: str,
     model_type: str = "dtmc",
-    num_of_frame_in_sequence = 3
+    num_of_frame_in_sequence = 3,
+    satisfaction_threshold: float = 0.6,
+    vlm_detection_threshold: float = 0.349,
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
@@ -29,7 +31,8 @@ def run_nsvs(
     checker = PropertyChecker(
         proposition=proposition,
         specification=specification,
-        model_type=model_type
+        model_type=model_type,
+        threshold=satisfaction_threshold,
     )
 
     frame_of_interest = FramesofInterest(num_of_frame_in_sequence)
@@ -45,7 +48,7 @@ def run_nsvs(
             detected_object = vlm.detect(
                 seq_of_frames=sequence_of_frames,
                 scene_description=prop,
-                threshold=0.349
+                threshold=vlm_detection_threshold
             )
             object_of_interest[prop] = detected_object
             if PRINT_ALL and detected_object.is_detected:

@@ -2,10 +2,11 @@ from ns_vfs.model_checker.stormpy import StormModelChecker
 from ns_vfs.model_checker.frame_validator import FrameValidator
 
 class PropertyChecker:
-    def __init__(self, proposition, specification, model_type):
+    def __init__(self, proposition, specification, model_type, threshold):
         self.proposition = proposition
         self.specification = self.generate_specification(specification)
         self.model_type = model_type
+        self.threshold = threshold
 
         self.model_checker = StormModelChecker(
             proposition_set=self.proposition,
@@ -16,7 +17,7 @@ class PropertyChecker:
         )
 
     def generate_specification(self, specification_raw):
-        return f'P>=0.60 [ {specification_raw} ]'
+        return f'P>={self.threshold:.2f} [ {specification_raw} ]'
 
     def validate_frame(self, frame_of_interest):
         return self.frame_validator.validate_frame(frame_of_interest)
