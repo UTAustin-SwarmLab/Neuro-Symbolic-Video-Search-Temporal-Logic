@@ -1,18 +1,9 @@
 from enum import Enum
-import json
-import logging
-import os
-import pickle
-import traceback
-from collections import defaultdict
-
-import cv2
-import time
-import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+import json
+import time
+import os
 
-from ns_vfs.vlm.obj import DetectedObject
 from ns_vfs.vlm.internvl import InternVL
 from execute_with_tlv import readTLV
 
