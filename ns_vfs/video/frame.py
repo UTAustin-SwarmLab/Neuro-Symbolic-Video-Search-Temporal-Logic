@@ -1,11 +1,6 @@
-from __future__ import annotations
-
-from pathlib import Path
-from typing import Dict, List
-
-import cv2
+from typing import List
 import numpy as np
-
+import cv2
 
 
 class VideoFrame:
@@ -35,29 +30,6 @@ class VideoFrame:
             if probability > threshold:
                 detected_obj[prop] = probability
         return detected_obj
-
-    def detected_bboxes(self, probability_threshold: bool = False) -> list:
-        """Get detected object.
-
-        Args:
-            probability_threshold (float | None): Probability threshold.
-            Defaults to None.
-
-        Returns:
-            list: Bounding boxes.
-        """
-        bboxes = []
-
-        for _, obj_value in self.object_of_interest.items():
-            if obj_value.is_detected:
-                if probability_threshold:
-                    for obj_prob in obj_value.probability_of_all_obj:
-                        if obj_prob > 0:
-                            bboxes += obj_value.bounding_box_of_all_obj
-                else:
-                    bboxes += obj_value.bounding_box_of_all_obj
-
-        return bboxes
 
 
 class FramesofInterest:

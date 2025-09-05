@@ -5,7 +5,7 @@ import time
 import os
 
 from ns_vfs.vlm.internvl import InternVL
-from execute_with_tlv import readTLV
+from ns_vfs.video.read_tlv import TLVReader
 
 class RunConfig(Enum):
     SLIDING_WINDOW = "sliding_window"
@@ -20,7 +20,7 @@ STRIDE = 10  # slide stride (sw)
 WINDOW = 20  # window length (sw)
 
 def sliding_window(entry):  # answers "which sequence of `WINDOW` frames can best answer the query"
-    query = entry["query"]
+    query = entry["tl"]["query"]
     frames = entry["images"]
 
     model = InternVL(model_name=MODEL_NAME, device=DEVICE)
@@ -49,7 +49,7 @@ def sliding_window(entry):  # answers "which sequence of `WINDOW` frames can bes
     return foi
 
 def frame_wise(entry):
-    query = entry["query"]
+    query = entry["tl"]["query"]
     frames = entry["images"]
 
     model = InternVL(model_name="InternVL2-8B", device=DEVICE)
@@ -74,7 +74,8 @@ def frame_wise(entry):
 
 
 def main():
-    data = readTLV()
+    reader = TLVReader("/nas/dataset/tlv-dataset-v1")
+    data = reader.read_video()
     if not data:
         return
 
@@ -91,19 +92,18 @@ def main():
             else:
                 foi = frame_wise(entry)
             end_time = time.time()
-            entry["processing_time_seconds"] = round(end_time - start_time, 3)
 
             output = {
-                "propositions": entry['propositions'],
-                "specification": entry['specification'],
-                "ground_truth": entry['ground_truth'],
+                "propositions": entry["tl"]["propositions"],
+                "specification": entry["tl"]["specification"],
+                "ground_truth": entry["metadata"]["ground_truth"],
                 "frames_of_interest": foi,
-                "type": entry['type'],
-                "number_of_frames": entry['number_of_frames'],
-                "processting_time_seconds": entry['processing_time_seconds'],
+                "type": entry["metadata"]["type"],
+                "number_of_frames": entry["video_info"].frame_count,
+                "processting_time_seconds": round(end_time - start_time, 3),
             }
 
-            with open(f"junk/output_{i}.json", "w") as f:
+            with open(f"{folder_name}/output_{i}.json", "w") as f:
                 json.dump(output, f, indent=4)
 
 
