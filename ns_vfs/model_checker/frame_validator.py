@@ -26,10 +26,6 @@ class FrameValidator:
         else:
             self.symbolic_verification_rule = self.get_symbolic_rule_from_ltl_formula(ltl_formula)
 
-        # print(f"\nSpecification: {ltl_formula}")
-        # print(f"avoid_props: {self.symbolic_verification_rule[SymbolicFilterRule.AVOID_PROPS]}")
-        # print(f"associated_props: {self.symbolic_verification_rule[SymbolicFilterRule.ASSOCIATED_PROPS]}")
-
     def validate_frame(
         self,
         frame: VideoFrame,
