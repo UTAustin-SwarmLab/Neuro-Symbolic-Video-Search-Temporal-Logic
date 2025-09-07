@@ -11,6 +11,7 @@ class RunConfig(Enum):
     SLIDING_WINDOW = "sliding_window"
     FRAME_WISE = "frame_wise"
 CURRENT_CONFIG = RunConfig.SLIDING_WINDOW
+TLV_PATH = "/nas/dataset/tlv-dataset-v1"
 MODEL_NAME = "InternVL2-8B"
 DEVICE = 7  # GPU device index
 
@@ -74,7 +75,7 @@ def frame_wise(entry):
 
 
 def main():
-    reader = TLVReader("/nas/dataset/tlv-dataset-v1")
+    reader = TLVReader(TLV_PATH)
     data = reader.read_video()
     if not data:
         return

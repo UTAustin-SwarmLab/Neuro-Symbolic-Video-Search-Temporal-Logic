@@ -3,11 +3,17 @@ import json
 import time
 
 from ns_vfs.nsvs import run_nsvs
-from ns_vfs.video.read_tlv import TLVReader
+from ns_vfs.video.read_mp4 import Mp4Reader
 
 
-TLV_PATH = "/nas/dataset/tlv-dataset-v1"
+VIDEOS = [
+    {
+        "path": "/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4",
+        "query": "a man is talking before getting up"
+    }
+]
 DEVICE = 7  # GPU device index
+OPENAI_SAVE_PATH = "/nas/mars/experiment_result/nsvs/openai_conversation_history/"
 
 def process_entry(entry):
     try:
@@ -24,8 +30,9 @@ def process_entry(entry):
     return foi
 
 def main():
-    reader = TLVReader(TLV_PATH)
+    reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=0.1)
     data = reader.read_video()
+    print(data[0]["tl"]["specification"])
     if not data:
         return
 
@@ -49,7 +56,6 @@ def main():
 
                 with open(f"junk/output_{i}.json", "w") as f:
                     json.dump(output, f, indent=4)
-
 
 if __name__ == "__main__":
     main()

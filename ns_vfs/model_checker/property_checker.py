@@ -2,22 +2,24 @@ from ns_vfs.model_checker.stormpy import StormModelChecker
 from ns_vfs.model_checker.frame_validator import FrameValidator
 
 class PropertyChecker:
-    def __init__(self, proposition, specification, model_type, threshold):
+    def __init__(self, proposition, specification, model_type, tl_satisfaction_threshold, detection_threshold):
         self.proposition = proposition
         self.specification = self.generate_specification(specification)
         self.model_type = model_type
-        self.threshold = threshold
+        self.tl_satisfaction_threshold = tl_satisfaction_threshold,
+        self.detection_threshold = detection_threshold
 
         self.model_checker = StormModelChecker(
             proposition_set=self.proposition,
             ltl_formula=self.specification
         )
         self.frame_validator = FrameValidator(
-            ltl_formula=self.specification
+            ltl_formula=self.specification,
+            threshold_of_probability=self.detection_threshold
         )
 
     def generate_specification(self, specification_raw):
-        return f'P>={self.threshold:.2f} [ {specification_raw} ]'
+        return f'P>={self.tl_satisfaction_threshold:.2f} [ {specification_raw} ]'
 
     def validate_frame(self, frame_of_interest):
         return self.frame_validator.validate_frame(frame_of_interest)

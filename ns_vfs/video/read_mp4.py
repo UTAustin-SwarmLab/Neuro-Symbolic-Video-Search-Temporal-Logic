@@ -4,16 +4,15 @@ import numpy as np
 import cv2
 
 from ns_vfs.video.reader import VideoFormat, VideoInfo, Reader
+from ns_vfs.puls.puls import PULS
 
 
 class Mp4Reader(Reader):
-    def __init__(self, video_paths: str | List[str], sampling_rate_fps: float = 1.0):
-        if isinstance(video_paths, str):
-            self.video_paths = [video_paths]
-        else:
-            self.video_paths = video_paths
+    def __init__(self, videos: List[Dict[str, str]], openai_save_path: str, sampling_rate_fps: float = 1.0):
+        self.videos = videos
         if sampling_rate_fps is None or sampling_rate_fps <= 0:
             raise ValueError("sampling_rate_fps must be > 0")
+        self.openai_save_path = openai_save_path
         self.sampling_rate_fps = float(sampling_rate_fps)
 
     def _sampled_frame_indices(self, fps: float, frame_count: int) -> List[int]:
@@ -29,7 +28,10 @@ class Mp4Reader(Reader):
             idxs = [0]
         return idxs
 
-    def _read_one(self, path: str) -> Dict[str, Any] | None:
+    def _read_one(self, video_query: Dict[str, str]) -> Dict[str, Any] | None:
+        path = video_query["path"]
+        query = video_query["query"]
+
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
             return None
@@ -62,15 +64,18 @@ class Mp4Reader(Reader):
                 fps=float(fps) if fps else None,
             )
 
+            puls_output = PULS(query, self.openai_save_path)
+
             entry = {
                 "tl": {
-                    "propositions": {},
-                    "specification": "",
-                    "query": "",
+                    "propositions": puls_output["proposition"],
+                    "specification": puls_output["specification"],
+                    "query": query,
                 },
                 "metadata": {
-                    "file_path": path,
+                    "video_path": path,
                     "sampling_rate_fps": self.sampling_rate_fps,
+                    "puls_saved_path": puls_output["saved_path"],
                 },
                 "video_info": video_info,
                 "images": images,
@@ -81,10 +86,10 @@ class Mp4Reader(Reader):
 
     def read_video(self) -> List[Dict[str, Any]]:
         results: List[Dict[str, Any]] = []
-        with tqdm(total=len(self.video_paths), desc="Reading MP4s") as pbar:
-            for p in self.video_paths:
+        with tqdm(total=len(self.videos), desc="Reading MP4s") as pbar:
+            for v in self.videos:
                 try:
-                    entry = self._read_one(p)
+                    entry = self._read_one(v)
                     if entry is not None:
                         results.append(entry)
                 finally:

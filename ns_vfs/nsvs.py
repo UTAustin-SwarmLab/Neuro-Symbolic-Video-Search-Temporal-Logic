@@ -9,21 +9,23 @@ from ns_vfs.video.frame import VideoFrame
 from ns_vfs.vlm.internvl import InternVL
 
 PRINT_ALL = False
-DEVICE = 7
 
 def run_nsvs(
     frames: list[np.ndarray],
     proposition: list,
     specification: str,
+    model_name: str = "InternVL2-8B",
+    device: int = 0,
     model_type: str = "dtmc",
     num_of_frame_in_sequence = 3,
-    satisfaction_threshold: float = 0.6,
+    tl_satisfaction_threshold: float = 0.6,
+    detection_threshold: float = 0.5,
     vlm_detection_threshold: float = 0.349,
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
     # vlm = VLLMClient()
-    vlm = InternVL(model_name="InternVL2-8B", device=DEVICE)
+    vlm = InternVL(model_name=model_name, device=device)
 
     automaton = VideoAutomaton(include_initial_state=True)
     automaton.set_up(proposition_set=proposition)
@@ -32,7 +34,8 @@ def run_nsvs(
         proposition=proposition,
         specification=specification,
         model_type=model_type,
-        threshold=satisfaction_threshold,
+        tl_satisfaction_threshold=tl_satisfaction_threshold,
+        detection_threshold=detection_threshold
     )
 
     frame_of_interest = FramesofInterest(num_of_frame_in_sequence)
