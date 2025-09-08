@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import json
 import time
+import os
 
 from ns_vfs.nsvs import run_nsvs
 from ns_vfs.video.read_tlv import TLVReader
@@ -8,19 +9,16 @@ from ns_vfs.video.read_tlv import TLVReader
 
 TLV_PATH = "/nas/dataset/tlv-dataset-v1"
 DEVICE = 7  # GPU device index
+OUTPUT_DIR = "output"
 
 def process_entry(entry):
-    try:
-        foi = run_nsvs(
-            frames=entry['images'], 
-            proposition=entry['tl']['propositions'],
-            specification=entry['tl']['specification'],
-            model_name="InternVL2-8B",
-            device=DEVICE
-        )
-    except Exception as _:
-        foi = None
-
+    foi = run_nsvs(
+        frames=entry['images'], 
+        proposition=entry['tl']['propositions'],
+        specification=entry['tl']['specification'],
+        model_name="InternVL2-8B",
+        device=DEVICE
+    )
     return foi
 
 def main():
@@ -34,22 +32,20 @@ def main():
             start_time = time.time()
             foi = process_entry(entry)
             end_time = time.time()
-            entry["processing_time_seconds"] = round(end_time - start_time, 3)
+            processing_time = round(end_time - start_time, 3)
 
             if foi:
                 output = {
-                    "propositions": entry['propositions'],
-                    "specification": entry['specification'],
-                    "ground_truth": entry['ground_truth'],
+                    "tl": entry["tl"],
+                    "metadata": entry["metadata"],
+                    "video_info": entry["video_info"].to_dict(),
                     "frames_of_interest": foi,
-                    "type": entry['type'],
-                    "number_of_frames": entry['number_of_frames'],
-                    "processting_time_seconds": entry['processing_time_seconds'],
+                    "processting_time_seconds": processing_time
                 }
 
-                with open(f"junk/output_{i}.json", "w") as f:
+                os.makedirs(OUTPUT_DIR, exist_ok=True)
+                with open(os.path.join(OUTPUT_DIR, f"output_{i}.json"), "w") as f:
                     json.dump(output, f, indent=4)
-
 
 if __name__ == "__main__":
     main()

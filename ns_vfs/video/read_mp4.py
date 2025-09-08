@@ -36,62 +36,58 @@ class Mp4Reader(Reader):
         if not cap.isOpened():
             return None
 
-        try:
-            fps = cap.get(cv2.CAP_PROP_FPS) or 0.0
-            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
-            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+        fps = cap.get(cv2.CAP_PROP_FPS) or 0.0
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
 
-            frame_idxs = self._sampled_frame_indices(fps, frame_count)
+        frame_idxs = self._sampled_frame_indices(fps, frame_count)
 
-            images: List[np.ndarray] = []
-            for idx in frame_idxs:
-                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
-                ok, frame_bgr = cap.read()
-                if not ok or frame_bgr is None:
-                    continue
-                frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-                images.append(frame_rgb)
+        images: List[np.ndarray] = []
+        for idx in frame_idxs:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+            ok, frame_bgr = cap.read()
+            if not ok or frame_bgr is None:
+                continue
+            frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+            images.append(frame_rgb)
 
-            if (width == 0 or height == 0) and images:
-                height, width = images[0].shape[:2]
+        if (width == 0 or height == 0) and images:
+            height, width = images[0].shape[:2]
 
-            video_info = VideoInfo(
-                format=VideoFormat.MP4,
-                frame_width=width,
-                frame_height=height,
-                frame_count=frame_count,
-                fps=float(fps) if fps else None,
-            )
+        video_info = VideoInfo(
+            format=VideoFormat.MP4,
+            frame_width=width,
+            frame_height=height,
+            frame_count=frame_count,
+            fps=float(fps) if fps else None,
+        )
 
-            puls_output = PULS(query, self.openai_save_path)
+        puls_output = PULS(query, self.openai_save_path)
 
-            entry = {
-                "tl": {
-                    "propositions": puls_output["proposition"],
-                    "specification": puls_output["specification"],
-                    "query": query,
-                },
-                "metadata": {
-                    "video_path": path,
-                    "sampling_rate_fps": self.sampling_rate_fps,
-                    "puls_saved_path": puls_output["saved_path"],
-                },
-                "video_info": video_info,
-                "images": images,
-            }
-            return entry
-        finally:
-            cap.release()
+        cap.release()
+        entry = {
+            "tl": {
+                "propositions": puls_output["proposition"],
+                "specification": puls_output["specification"],
+                "query": query,
+            },
+            "metadata": {
+                "video_path": path,
+                "sampling_rate_fps": self.sampling_rate_fps,
+                "puls_saved_path": puls_output["saved_path"],
+            },
+            "video_info": video_info,
+            "images": images,
+        }
+        return entry
 
     def read_video(self) -> List[Dict[str, Any]]:
         results: List[Dict[str, Any]] = []
         with tqdm(total=len(self.videos), desc="Reading MP4s") as pbar:
             for v in self.videos:
-                try:
-                    entry = self._read_one(v)
-                    if entry is not None:
-                        results.append(entry)
-                finally:
-                    pbar.update(1)
+                entry = self._read_one(v)
+                if entry is not None:
+                    results.append(entry)
+                pbar.update(1)
         return results

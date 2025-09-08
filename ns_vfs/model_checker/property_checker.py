@@ -4,9 +4,9 @@ from ns_vfs.model_checker.frame_validator import FrameValidator
 class PropertyChecker:
     def __init__(self, proposition, specification, model_type, tl_satisfaction_threshold, detection_threshold):
         self.proposition = proposition
+        self.tl_satisfaction_threshold = tl_satisfaction_threshold
         self.specification = self.generate_specification(specification)
         self.model_type = model_type
-        self.tl_satisfaction_threshold = tl_satisfaction_threshold,
         self.detection_threshold = detection_threshold
 
         self.model_checker = StormModelChecker(

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 import enum
@@ -17,6 +17,12 @@ class VideoInfo:
     frame_count: int
     video_id: uuid.UUID = field(default_factory=uuid.uuid4)
     fps: float | None = None
+
+    def to_dict(self):
+        d = asdict(self)
+        d["video_id"] = str(self.video_id)
+        d["format"] = self.format.value
+        return d
 
 class Reader(ABC):
     @abstractmethod
