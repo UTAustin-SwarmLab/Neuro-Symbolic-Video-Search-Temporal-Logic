@@ -1,4 +1,6 @@
 from tqdm import tqdm
+import itertools
+import operator
 import json
 import time
 import os
@@ -10,7 +12,7 @@ from ns_vfs.video.read_mp4 import Mp4Reader
 VIDEOS = [
     {
         "path": "/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4",
-        "query": "a man is talking before getting up"
+        "query": "a unicorn is prancing until a pizza eats a strawberry"
     }
 ]
 DEVICE = 7  # GPU device index
@@ -25,7 +27,23 @@ def process_entry(entry):
         model_name="InternVL2-8B",
         device=DEVICE
     )
-    return [i for sub in foi for i in sub]
+
+    foi = [i for sub in foi for i in sub]
+    scale = (entry["video_info"].fps) / (entry["metadata"]["sampling_rate_fps"])
+
+    runs = []
+    for _, grp in itertools.groupby(sorted(foi), key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0]+1) or c[0]))):
+        g = list(grp)
+        runs.append((g[0], g[-1]))
+
+    real = []
+    for start_i, end_i in runs:
+        a = int(round(start_i * scale))
+        b = int(round(end_i * scale))
+        if real and a <= real[-1]:
+            a = real[-1] + 1
+        real.extend(range(a, b + 1))
+    return real
 
 def main():
     reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=0.1)
