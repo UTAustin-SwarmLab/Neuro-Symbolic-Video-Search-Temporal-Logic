@@ -21,6 +21,11 @@ From the root of the repo, run the following to build all STORM dependencies:
 ./build_dependency
 ```
 
+Next, install uv:
+```bash
+pip install uv
+```
+
 Finally, install everything in `pyproject.toml` to build project dependencies:
 ```bash
 uv sync
