@@ -4,7 +4,7 @@ import math
 import numpy as np
 import stormpy
 import stormpy.examples.files
-from stormpy.core import ExplicitQualitativeCheckResult
+from stormpy import ExplicitQualitativeCheckResult
 
 from ns_vfs.model_checker.video_state import VideoState
 
