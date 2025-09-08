@@ -38,5 +38,3 @@ export STORM_DIR_HINT="$INSTALL_PREFIX"
 export CARL_DIR_HINT="$INSTALL_PREFIX"
 unset CMAKE_ARGS || true
 
-uv add "stormpy==1.10.0"
-

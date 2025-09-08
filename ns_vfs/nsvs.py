@@ -1,5 +1,7 @@
 import numpy as np
+import warnings
 import tqdm
+import os
 
 from ns_vfs.model_checker.property_checker import PropertyChecker
 from ns_vfs.model_checker.video_automaton import VideoAutomaton
@@ -9,6 +11,7 @@ from ns_vfs.video.frame import VideoFrame
 from ns_vfs.vlm.internvl import InternVL
 
 PRINT_ALL = False
+warnings.filterwarnings("ignore")
 
 def run_nsvs(
     frames: list[np.ndarray],
@@ -21,6 +24,7 @@ def run_nsvs(
     tl_satisfaction_threshold: float = 0.6,
     detection_threshold: float = 0.5,
     vlm_detection_threshold: float = 0.349,
+    image_output_dir: str = "output"
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
@@ -75,7 +79,8 @@ def run_nsvs(
             print("Detections:")
         frame = process_frame(sequence_of_frames, i)
         if PRINT_ALL:
-            frame.save_frame_img(save_path=f"junk/{i}")
+            os.makedirs(image_output_dir, exist_ok=True)
+            frame.save_frame_img(save_path=os.path.join(image_output_dir, f"{i}"))
 
         if checker.validate_frame(frame_of_interest=frame):
             automaton.add_frame(frame=frame)
