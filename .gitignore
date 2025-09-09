@@ -1,5 +1,6 @@
 vendors/
 output/
+uv.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
