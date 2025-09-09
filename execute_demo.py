@@ -6,12 +6,6 @@ from ns_vfs.nsvs import run_nsvs
 from ns_vfs.video.read_mp4 import Mp4Reader
 
 # -----------------------------
-# Config
-# -----------------------------
-DEVICE = 7  # GPU device index
-OPENAI_SAVE_PATH = "/nas/mars/experiment_result/nsvs/openai_conversation_history/"
-
-# -----------------------------
 # Core logic (same as your program’s path)
 # -----------------------------
 def _frames_of_interest(entry):
@@ -25,7 +19,7 @@ def _frames_of_interest(entry):
         proposition=props_for_model,
         specification=tl['specification'],
         model_name="InternVL2-8B",
-        device=DEVICE
+        device=7
     )
 
     # Flatten list of lists
@@ -59,7 +53,7 @@ def _load_entry_from_reader(video_path, query_text):
     """
     reader = Mp4Reader(
         [{"path": video_path, "query": query_text}],
-        OPENAI_SAVE_PATH,
+        openai_save_path="",
         sampling_rate_fps=0.1
     )
     data = reader.read_video()
@@ -187,8 +181,8 @@ with gr.Blocks(css="""
             gr.Examples(
                 label="Examples (dummy paths + queries)",
                 examples=[
-                    ["/path/to/video1.mp4", "a unicorn is prancing until a pizza eats a strawberry"],
-                    ["/path/to/video2.mp4", "the dog chases the ball and then sits by the tree"],
+                    ["/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4", "a unicorn is prancing until a pizza eats a strawberry"],
+                    ["/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4", "the dog chases the ball and then sits by the tree"],
                 ],
                 inputs=[video, query],
                 cache_examples=False

@@ -3,11 +3,11 @@ import json
 import os
 
 class LLM:
-    def __init__(self, client, save_dir=None): # pass in save_dir to start saving
+    def __init__(self, client, save_dir=""): # pass in save_dir to start saving
         self.client = client
         self.history = []
         self.save_dir = save_dir
-        if save_dir:
+        if save_dir != "":
             os.makedirs(save_dir, exist_ok=True)
 
     def prompt(self, p, openai_model):
@@ -26,7 +26,7 @@ class LLM:
         return assistant_response
 
     def save_history(self, filename="conversation_history.json"):
-        if not self.save_dir:
+        if self.save_dir == "":
             return None
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
