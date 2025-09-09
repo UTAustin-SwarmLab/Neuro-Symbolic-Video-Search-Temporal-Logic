@@ -1,4 +1,0 @@
-_target_: ns_vfs.automaton.drtmc.DRTMarkovChain
-tl_specification: ${ltl_formula}
-proposition_set: ${proposition_set}
-

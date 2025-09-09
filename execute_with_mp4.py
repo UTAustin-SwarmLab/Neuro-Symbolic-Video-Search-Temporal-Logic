@@ -1,0 +1,75 @@
+from tqdm import tqdm
+import itertools
+import operator
+import json
+import time
+import os
+
+from ns_vfs.nsvs import run_nsvs
+from ns_vfs.video.read_mp4 import Mp4Reader
+
+
+VIDEOS = [
+    {
+        "path": "/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4",
+        "query": "a unicorn is prancing until a pizza eats a strawberry"
+    }
+]
+DEVICE = 7  # GPU device index
+OPENAI_SAVE_PATH = "/nas/mars/experiment_result/nsvs/openai_conversation_history/"
+OUTPUT_DIR = "output"
+
+def process_entry(entry):
+    foi = run_nsvs(
+        frames=entry['images'], 
+        proposition=entry['tl']['propositions'],
+        specification=entry['tl']['specification'],
+        model_name="InternVL2-8B",
+        device=DEVICE
+    )
+
+    foi = [i for sub in foi for i in sub]
+    scale = (entry["video_info"].fps) / (entry["metadata"]["sampling_rate_fps"])
+
+    runs = []
+    for _, grp in itertools.groupby(sorted(foi), key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0]+1) or c[0]))):
+        g = list(grp)
+        runs.append((g[0], g[-1]))
+
+    real = []
+    for start_i, end_i in runs:
+        a = int(round(start_i * scale))
+        b = int(round(end_i * scale))
+        if real and a <= real[-1]:
+            a = real[-1] + 1
+        real.extend(range(a, b + 1))
+    return real
+
+def main():
+    reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=0.1)
+    data = reader.read_video()
+    if not data:
+        return
+
+    with tqdm(enumerate(data), total=len(data), desc="Processing entries") as pbar:
+        for i, entry in pbar:
+            start_time = time.time()
+            foi = process_entry(entry)
+            end_time = time.time()
+            processing_time = round(end_time - start_time, 3)
+
+            if foi:
+                output = {
+                    "tl": entry["tl"],
+                    "metadata": entry["metadata"],
+                    "video_info": entry["video_info"].to_dict(),
+                    "frames_of_interest": foi,
+                    "processting_time_seconds": processing_time
+                }
+
+                os.makedirs(OUTPUT_DIR, exist_ok=True)
+                with open(os.path.join(OUTPUT_DIR, f"output_{i}.json"), "w") as f:
+                    json.dump(output, f, indent=4)
+
+if __name__ == "__main__":
+    main()

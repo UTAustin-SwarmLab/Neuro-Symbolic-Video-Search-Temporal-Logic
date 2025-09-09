@@ -1,9 +1,0 @@
-defaults:
-  - _self_
-_target_: ns_vfs.system.tlv_dataset.NSVSNodeTLVDataset
-video_processor: ${video_processor}
-vision_percepter: ${vision_percepter}
-automaton: ${automaton}
-ltl_formula: ${ltl_formula}
-proposition_set: ${proposition_set}
-ns_vfs_system_cfg: ${ns_vfs_system_cfg}

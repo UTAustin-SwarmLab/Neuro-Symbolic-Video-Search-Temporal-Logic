@@ -1,53 +1,21 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["ns_vfs"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["store", "artifacts, docker, experiments"]  # exclude packages matching these glob patterns (empty by default)
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
-
-[tool.my-tool]
-submodule_path = "ns_vfs/model/diffusion/stable_diffusion"
-
 [project]
-name = "ns-vfs"
-version = "0.0.1"
-authors = [
-  { name="Minkyu Choi", email="minkyu.choi@utexas.edu" },
-]
-description = "The pipeline to convert video to automaton"
-readme = "README.md"
-requires-python = ">=3.10"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+name = "nsvs"
+version = "0.1.0"
+requires-python = ">=3.13"
 dependencies = [
-    "omegaconf",
-    "hydra-core>=1.2.0",
-    "numpy==1.21.5",
-    "pandas",
-    "sympy",
-    "regex",
-    "supervision==0.6.0",
-    "roboflow",
-    "einops",
-    "pytorch-lightning==1.4.2",
-    "torchmetrics==0.5",
-    "ultralytics",
-    "clip@git+https://github.com/openai/CLIP.git",
+    "accelerate>=1.10.1",
+    "cmake==3.29.6",
+    "decord>=0.6.0",
+    "einops>=0.8.1",
+    "ninja>=1.13.0",
+    "numpy>=2.3.2",
+    "openai>=1.106.1",
+    "opencv-python>=4.11.0.86",
+    "safetensors>=0.6.2",
+    "sentencepiece>=0.2.1",
+    "stormpy>=1.10.1",
+    "timm>=1.0.19",
+    "tqdm>=4.67.1",
+    "transformers>=4.41,<4.47",
 ]
-[tool.black]
-line-length = 80
-
-[project.urls]
-"Homepage" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
-"Bug Tracker" = "https://github.com/UTAustin-SwarmLab/Video-to-Automaton"
-
-[project.optional-dependencies]
-dev = ["black", "ruff", "mypy"]
-test = ["pytest", "pytest-cov", "pytest-mock"]
 
