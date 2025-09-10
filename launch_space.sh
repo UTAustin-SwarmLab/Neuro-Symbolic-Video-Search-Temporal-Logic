@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Start vLLM server in background
-# ./vllm_serve.sh &
+./vllm_serve.sh &
 
 # Wait briefly to ensure vLLM is up before Gradio tries to connect
-# sleep 60
+sleep 60
 
 # Display fancy startup message
 echo "
@@ -16,4 +16,4 @@ echo "
 "
 
 # Start Gradio app
-uv run execute_demo.py
+python3 execute_demo.py

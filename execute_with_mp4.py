@@ -11,15 +11,16 @@ from ns_vfs.video.read_mp4 import Mp4Reader
 
 VIDEOS = [
     {
-        "path": "/nas/mars/dataset/LongVideoBench/burn-subtitles/zVudr8cxHRE.mp4",
-        "query": "a unicorn is prancing until a pizza eats a strawberry"
+        "path": "demo_videos/blue_shirt.mp4",
+        "query": "a woman is jumping and clapping until a candle is blown"
     }
 ]
 DEVICE = 7  # GPU device index
-OPENAI_SAVE_PATH = "/nas/mars/experiment_result/nsvs/openai_conversation_history/"
+OPENAI_SAVE_PATH = ""
 OUTPUT_DIR = "output"
 
 def process_entry(entry):
+    print(entry['tl'])
     foi = run_nsvs(
         frames=entry['images'], 
         proposition=entry['tl']['propositions'],
@@ -46,7 +47,7 @@ def process_entry(entry):
     return real
 
 def main():
-    reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=0.1)
+    reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=1)
     data = reader.read_video()
     if not data:
         return

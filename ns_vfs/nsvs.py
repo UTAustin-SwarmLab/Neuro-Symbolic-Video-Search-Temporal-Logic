@@ -28,8 +28,8 @@ def run_nsvs(
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
-    # vlm = VLLMClient()
-    vlm = InternVL(model_name=model_name, device=device)
+    vlm = VLLMClient()
+    # vlm = InternVL(model_name=model_name, device=device)
 
     automaton = VideoAutomaton(include_initial_state=True)
     automaton.set_up(proposition_set=proposition)
