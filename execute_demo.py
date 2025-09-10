@@ -9,7 +9,7 @@ def _load_entry_from_reader(video_path, query_text):
     reader = Mp4Reader(
         [{"path": video_path, "query": query_text}],
         openai_save_path="",
-        sampling_rate_fps=1
+        sampling_rate_fps=0.5
     )
     data = reader.read_video()
     if not data:

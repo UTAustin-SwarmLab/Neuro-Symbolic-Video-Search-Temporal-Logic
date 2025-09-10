@@ -63,7 +63,6 @@ class Mp4Reader(Reader):
             fps=float(fps) if fps else None,
         )
 
-        OPENAI_API_KEY=""
         puls_output = PULS(query, self.openai_save_path, openai_key=OPENAI_API_KEY)
 
         cap.release()
