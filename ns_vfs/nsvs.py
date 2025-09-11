@@ -10,7 +10,7 @@ from ns_vfs.vlm.vllm_client import VLLMClient
 from ns_vfs.video.frame import VideoFrame
 from ns_vfs.vlm.internvl import InternVL
 
-PRINT_ALL = False
+PRINT_ALL = True
 warnings.filterwarnings("ignore")
 
 def run_nsvs(
