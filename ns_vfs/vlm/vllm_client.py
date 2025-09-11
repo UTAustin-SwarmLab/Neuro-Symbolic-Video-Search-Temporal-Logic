@@ -13,7 +13,7 @@ class VLLMClient:
         self,
         api_key="EMPTY",
         api_base="http://localhost:8000/v1",
-        model="OpenGVLab/InternVL2_5-8B",
+        model="OpenGVLab/InternVL2-8B",
         # model="Qwen/Qwen2.5-VL-7B-Instruct",
     ):
         self.client = OpenAI(api_key=api_key, base_url=api_base)

@@ -23,7 +23,7 @@ def run_nsvs(
     num_of_frame_in_sequence = 3,
     tl_satisfaction_threshold: float = 0.6,
     detection_threshold: float = 0.5,
-    vlm_detection_threshold: float = 0.65,
+    vlm_detection_threshold: float = 0.35,
     image_output_dir: str = "output"
 ):
     """Find relevant frames from a video that satisfy a specification"""
