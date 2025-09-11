@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from tqdm import tqdm
 import numpy as np
 import cv2
+import os
 
 from ns_vfs.video.reader import VideoFormat, VideoInfo, Reader
 from ns_vfs.puls.puls import PULS
