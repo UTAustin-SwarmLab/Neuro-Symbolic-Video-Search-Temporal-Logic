@@ -1,5 +1,8 @@
 #!/bin/bash
 
+apt update
+apt install -y ffmpeg
+
 # Start vLLM server in background
 ./vllm_serve.sh &
 

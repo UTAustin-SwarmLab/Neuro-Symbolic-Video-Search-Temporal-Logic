@@ -7,7 +7,7 @@
 # export CUDA_VISIBLE_DEVICES="0"
 # export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 PORT=8000
-vllm serve "OpenGVLab/InternVL2-8B" \
+vllm serve "OpenGVLab/InternVL2_5-8B" \
     --port 8000 \
     --trust-remote-code \
     --limit-mm-per-prompt image=4 \

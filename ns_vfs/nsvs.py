@@ -23,11 +23,12 @@ def run_nsvs(
     num_of_frame_in_sequence = 3,
     tl_satisfaction_threshold: float = 0.6,
     detection_threshold: float = 0.5,
-    vlm_detection_threshold: float = 0.349,
+    vlm_detection_threshold: float = 0.65,
     image_output_dir: str = "output"
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
+    object_frame_dict = {}
     vlm = VLLMClient()
     # vlm = InternVL(model_name=model_name, device=device)
 
@@ -58,8 +59,14 @@ def run_nsvs(
                 threshold=vlm_detection_threshold
             )
             object_of_interest[prop] = detected_object
-            if PRINT_ALL and detected_object.is_detected:
-                print(f"\t{prop}: {detected_object.confidence}->{detected_object.probability}")
+            if detected_object.is_detected:
+                multi_frame_arr = [frame_count * num_of_frame_in_sequence + j for j in range(num_of_frame_in_sequence)]
+                if prop in object_frame_dict:
+                    object_frame_dict[prop].extend(multi_frame_arr)
+                else:
+                    object_frame_dict[prop] = multi_frame_arr
+                if PRINT_ALL:
+                    print(f"\t{prop}: {detected_object.confidence}->{detected_object.probability}")
 
         frame = VideoFrame(
             frame_idx=frame_count,
@@ -97,5 +104,5 @@ def run_nsvs(
         print("Detected frames of interest:")
         print(foi)
 
-    return foi
+    return foi, object_frame_dict
 

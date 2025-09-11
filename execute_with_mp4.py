@@ -19,21 +19,11 @@ DEVICE = 7  # GPU device index
 OPENAI_SAVE_PATH = ""
 OUTPUT_DIR = "output"
 
-def process_entry(entry):
-    print(entry['tl'])
-    foi = run_nsvs(
-        frames=entry['images'], 
-        proposition=entry['tl']['propositions'],
-        specification=entry['tl']['specification'],
-        model_name="InternVL2-8B",
-        device=DEVICE
-    )
-
-    foi = [i for sub in foi for i in sub]
+def fill_in_frame_count(arr, entry):
     scale = (entry["video_info"].fps) / (entry["metadata"]["sampling_rate_fps"])
 
     runs = []
-    for _, grp in itertools.groupby(sorted(foi), key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0]+1) or c[0]))):
+    for _, grp in itertools.groupby(sorted(arr), key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0]+1) or c[0]))):
         g = list(grp)
         runs.append((g[0], g[-1]))
 
@@ -45,6 +35,19 @@ def process_entry(entry):
             a = real[-1] + 1
         real.extend(range(a, b + 1))
     return real
+
+def process_entry(entry):
+    foi, object_frame_dict = run_nsvs(
+        frames=entry['images'], 
+        proposition=entry['tl']['propositions'],
+        specification=entry['tl']['specification'],
+        model_name="InternVL2-8B",
+        device=DEVICE
+    )
+
+    foi = fill_in_frame_count([i for sub in foi for i in sub], entry)
+    object_frame_dict = {key: fill_in_frame_count(value, entry) for key, value in object_frame_dict.items()}
+    return foi, object_frame_dict
 
 def main():
     reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=1)
