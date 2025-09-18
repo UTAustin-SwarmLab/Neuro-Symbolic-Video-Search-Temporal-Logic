@@ -18,5 +18,6 @@ dependencies = [
     "timm>=1.0.19",
     "tqdm>=4.67.1",
     "transformers>=4.41,<4.47",
+    "ultralytics>=8.3.201",
 ]
 

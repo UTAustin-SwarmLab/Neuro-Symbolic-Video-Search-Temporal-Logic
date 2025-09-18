@@ -24,14 +24,12 @@ def run_nsvs(
     tl_satisfaction_threshold: float = 0.6,
     detection_threshold: float = 0.5,
     vlm_detection_threshold: float = 0.35,
-    image_output_dir: str = "output"
 ):
     """Find relevant frames from a video that satisfy a specification"""
 
     object_frame_dict = {}
-    vlm = VLLMClient()
-    # vlm = InternVL(model_name=model_name, device=device)
 
+    vlm = VLLMClient()
     automaton = VideoAutomaton(include_initial_state=True)
     automaton.set_up(proposition_set=proposition)
 
@@ -65,6 +63,7 @@ def run_nsvs(
                     object_frame_dict[prop].extend(multi_frame_arr)
                 else:
                     object_frame_dict[prop] = multi_frame_arr
+
                 if PRINT_ALL:
                     print(f"\t{prop}: {detected_object.confidence}->{detected_object.probability}")
 
@@ -85,9 +84,6 @@ def run_nsvs(
             print("\n" + "*"*50 + f" {i}/{len(frame_windows)-1} " + "*"*50)
             print("Detections:")
         frame = process_frame(sequence_of_frames, i)
-        if PRINT_ALL:
-            os.makedirs(image_output_dir, exist_ok=True)
-            frame.save_frame_img(save_path=os.path.join(image_output_dir, f"{i}"))
 
         if checker.validate_frame(frame_of_interest=frame):
             automaton.add_frame(frame=frame)

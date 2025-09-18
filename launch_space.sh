@@ -2,6 +2,7 @@
 
 apt update
 apt install -y ffmpeg
+pip install ultralytics
 
 # Start vLLM server in background
 ./vllm_serve.sh &
@@ -19,4 +20,4 @@ echo "
 "
 
 # Start Gradio app
-python3 execute_demo.py
+python3 execute_demo_v3.py
