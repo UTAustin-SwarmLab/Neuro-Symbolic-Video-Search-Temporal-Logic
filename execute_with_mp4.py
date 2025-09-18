@@ -20,11 +20,16 @@ DEVICE = 7  # GPU device index
 OPENAI_SAVE_PATH = ""
 OUTPUT_DIR = "output"
 
+import itertools
+
 def fill_in_frame_count(arr, entry):
     scale = (entry["video_info"].fps) / (entry["metadata"]["sampling_rate_fps"])
 
     runs = []
-    for _, grp in itertools.groupby(sorted(arr), key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0]+1) or c[0]))):
+    for _, grp in itertools.groupby(
+        sorted(arr),
+        key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0] + 1) or c[0]))
+    ):
         g = list(grp)
         runs.append((g[0], g[-1]))
 
@@ -37,29 +42,92 @@ def fill_in_frame_count(arr, entry):
         real.extend(range(a, b + 1))
     return real
 
-def process_entry(entry, run_with_yolo=False, cache_path = ""):
+
+def _fill_in_frame_count_pairs(pairs, entry):
+    if not pairs:
+        return []
+    scale = (entry["video_info"].fps) / (entry["metadata"]["sampling_rate_fps"])
+
+    pairs = sorted(pairs, key=lambda t: int(t[0]))
+    sampled_indices = [int(i) for i, _ in pairs]
+
+    runs = []
+    for _, grp in itertools.groupby(
+        sampled_indices,
+        key=lambda x, c=[0]: (x - (c.__setitem__(0, c[0] + 1) or c[0]))
+    ):
+        g = list(grp)
+        runs.append((g[0], g[-1]))
+
+    idx2bbox = {}
+    for i, bbox in pairs:
+        i = int(i)
+        if i not in idx2bbox:
+            idx2bbox[i] = bbox
+
+    expanded: list[tuple[int, tuple[float, float, float, float]]] = []
+    last_real = -1
+
+    for start_i, end_i in runs:
+        rep_bbox = idx2bbox.get(start_i)
+        if rep_bbox is None:
+            for k in range(start_i, end_i + 1):
+                if k in idx2bbox:
+                    rep_bbox = idx2bbox[k]
+                    break
+        if rep_bbox is None:
+            continue
+
+        a = int(round(start_i * scale))
+        b = int(round(end_i * scale))
+        if expanded and a <= last_real:
+            a = last_real + 1
+        for real_i in range(a, b + 1):
+            expanded.append((real_i, rep_bbox))
+        last_real = b
+
+    return expanded
+
+
+def process_entry(entry, run_with_yolo=False, cache_path=""):
+    """
+    VLM path (run_with_yolo=False):
+        - Returns (foi, object_frame_dict_expanded)
+          where object_frame_dict_expanded: Dict[str, List[int]] (real frame indices)
+
+    YOLO path (run_with_yolo=True):
+        - Expects run_nsvs_yolo to return (foi, object_frame_bounding_boxes)
+          where object_frame_bounding_boxes: Dict[str, List[(sample_idx, bbox)]]
+        - Returns (foi, object_frame_bounding_boxes_expanded)
+          where each bbox is duplicated across the scaled span to real frames:
+            Dict[str, List[(real_idx, bbox)]]
+    """
     if run_with_yolo:
-        foi, object_frame_dict = run_nsvs_yolo(
+        foi, object_frame_bounding_boxes = run_nsvs_yolo(
             frames=entry["images"],
             proposition=entry['tl']['propositions'],
             specification=entry['tl']['specification'],
             yolo_cache_path=cache_path,
             vlm_detection_threshold=0.35,
         )
+        foi = fill_in_frame_count([i for sub in foi for i in sub], entry)
+
+        expanded_boxes = {}
+        for key, pairs in (object_frame_bounding_boxes or {}).items():
+            expanded_boxes[key] = _fill_in_frame_count_pairs(pairs, entry)
+        return foi, expanded_boxes
+
     else:
         foi, object_frame_dict = run_nsvs(
-            frames=entry['images'], 
+            frames=entry['images'],
             proposition=entry['tl']['propositions'],
             specification=entry['tl']['specification'],
             model_name="InternVL2-8B",
             device=DEVICE
         )
-
-    foi = fill_in_frame_count([i for sub in foi for i in sub], entry)
-    object_frame_dict = {key: fill_in_frame_count(value, entry) for key, value in object_frame_dict.items()}
-    print(foi)
-    print(object_frame_dict)
-    return foi, object_frame_dict
+        foi = fill_in_frame_count([i for sub in foi for i in sub], entry)
+        object_frame_dict = {key: fill_in_frame_count(value, entry) for key, value in (object_frame_dict or {}).items()}
+        return foi, object_frame_dict
 
 def main():
     reader = Mp4Reader(VIDEOS, OPENAI_SAVE_PATH, sampling_rate_fps=1)

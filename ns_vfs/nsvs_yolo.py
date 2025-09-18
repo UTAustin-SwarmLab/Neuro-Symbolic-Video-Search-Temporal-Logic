@@ -1,5 +1,5 @@
 # -------------------------------
-# Preprocess: per-frame dicts {class: prob}
+# Preprocess: per-frame dicts {class: List[(conf, (x1,y1,x2,y2))]}
 # -------------------------------
 from ultralytics import YOLO
 import numpy as np
@@ -26,33 +26,21 @@ def preprocess_yolo(
     device: str | int = "cuda:0",
     batch_size: int = 16,
     out_path: str = "yolo_det_cache.pkl",
-    aggregation: Literal["max", "one_minus_prod", "mean"] = "max",
     conf_threshold: float = 0.001,
     iou: float = 0.7,
 ) -> str:
     """
-    Run YOLOv8 detection on every frame and save a list of dicts:
-      detections: List[Dict[str, float]] (one dict per frame).
-      Each dict maps class_name (lowercase, COCO, with spaces) -> aggregated confidence in [0,1].
+    Run YOLOv8 detection on every frame and save a list of dicts.
+      cache format:
+        yolo_dets: List[ Dict[str, List[Tuple[float, Tuple[float,float,float,float]]]] ]
+        # one item per frame
+        # each frame dict maps: class_name (lowercase, spaces) ->
+        #     list of (confidence, (x1, y1, x2, y2)) in pixel coordinates
     """
     model = YOLO(model_weights)
     id_to_name: Dict[int, str] = {int(k): str(v).lower() for k, v in model.names.items()}
 
-    def _aggregate(vals: List[float]) -> float:
-        if not vals:
-            return 0.0
-        if aggregation == "max":
-            return float(max(vals))
-        if aggregation == "mean":
-            return float(sum(vals) / len(vals))
-        if aggregation == "one_minus_prod":
-            prod = 1.0
-            for p in vals:
-                prod *= (1.0 - p)
-            return float(1.0 - prod)
-        raise ValueError(f"Unknown aggregation '{aggregation}'")
-
-    detections: List[Dict[str, float]] = []
+    yolo_dets: List[Dict[str, List[Tuple[float, Tuple[float, float, float, float]]]]] = []
 
     for start in range(0, len(frames), batch_size):
         batch = frames[start:start + batch_size]
@@ -65,25 +53,25 @@ def preprocess_yolo(
         )
 
         for r in results:
-            frame_dict: Dict[str, float] = {}
+            frame_dict: Dict[str, List[Tuple[float, Tuple[float, float, float, float]]]] = {}
             if r.boxes is not None and len(r.boxes) > 0:
-                cls_ids = r.boxes.cls.detach().cpu().numpy().astype(int).tolist()
-                confs   = r.boxes.conf.detach().cpu().numpy().astype(float).tolist()
+                # xyxy in pixels, conf, and class ids
+                xyxy = r.boxes.xyxy.detach().cpu().numpy().astype(float)
+                confs = r.boxes.conf.detach().cpu().numpy().astype(float)
+                cls_ids = r.boxes.cls.detach().cpu().numpy().astype(int)
 
-                per_class: Dict[int, List[float]] = {}
-                for cid, c in zip(cls_ids, confs):
-                    per_class.setdefault(cid, []).append(c)
-
-                for cid, vals in per_class.items():
+                for (x1, y1, x2, y2), conf, cid in zip(xyxy, confs, cls_ids):
                     name = id_to_name.get(int(cid), str(cid))  # e.g., "traffic light"
-                    frame_dict[name] = _aggregate(vals)
+                    frame_dict.setdefault(name, []).append(
+                        (float(conf), (float(x1), float(y1), float(x2), float(y2)))
+                    )
 
-            detections.append(frame_dict)
+            yolo_dets.append(frame_dict)
 
-    assert len(detections) == len(frames), f"expected {len(frames)} dicts, got {len(detections)}"
+    assert len(yolo_dets) == len(frames), f"expected {len(frames)} dicts, got {len(yolo_dets)}"
 
     with open(out_path, "wb") as f:
-        pickle.dump(detections, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(yolo_dets, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     return out_path
 
@@ -92,7 +80,7 @@ def preprocess_yolo(
 # NSVS using cached YOLO dicts; 1 frame per step
 # -------------------------------
 
-# NEW: normalize props to YOLO label style (spaces, lowercase, collapsed whitespace)
+# normalize props to YOLO label style (spaces, lowercase, collapsed whitespace)
 _WS = re.compile(r"\s+")
 def normalize_label_for_yolo(s: str) -> str:
     s = (s or "").strip().lower()
@@ -100,6 +88,7 @@ def normalize_label_for_yolo(s: str) -> str:
     s = s.replace("-", " ").replace("–", " ").replace("—", " ")
     s = _WS.sub(" ", s)
     return s
+
 
 def run_nsvs_yolo(
     frames: List[np.ndarray],
@@ -112,14 +101,14 @@ def run_nsvs_yolo(
     detection_threshold: float = 0.5,
     vlm_detection_threshold: float = 0.35,   # used as 'false_threshold' in calibrate()
     image_output_dir: str = "output",
-) -> Tuple[List[VideoFrame], Dict[str, List[int]]]:
+) -> Tuple[List[VideoFrame], Dict[str, List[Tuple[int, Tuple[float, float, float, float]]]]]:
     """
-    Replaces vlm.detect with cached YOLO (detection) per frame.
-    Always uses 1-frame sequences.
-
+    Replaces vlm.detect with cached YOLO per frame (1-frame sequences).
     Returns:
       foi: List[VideoFrame]
-      object_frame_dict: Dict[str, List[int]] mapping ORIGINAL prop -> list of frame indices where it was detected
+      object_frame_bounding_boxes:
+         Dict[str, List[(frame_index, (x1, y1, x2, y2))]]
+         # one bbox per frame (the highest-confidence bbox for that class in that frame)
     """
     if not os.path.exists(yolo_cache_path):
         raise FileNotFoundError(
@@ -128,17 +117,17 @@ def run_nsvs_yolo(
         )
 
     with open(yolo_cache_path, "rb") as f:
-        yolo_dets: List[Dict[str, float]] = pickle.load(f)
+        # List[Dict[str, List[(conf, (x1,y1,x2,y2))]]]
+        yolo_dets: List[Dict[str, List[Tuple[float, Tuple[float, float, float, float]]]]] = pickle.load(f)
 
     if len(yolo_dets) != len(frames):
         raise ValueError(f"cache length {len(yolo_dets)} != frames length {len(frames)}")
 
-    # Build a normalized lookup for each prop specifically for YOLO label matching
-    # e.g., "traffic_light" -> "traffic light"
+    # Build normalized lookup (e.g., "traffic_light" -> "traffic light")
     prop_lookup: Dict[str, str] = {prop_raw: normalize_label_for_yolo(prop_raw) for prop_raw in proposition}
 
     automaton = VideoAutomaton(include_initial_state=True)
-    automaton.set_up(proposition_set=proposition)   # keep original props for TL side
+    automaton.set_up(proposition_set=proposition)   # original props for TL
 
     checker = PropertyChecker(
         proposition=proposition,
@@ -148,8 +137,8 @@ def run_nsvs_yolo(
         detection_threshold=detection_threshold,
     )
 
-    frame_of_interest = FramesofInterest(1)  # fixed to 1-frame sequences
-    object_frame_dict: Dict[str, List[int]] = {}
+    frame_of_interest = FramesofInterest(1)  # 1-frame sequences
+    object_frame_bounding_boxes: Dict[str, List[Tuple[int, Tuple[float, float, float, float]]]] = {}
 
     calibrator = VLLMClient()
 
@@ -168,25 +157,41 @@ def run_nsvs_yolo(
             print("\n" + "*" * 50 + f" {i}/{len(frames) - 1} " + "*" * 50)
             print("Detections:")
 
-        det_dict = yolo_dets[i]  # {class (lowercase COCO, with spaces): aggregated_confidence}
+        # Per-frame dict: class -> List[(conf, (x1,y1,x2,y2))]
+        det_dict = yolo_dets[i]
         object_of_interest = {}
 
         for prop_raw in proposition:
-            prop_yolo = prop_lookup[prop_raw]  # normalized to YOLO style
-            conf = float(det_dict.get(prop_yolo, 0.0))  # 0.0 if YOLO label not present in this frame
-            det = _mk_detected_object(prop_raw, conf)   # keep original prop name for downstream
+            yolo_label = prop_lookup[prop_raw]
+            dets_for_class = det_dict.get(yolo_label, [])
+
+            # confidence for decision = max conf for that class in this frame (0 if none)
+            if dets_for_class:
+                confs = [c for c, _ in dets_for_class]
+                max_idx = int(np.argmax(confs))
+                best_conf, best_bbox = dets_for_class[max_idx]
+            else:
+                best_conf, best_bbox = 0.0, None
+
+            det = _mk_detected_object(prop_raw, float(best_conf))
             object_of_interest[prop_raw] = det
 
-            if det.is_detected:
-                object_frame_dict.setdefault(prop_raw, []).append(i)
+            if det.is_detected and best_bbox is not None:
+                # one bbox per frame (highest-confidence one)
+                object_frame_bounding_boxes.setdefault(prop_raw, []).append((i, best_bbox))
 
             if PRINT_ALL:
-                print(f"\t{prop_raw} (yolo='{prop_yolo}'): conf={det.confidence:.3f} -> prob={det.probability:.3f}"
-                      + (" [DETECTED]" if det.is_detected else ""))
+                if best_bbox is not None:
+                    x1, y1, x2, y2 = best_bbox
+                    print(f"\t{prop_raw} (yolo='{yolo_label}'): conf={det.confidence:.3f} "
+                          f"-> prob={det.probability:.3f} bbox=({x1:.1f},{y1:.1f},{x2:.1f},{y2:.1f})"
+                          + (" [DETECTED]" if det.is_detected else ""))
+                else:
+                    print(f"\t{prop_raw} (yolo='{yolo_label}'): conf=0.000 -> prob={det.probability:.3f}")
 
         frame = VideoFrame(
             frame_idx=i,
-            frame_images=[frames[i]],    # single-frame sequence
+            frame_images=[frames[i]],    # single-frame
             object_of_interest=object_of_interest,
         )
 
@@ -205,5 +210,6 @@ def run_nsvs_yolo(
         print("Detected frames of interest:")
         print(foi)
 
-    return foi, object_frame_dict
+    # NOTE: replaced the old object_frame_dict return
+    return foi, object_frame_bounding_boxes
 

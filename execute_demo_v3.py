@@ -10,7 +10,7 @@ import gradio as gr
 
 from openai import OpenAI
 from matplotlib import pyplot as plt
-from typing import Dict, List, Iterable, Tuple
+from typing import Dict, List, Iterable, Tuple, Union
 
 from ns_vfs.video.read_mp4 import Mp4Reader
 from execute_with_mp4 import process_entry
@@ -70,7 +70,7 @@ def _load_entry_from_reader(video_path, query_text):
     reader = Mp4Reader(
         [{"path": video_path, "query": query_text}],
         openai_save_path="",
-        sampling_rate_fps=0.5
+        sampling_rate_fps=1
     )
     data = reader.read_video()
     if not data:
@@ -88,9 +88,41 @@ def _make_empty_video(path, width=320, height=240, fps=1.0):
 
 
 # -----------------------------
-# Added helpers
+# Helpers to detect bbox-style outputs and to convert them
 # -----------------------------
-def _crop_video(input_path: str, output_path: str, frame_indices: List[int], prop_matrix: Dict[str, List[int]]):
+BBox = Tuple[float, float, float, float]
+YOLODict = Dict[str, List[Tuple[int, BBox]]]
+VLMDict = Dict[str, List[int]]
+
+def _has_bboxes(prop_matrix: Union[YOLODict, VLMDict]) -> bool:
+    """Return True if the prop_matrix contains (frame_idx, bbox) tuples."""
+    if not prop_matrix:
+        return False
+    for v in prop_matrix.values():
+        if not v:
+            continue
+        first = v[0]
+        if isinstance(first, tuple) and len(first) == 2 and hasattr(first[1], "__len__") and len(first[1]) == 4:
+            return True
+    return False
+
+def _bbox_dict_to_frames_only(prop_bboxes: YOLODict) -> VLMDict:
+    """Convert {'car': [(i, (x1,y1,x2,y2)), ...], ...} -> {'car': [i, ...], ...}"""
+    out: VLMDict = {}
+    for k, pairs in (prop_bboxes or {}).items():
+        out[k] = [int(i) for i, _ in pairs]
+    return out
+
+
+# -----------------------------
+# Video cropping and overlays
+# -----------------------------
+def _crop_video_subtitles(input_path: str, output_path: str, frame_indices: List[int], prop_matrix: VLMDict):
+    """
+    Existing behavior (VLM/no bboxes):
+      - Keep only frames in frame_indices (in order, contiguous groups)
+      - Overlay top-right proposition text via ASS subtitles
+    """
     input_path = str(input_path)
     output_path = str(output_path)
 
@@ -154,7 +186,7 @@ def _crop_video(input_path: str, output_path: str, frame_indices: List[int], pro
     if prev_f is not None and prev_labels:
         grouped_label_spans.append((span_start, prev_f + 1, prev_labels))
 
-    # Build ASS subtitle file (top-right)
+    # Build ASS subtitle (top-right)
     def ass_time(t_sec: float) -> str:
         cs = int(round(t_sec * 100))
         h = cs // (100 * 3600)
@@ -237,7 +269,88 @@ def _crop_video(input_path: str, output_path: str, frame_indices: List[int], pro
             pass
 
 
-def _format_prop_ranges_dict(prop_matrix: Dict[str, List[int]]) -> Dict[str, List[Tuple[int, int]]]:
+def _crop_video_bboxes(input_path: str, output_path: str, frame_indices: List[int], prop_bboxes: YOLODict):
+    """
+    YOLO path (with bounding boxes):
+      - Keep only frames in frame_indices.
+      - Draw rectangles for each detected prop on the kept frames.
+      - Label each rectangle with the prop name (top-left of box).
+    """
+    keep_set = set(int(x) for x in frame_indices)
+    if not keep_set:
+        # output a 1-frame empty video (consistent with _crop_video_subtitles)
+        cap0 = cv2.VideoCapture(input_path)
+        if not cap0.isOpened():
+            raise RuntimeError(f"Could not open video: {input_path}")
+        width  = int(cap0.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap0.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap0.release()
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(output_path, fourcc, 1.0, (width, height))
+        out.write(np.zeros((height, width, 3), dtype=np.uint8))
+        out.release()
+        return
+
+    # Build frame -> list[(prop, bbox)]
+    per_frame: Dict[int, List[Tuple[str, BBox]]] = {}
+    for prop, pairs in (prop_bboxes or {}).items():
+        for fi, bbox in pairs:
+            fi = int(fi)
+            per_frame.setdefault(fi, []).append((prop, bbox))
+
+    cap = cv2.VideoCapture(input_path)
+    if not cap.isOpened():
+        raise RuntimeError(f"Could not open video: {input_path}")
+    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps    = float(cap.get(cv2.CAP_PROP_FPS)) or 30.0
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    idx = 0
+    ok, frame = cap.read()
+    while ok:
+        if idx in keep_set:
+            # draw all bboxes for this frame
+            for prop, (x1, y1, x2, y2) in per_frame.get(idx, []):
+                p1 = (int(round(x1)), int(round(y1)))
+                p2 = (int(round(x2)), int(round(y2)))
+                cv2.rectangle(frame, p1, p2, (0, 255, 0), 2)  # green rectangle
+                # text background for readability
+                label = prop.replace("_", " ")
+                txt_origin = (p1[0], max(0, p1[1] - 5))
+                cv2.putText(frame, label, txt_origin, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(frame, label, txt_origin, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+            out.write(frame)
+        idx += 1
+        ok, frame = cap.read()
+
+    cap.release()
+    out.release()
+
+
+def _crop_video(
+    input_path: str,
+    output_path: str,
+    frame_indices: List[int],
+    prop_matrix: Union[VLMDict, YOLODict]
+):
+    """
+    Dispatch to the appropriate cropper:
+      - VLM/no-bbox: ASS subtitle overlay.
+      - YOLO with bbox: draw rectangles overlay via OpenCV.
+    """
+    if _has_bboxes(prop_matrix):
+        _crop_video_bboxes(input_path, output_path, frame_indices, prop_matrix)  # type: ignore[arg-type]
+    else:
+        _crop_video_subtitles(input_path, output_path, frame_indices, prop_matrix)  # type: ignore[arg-type]
+
+
+# -----------------------------
+# Text helpers (unchanged API, but robust to bbox dicts)
+# -----------------------------
+def _format_prop_ranges_dict(prop_matrix: Union[VLMDict, YOLODict]) -> Dict[str, List[Tuple[int, int]]]:
     def group_into_ranges(frames: Iterable[int]) -> List[Tuple[int, int]]:
         f = sorted(set(int(x) for x in frames))
         if not f:
@@ -252,15 +365,19 @@ def _format_prop_ranges_dict(prop_matrix: Dict[str, List[int]]) -> Dict[str, Lis
                 s = p = x
         ranges.append((s, p))
         return ranges
-    
+
+    if _has_bboxes(prop_matrix):
+        frames_only = _bbox_dict_to_frames_only(prop_matrix)  # type: ignore[arg-type]
+    else:
+        frames_only = prop_matrix  # type: ignore[assignment]
+
     detections: Dict[str, List[Tuple[int, int]]] = {}
-    for prop, frames in prop_matrix.items():
-        ranges = group_into_ranges(frames)
-        detections[prop] = ranges
+    for prop, frames in (frames_only or {}).items():
+        detections[prop] = group_into_ranges(frames)
     return detections
 
 
-def _format_prop_ranges(prop_matrix: Dict[str, List[int]]) -> str:
+def _format_prop_ranges(prop_matrix: Union[VLMDict, YOLODict]) -> str:
     def group_into_ranges(frames: Iterable[int]) -> List[Tuple[int, int]]:
         f = sorted(set(int(x) for x in frames))
         if not f:
@@ -279,8 +396,13 @@ def _format_prop_ranges(prop_matrix: Dict[str, List[int]]) -> str:
     if not prop_matrix:
         return "No propositions detected."
 
+    if _has_bboxes(prop_matrix):
+        frames_only = _bbox_dict_to_frames_only(prop_matrix)  # type: ignore[arg-type]
+    else:
+        frames_only = prop_matrix  # type: ignore[assignment]
+
     lines = []
-    for prop, frames in prop_matrix.items():
+    for prop, frames in (frames_only or {}).items():
         ranges = group_into_ranges(frames)
         pretty = prop.replace("_", " ").title()
         if not ranges:
@@ -317,7 +439,7 @@ def generate_timeline_plot(detections, total_frames):
 
     for i, label in enumerate(labels):
         segments = [(start, end - start) for start, end in detections[label]]
-        ax.broken_barh(segments, (i + 0.1, 0.8), facecolors=colors(i))
+        ax.broken_barh(segments, (i + 0.1, 0.8))
 
     plt.tight_layout()
     return fig
@@ -374,7 +496,7 @@ def run_pipeline(input_video, mode, detector, query_text, propositions_json, spe
 
     # Process depending on detector
     foi = None
-    prop_matrix = {}
+    prop_matrix: Union[VLMDict, YOLODict] = {}
 
     if detector == "YOLO":
         cache_path = _yolo_cache_path_for_video(video_path)
@@ -383,16 +505,12 @@ def run_pipeline(input_video, mode, detector, query_text, propositions_json, spe
         try:
             if preprocess_yolo is None:
                 raise NameError("preprocess_yolo() not defined")
-            # EXACT signature as requested:
-            # cache_path = preprocess_yolo(entry["images"], model_weights="yolov8n.pt",
-            #                              device="cuda:0", out_path="yolo_cache.npz")
             ret_path = preprocess_yolo(
                 entry["images"],
                 model_weights="yolov8n.pt",
                 device="cuda:0",
                 out_path=cache_path
             )
-            # If preprocess_yolo returns a path, prefer it
             if isinstance(ret_path, str) and ret_path.strip():
                 cache_path = ret_path
         except NameError:
@@ -418,14 +536,14 @@ def run_pipeline(input_video, mode, detector, query_text, propositions_json, spe
         except Exception as e:
             return _err(f"Processing error (VLM mode): {e}")
 
-    # Export cropped video
+    # Export cropped video (with either subtitles or bbox overlays)
     try:
         out_path = os.path.join("/tmp", f"cropped_{uuid.uuid4().hex}.mp4")
         _crop_video(video_path, out_path, foi, prop_matrix)
     except Exception as e:
         return _err(f"Failed to write cropped video: {e}")
 
-    # Text + plot
+    # Text + plot (work from frames; ignore bbox coords)
     try:
         prop_ranges_text = _format_prop_ranges(prop_matrix)
         prop_ranges_dict = _format_prop_ranges_dict(prop_matrix)
