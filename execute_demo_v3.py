@@ -642,7 +642,9 @@ with gr.Blocks(css="""
                 examples=[
                     ["demo_videos/dog_jump.mp4", "a dog jumps until a red tube is in view"],
                     ["demo_videos/blue_shirt.mp4", "a girl in a green shirt until a candle is blown"],
-                    ["demo_videos/car.mp4", "red car until a truck"]
+                    ["demo_videos/car.mp4", "red car until a truck"],
+                    ["demo_videos/newyork_1.mp4", "taxi until empire state building"],
+                    ["demo_videos/chicago_2.mp4", "boat until ferris wheel"],
                 ],
                 inputs=[video, query],
                 cache_examples=False
