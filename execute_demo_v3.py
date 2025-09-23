@@ -70,7 +70,7 @@ def _load_entry_from_reader(video_path, query_text):
     reader = Mp4Reader(
         [{"path": video_path, "query": query_text}],
         openai_save_path="",
-        sampling_rate_fps=1
+        sampling_rate_fps=2
     )
     data = reader.read_video()
     if not data:
@@ -644,7 +644,7 @@ with gr.Blocks(css="""
                     ["demo_videos/blue_shirt.mp4", "a girl in a green shirt until a candle is blown"],
                     ["demo_videos/car.mp4", "red car until a truck"],
                     ["demo_videos/newyork_1.mp4", "taxi until empire state building"],
-                    ["demo_videos/chicago_2.mp4", "boat until ferris wheel"],
+                    ["demo_videos/chicago_2.mp4", "boat until ferris wheel"]
                 ],
                 inputs=[video, query],
                 cache_examples=False
