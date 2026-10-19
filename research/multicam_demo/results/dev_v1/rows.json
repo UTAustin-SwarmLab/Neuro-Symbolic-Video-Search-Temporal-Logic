@@ -1,0 +1,1144 @@
+[
+ {
+  "seed": 5000,
+  "kind": "none",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5000,
+  "kind": "none",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5000,
+  "kind": "none",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5001,
+  "kind": "none",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5001,
+  "kind": "none",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5001,
+  "kind": "none",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5002,
+  "kind": "none",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5002,
+  "kind": "none",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5002,
+  "kind": "none",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5003,
+  "kind": "none",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5003,
+  "kind": "none",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 5003,
+  "kind": "none",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6000,
+  "kind": "stop",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6000,
+  "kind": "stop",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W2",
+   "W3"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W3"
+  ],
+  "true_missing_tids": [
+   "W2"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": false,
+  "n_candidates": 2
+ },
+ {
+  "seed": 6000,
+  "kind": "stop",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6001,
+  "kind": "stop",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6001,
+  "kind": "stop",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W1"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1"
+  ],
+  "true_missing_tids": [
+   "W1"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 6001,
+  "kind": "stop",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6002,
+  "kind": "stop",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6002,
+  "kind": "stop",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W1"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1"
+  ],
+  "true_missing_tids": [
+   "W1"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 6002,
+  "kind": "stop",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6003,
+  "kind": "stop",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S3"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 6003,
+  "kind": "stop",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W3"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W3"
+  ],
+  "true_missing_tids": [
+   "W3"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 6003,
+  "kind": "stop",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7000,
+  "kind": "divert",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S2"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7000,
+  "kind": "divert",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W1"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1"
+  ],
+  "true_missing_tids": [
+   "W1"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 7000,
+  "kind": "divert",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7001,
+  "kind": "divert",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S3"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7001,
+  "kind": "divert",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W2"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W2"
+  ],
+  "true_missing_tids": [
+   "W2"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 7001,
+  "kind": "divert",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7002,
+  "kind": "divert",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7002,
+  "kind": "divert",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W1"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1"
+  ],
+  "true_missing_tids": [
+   "W1"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 7002,
+  "kind": "divert",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7003,
+  "kind": "divert",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S2"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 7003,
+  "kind": "divert",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALERT",
+  "ours_candidates": [
+   "W3"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W3"
+  ],
+  "true_missing_tids": [
+   "W3"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 7003,
+  "kind": "divert",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8000,
+  "kind": "swap",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8000,
+  "kind": "swap",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [
+   "W2"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [
+   "N1",
+   "N2"
+  ],
+  "committed_named": [
+   "W2"
+  ],
+  "true_missing_tids": [
+   "W2"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 8000,
+  "kind": "swap",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8001,
+  "kind": "swap",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8001,
+  "kind": "swap",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [
+   "W3"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [
+   "N3"
+  ],
+  "committed_named": [
+   "W3"
+  ],
+  "true_missing_tids": [
+   "W3"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 8001,
+  "kind": "swap",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8002,
+  "kind": "swap",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S2"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8002,
+  "kind": "swap",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [
+   "W2"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [
+   "N2"
+  ],
+  "committed_named": [
+   "W2"
+  ],
+  "true_missing_tids": [
+   "W2"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 8002,
+  "kind": "swap",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8003,
+  "kind": "swap",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [
+   "S1"
+  ],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 8003,
+  "kind": "swap",
+  "link": "CAM-W->CAM-N",
+  "expected": "ALERT",
+  "ours": "ALERT",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [
+   "W2"
+  ],
+  "ours_missing": 1,
+  "ours_unexplained": [
+   "N2"
+  ],
+  "committed_named": [
+   "W2"
+  ],
+  "true_missing_tids": [
+   "W2"
+  ],
+  "candidates_contain_truth": true,
+  "committed_named_correct": true,
+  "n_candidates": 1
+ },
+ {
+  "seed": 8003,
+  "kind": "swap",
+  "link": "CAM-N->CAM-E",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9000,
+  "kind": "degraded",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9000,
+  "kind": "degraded",
+  "link": "CAM-W->CAM-N",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1",
+   "W2",
+   "W3",
+   "W4"
+  ],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9000,
+  "kind": "degraded",
+  "link": "CAM-N->CAM-E",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9001,
+  "kind": "degraded",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9001,
+  "kind": "degraded",
+  "link": "CAM-W->CAM-N",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1",
+   "W2"
+  ],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9001,
+  "kind": "degraded",
+  "link": "CAM-N->CAM-E",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9002,
+  "kind": "degraded",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9002,
+  "kind": "degraded",
+  "link": "CAM-W->CAM-N",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W1",
+   "W2",
+   "W3",
+   "W4"
+  ],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9002,
+  "kind": "degraded",
+  "link": "CAM-N->CAM-E",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9003,
+  "kind": "degraded",
+  "link": "CAM-S->CAM-W",
+  "expected": "ALL ACCOUNTED",
+  "ours": "ALL ACCOUNTED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9003,
+  "kind": "degraded",
+  "link": "CAM-W->CAM-N",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALERT",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [
+   "W3",
+   "W5"
+  ],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ },
+ {
+  "seed": 9003,
+  "kind": "degraded",
+  "link": "CAM-N->CAM-E",
+  "expected": "UNVERIFIED",
+  "ours": "UNVERIFIED",
+  "committed": "ALL ACCOUNTED",
+  "count": "ALL ACCOUNTED",
+  "ours_candidates": [],
+  "ours_missing": 0,
+  "ours_unexplained": [],
+  "committed_named": [],
+  "true_missing_tids": [],
+  "candidates_contain_truth": false,
+  "committed_named_correct": false,
+  "n_candidates": 0
+ }
+]

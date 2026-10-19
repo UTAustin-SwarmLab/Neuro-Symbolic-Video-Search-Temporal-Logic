@@ -1,0 +1,3873 @@
+{
+ "pair": {
+  "gate": "pair",
+  "summary": {
+   "CAM1->CAM2": {
+    "departures": 97,
+    "pending_at_end": 4,
+    "truly_missing": 17,
+    "edges": 149,
+    "mon_claimed": 15,
+    "mon_found": 15,
+    "mon_wrong": 0,
+    "mon_set": 26,
+    "mon_alerts": 14,
+    "mon_pinned": 8,
+    "mon_missed": 2,
+    "com_claimed": 15,
+    "com_found": 15,
+    "com_wrong": 0,
+    "com_missed": 2,
+    "cnt_claimed": 6,
+    "cnt_found": 6,
+    "cnt_wrong": 0,
+    "cnt_set": 53,
+    "cnt_missed": 11,
+    "arrivals": 97,
+    "truly_joined": 17,
+    "join_claimed": 13,
+    "join_found": 13,
+    "join_wrong": 0,
+    "join_set": 22
+   },
+   "CAM2->CAM1": {
+    "departures": 114,
+    "pending_at_end": 9,
+    "truly_missing": 25,
+    "edges": 191,
+    "mon_claimed": 17,
+    "mon_found": 17,
+    "mon_wrong": 0,
+    "mon_set": 34,
+    "mon_alerts": 15,
+    "mon_pinned": 7,
+    "mon_missed": 7,
+    "com_claimed": 17,
+    "com_found": 17,
+    "com_wrong": 0,
+    "com_missed": 8,
+    "cnt_claimed": 15,
+    "cnt_found": 13,
+    "cnt_wrong": 2,
+    "cnt_set": 56,
+    "cnt_missed": 12,
+    "arrivals": 116,
+    "truly_joined": 23,
+    "join_claimed": 15,
+    "join_found": 15,
+    "join_wrong": 0,
+    "join_set": 21
+   },
+   "CAM2->CAM3": {
+    "departures": 93,
+    "pending_at_end": 15,
+    "truly_missing": 23,
+    "edges": 130,
+    "mon_claimed": 20,
+    "mon_found": 18,
+    "mon_wrong": 2,
+    "mon_set": 30,
+    "mon_alerts": 18,
+    "mon_pinned": 13,
+    "mon_missed": 5,
+    "com_claimed": 20,
+    "com_found": 17,
+    "com_wrong": 3,
+    "com_missed": 6,
+    "cnt_claimed": 5,
+    "cnt_found": 5,
+    "cnt_wrong": 0,
+    "cnt_set": 42,
+    "cnt_missed": 18,
+    "arrivals": 93,
+    "truly_joined": 19,
+    "join_claimed": 14,
+    "join_found": 13,
+    "join_wrong": 1,
+    "join_set": 23
+   },
+   "CAM3->CAM2": {
+    "departures": 91,
+    "pending_at_end": 19,
+    "truly_missing": 18,
+    "edges": 194,
+    "mon_claimed": 8,
+    "mon_found": 8,
+    "mon_wrong": 0,
+    "mon_set": 11,
+    "mon_alerts": 8,
+    "mon_pinned": 5,
+    "mon_missed": 10,
+    "com_claimed": 8,
+    "com_found": 8,
+    "com_wrong": 0,
+    "com_missed": 10,
+    "cnt_claimed": 2,
+    "cnt_found": 2,
+    "cnt_wrong": 0,
+    "cnt_set": 29,
+    "cnt_missed": 16,
+    "arrivals": 103,
+    "truly_joined": 29,
+    "join_claimed": 20,
+    "join_found": 20,
+    "join_wrong": 0,
+    "join_set": 45
+   },
+   "CAM3->CAM4": {
+    "departures": 82,
+    "pending_at_end": 12,
+    "truly_missing": 5,
+    "edges": 161,
+    "mon_claimed": 3,
+    "mon_found": 2,
+    "mon_wrong": 1,
+    "mon_set": 6,
+    "mon_alerts": 3,
+    "mon_pinned": 1,
+    "mon_missed": 3,
+    "com_claimed": 3,
+    "com_found": 2,
+    "com_wrong": 1,
+    "com_missed": 3,
+    "cnt_claimed": 7,
+    "cnt_found": 3,
+    "cnt_wrong": 4,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 84,
+    "truly_joined": 8,
+    "join_claimed": 6,
+    "join_found": 5,
+    "join_wrong": 1,
+    "join_set": 27
+   },
+   "CAM4->CAM3": {
+    "departures": 100,
+    "pending_at_end": 17,
+    "truly_missing": 4,
+    "edges": 281,
+    "mon_claimed": 3,
+    "mon_found": 3,
+    "mon_wrong": 0,
+    "mon_set": 6,
+    "mon_alerts": 3,
+    "mon_pinned": 1,
+    "mon_missed": 1,
+    "com_claimed": 3,
+    "com_found": 3,
+    "com_wrong": 0,
+    "com_missed": 1,
+    "cnt_claimed": 4,
+    "cnt_found": 2,
+    "cnt_wrong": 2,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 100,
+    "truly_joined": 6,
+    "join_claimed": 5,
+    "join_found": 5,
+    "join_wrong": 0,
+    "join_set": 14
+   }
+  },
+  "total": {
+   "departures": 577,
+   "pending_at_end": 76,
+   "truly_missing": 92,
+   "edges": 1106,
+   "mon_claimed": 66,
+   "mon_found": 63,
+   "mon_wrong": 3,
+   "mon_set": 113,
+   "mon_alerts": 61,
+   "mon_pinned": 35,
+   "mon_missed": 28,
+   "com_claimed": 66,
+   "com_found": 62,
+   "com_wrong": 4,
+   "com_missed": 30,
+   "cnt_claimed": 39,
+   "cnt_found": 31,
+   "cnt_wrong": 8,
+   "cnt_set": 260,
+   "cnt_missed": 61,
+   "arrivals": 593,
+   "truly_joined": 102,
+   "join_claimed": 73,
+   "join_found": 71,
+   "join_wrong": 2,
+   "join_set": 152
+  },
+  "calibration": [
+   {
+    "fold": 0,
+    "cal_half": [
+     0.0,
+     300.0
+    ],
+    "pairs": 260,
+    "impostors": 2341,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.456,
+      "T_hi": 48.89733333333329,
+      "T_med": 29.66666666666667,
+      "n_pairs": 41
+     },
+     "CAM2->CAM1": {
+      "T_lo": 21.543999999999997,
+      "T_hi": 50.29266666666663,
+      "T_med": 30.0,
+      "n_pairs": 52
+     },
+     "CAM2->CAM3": {
+      "T_lo": 33.077333333333335,
+      "T_hi": 75.309,
+      "T_med": 49.133333333333354,
+      "n_pairs": 33
+     },
+     "CAM3->CAM2": {
+      "T_lo": 33.999999999999986,
+      "T_hi": 78.2816666666667,
+      "T_med": 49.4,
+      "n_pairs": 44
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.768,
+      "T_hi": 81.93466666666667,
+      "T_med": 40.46666666666667,
+      "n_pairs": 41
+     },
+     "CAM4->CAM3": {
+      "T_lo": 29.471999999999998,
+      "T_hi": 71.253,
+      "T_med": 40.56666666666666,
+      "n_pairs": 54
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.6729489060195384,
+     "dino": 0.35556298384892776
+    }
+   },
+   {
+    "fold": 1,
+    "cal_half": [
+     300.0,
+     600.0
+    ],
+    "pairs": 251,
+    "impostors": 2150,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.49599999999994,
+      "T_hi": 43.848999999999954,
+      "T_med": 28.900000000000006,
+      "n_pairs": 40
+     },
+     "CAM2->CAM1": {
+      "T_lo": 20.165333333333365,
+      "T_hi": 46.47933333333329,
+      "T_med": 29.066666666666663,
+      "n_pairs": 43
+     },
+     "CAM2->CAM3": {
+      "T_lo": 32.41600000000002,
+      "T_hi": 67.35733333333334,
+      "T_med": 45.89999999999995,
+      "n_pairs": 46
+     },
+     "CAM3->CAM2": {
+      "T_lo": 31.78666666666668,
+      "T_hi": 76.09333333333333,
+      "T_med": 47.39999999999998,
+      "n_pairs": 31
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.613333333333333,
+      "T_hi": 75.65999999999998,
+      "T_med": 39.86666666666662,
+      "n_pairs": 43
+     },
+     "CAM4->CAM3": {
+      "T_lo": 28.693333333333317,
+      "T_hi": 84.02766666666662,
+      "T_med": 41.866666666666674,
+      "n_pairs": 51
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.7238926066048239,
+     "dino": 0.37469441821635874
+    }
+   }
+  ],
+  "events": [
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 48.52,
+    "k": 1,
+    "dep": "1:5",
+    "candidates": [
+     "1:5"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:5"
+    ],
+    "window": [
+     24.16,
+     48.52
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 76.08,
+    "k": 1,
+    "dep": "2:24",
+    "candidates": [
+     "2:1",
+     "2:15",
+     "2:17",
+     "2:19",
+     "2:24"
+    ],
+    "arrivals": [
+     "1:58",
+     "1:65",
+     "1:66",
+     "1:67",
+     "1:74"
+    ],
+    "truth_missing": [
+     "2:15"
+    ],
+    "window": [
+     49.77,
+     76.08
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 82.68,
+    "k": 1,
+    "dep": "2:25",
+    "candidates": [
+     "2:25"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:25"
+    ],
+    "window": [
+     56.37,
+     82.68
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 90.96,
+    "k": 1,
+    "dep": "2:10",
+    "candidates": [
+     "2:10"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:10"
+    ],
+    "window": [
+     56.02,
+     90.96
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 93.92,
+    "k": 1,
+    "dep": "1:54",
+    "candidates": [
+     "1:19",
+     "1:32",
+     "1:45",
+     "1:54"
+    ],
+    "arrivals": [
+     "2:37",
+     "2:41",
+     "2:50",
+     "2:53"
+    ],
+    "truth_missing": [
+     "1:32"
+    ],
+    "window": [
+     69.56,
+     93.92
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 97.2,
+    "k": 1,
+    "arr": "2:62",
+    "candidates": [
+     "2:57",
+     "2:62"
+    ],
+    "truth_joined": [
+     "2:57"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 130.65,
+    "k": 1,
+    "dep": "1:83",
+    "candidates": [
+     "1:81",
+     "1:83"
+    ],
+    "arrivals": [
+     "2:79"
+    ],
+    "truth_missing": [
+     "1:81"
+    ],
+    "window": [
+     106.3,
+     130.65
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 137.76,
+    "k": 1,
+    "dep": "2:37",
+    "candidates": [
+     "2:37"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:37"
+    ],
+    "window": [
+     102.82,
+     137.76
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 146.33,
+    "k": 2,
+    "arr": "2:109",
+    "candidates": [
+     "2:54",
+     "2:64",
+     "2:65",
+     "2:66",
+     "2:68",
+     "2:74",
+     "2:75",
+     "2:84",
+     "2:91",
+     "2:97",
+     "2:109"
+    ],
+    "truth_joined": [
+     "2:68",
+     "2:109"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 149.47,
+    "k": 1,
+    "arr": "3:133",
+    "candidates": [
+     "3:110",
+     "3:119",
+     "3:120",
+     "3:122",
+     "3:133"
+    ],
+    "truth_joined": [
+     "3:110",
+     "3:119",
+     "3:120"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 155.76,
+    "k": 1,
+    "dep": "2:51",
+    "candidates": [
+     "2:51"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:51"
+    ],
+    "window": [
+     120.82,
+     155.76
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 162.2,
+    "k": 1,
+    "arr": "2:119",
+    "candidates": [
+     "2:119"
+    ],
+    "truth_joined": [
+     "2:119"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 166.53,
+    "k": 1,
+    "arr": "3:149",
+    "candidates": [
+     "3:149"
+    ],
+    "truth_joined": [
+     "3:149"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 171.4,
+    "k": 1,
+    "arr": "2:124",
+    "candidates": [
+     "2:124"
+    ],
+    "truth_joined": [
+     "2:124"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 171.93,
+    "k": 1,
+    "arr": "1:137",
+    "candidates": [
+     "1:131",
+     "1:134",
+     "1:135",
+     "1:137"
+    ],
+    "truth_joined": [
+     "1:131"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 175.07,
+    "k": 1,
+    "arr": "2:125",
+    "candidates": [
+     "2:125"
+    ],
+    "truth_joined": [
+     "2:125"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 176.29,
+    "k": 1,
+    "dep": "2:62",
+    "candidates": [
+     "2:57",
+     "2:62"
+    ],
+    "arrivals": [
+     "3:146"
+    ],
+    "truth_missing": [
+     "2:57"
+    ],
+    "window": [
+     141.35,
+     176.29
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 179.36,
+    "k": 1,
+    "dep": "3:85",
+    "candidates": [
+     "3:85"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "3:85"
+    ],
+    "window": [
+     135.05,
+     179.36
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 1,
+    "t": 183.29,
+    "k": 1,
+    "dep": "4:60",
+    "candidates": [
+     "4:60"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "4:60"
+    ],
+    "window": [
+     127.96,
+     183.29
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 187.81,
+    "k": 1,
+    "dep": "2:85",
+    "candidates": [
+     "2:75",
+     "2:73",
+     "2:81",
+     "2:83",
+     "2:84",
+     "2:85"
+    ],
+    "arrivals": [
+     "1:131",
+     "1:134",
+     "1:135",
+     "1:137",
+     "1:142",
+     "1:145",
+     "1:148",
+     "1:154",
+     "1:156",
+     "1:160"
+    ],
+    "truth_missing": [
+     "2:83"
+    ],
+    "window": [
+     161.5,
+     187.81
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 189.69,
+    "k": 1,
+    "dep": "3:104",
+    "candidates": [
+     "3:82",
+     "3:104"
+    ],
+    "arrivals": [
+     "2:120"
+    ],
+    "truth_missing": [
+     "3:82"
+    ],
+    "window": [
+     145.39,
+     189.69
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 191.47,
+    "k": 2,
+    "arr": "1:180",
+    "candidates": [
+     "1:152",
+     "1:162",
+     "1:177",
+     "1:180"
+    ],
+    "truth_joined": [
+     "1:152",
+     "1:162",
+     "1:177"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 1,
+    "t": 192.13,
+    "k": 1,
+    "arr": "4:119",
+    "candidates": [
+     "4:119"
+    ],
+    "truth_joined": [
+     "4:119"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 200.36,
+    "k": 1,
+    "dep": "2:79",
+    "candidates": [
+     "2:79"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:79"
+    ],
+    "window": [
+     165.42,
+     200.36
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 201.78,
+    "k": 1,
+    "dep": "1:140",
+    "candidates": [
+     "1:127",
+     "1:140"
+    ],
+    "arrivals": [
+     "2:127",
+     "2:129"
+    ],
+    "truth_missing": [
+     "1:127"
+    ],
+    "window": [
+     177.43,
+     201.78
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 201.88,
+    "k": 1,
+    "dep": "2:105",
+    "candidates": [
+     "2:77",
+     "2:105"
+    ],
+    "arrivals": [
+     "1:170"
+    ],
+    "truth_missing": [
+     "2:77"
+    ],
+    "window": [
+     175.57,
+     201.88
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 213.02,
+    "k": 1,
+    "dep": "2:87",
+    "candidates": [
+     "2:87"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:87"
+    ],
+    "window": [
+     178.08,
+     213.02
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 219.4,
+    "k": 1,
+    "arr": "1:204",
+    "candidates": [
+     "1:204"
+    ],
+    "truth_joined": [
+     "1:204"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 220.67,
+    "k": 1,
+    "arr": "3:199",
+    "candidates": [
+     "3:199"
+    ],
+    "truth_joined": [
+     "3:199"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 223.73,
+    "k": 1,
+    "arr": "2:158",
+    "candidates": [
+     "2:158"
+    ],
+    "truth_joined": [
+     "2:158"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 228.6,
+    "k": 1,
+    "arr": "2:167",
+    "candidates": [
+     "2:128",
+     "2:135",
+     "2:136",
+     "2:144",
+     "2:147",
+     "2:148",
+     "2:167"
+    ],
+    "truth_joined": [
+     "2:135",
+     "2:167"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 242.05,
+    "k": 1,
+    "dep": "1:171",
+    "candidates": [
+     "1:164",
+     "1:171"
+    ],
+    "arrivals": [
+     "2:156",
+     "2:166",
+     "2:170",
+     "2:173"
+    ],
+    "truth_missing": [
+     "1:171"
+    ],
+    "window": [
+     217.7,
+     242.05
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 242.15,
+    "k": 1,
+    "dep": "2:122",
+    "candidates": [
+     "2:120",
+     "2:122"
+    ],
+    "arrivals": [
+     "1:207"
+    ],
+    "truth_missing": [
+     "2:120"
+    ],
+    "window": [
+     215.83,
+     242.15
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 243.4,
+    "k": 1,
+    "arr": "3:222",
+    "candidates": [
+     "3:222"
+    ],
+    "truth_joined": [
+     "3:222"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 245.13,
+    "k": 1,
+    "arr": "2:177",
+    "candidates": [
+     "2:177"
+    ],
+    "truth_joined": [
+     "2:177"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 1,
+    "t": 249.73,
+    "k": 1,
+    "arr": "4:131",
+    "candidates": [
+     "4:81",
+     "4:108",
+     "4:112",
+     "4:131"
+    ],
+    "truth_joined": [
+     "4:108",
+     "4:131"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 252.73,
+    "k": 1,
+    "arr": "1:215",
+    "candidates": [
+     "1:215"
+    ],
+    "truth_joined": [
+     "1:215"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 265.73,
+    "k": 1,
+    "arr": "3:235",
+    "candidates": [
+     "3:232",
+     "3:235"
+    ],
+    "truth_joined": [
+     "3:232"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 268.01,
+    "k": 1,
+    "dep": "2:141",
+    "candidates": [
+     "2:141"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:141"
+    ],
+    "window": [
+     241.7,
+     268.01
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 268.93,
+    "k": 1,
+    "arr": "2:189",
+    "candidates": [
+     "2:183",
+     "2:189"
+    ],
+    "truth_joined": [
+     "2:183"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 269.87,
+    "k": 1,
+    "arr": "2:190",
+    "candidates": [
+     "2:190"
+    ],
+    "truth_joined": [
+     "2:190"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 270.73,
+    "k": 1,
+    "arr": "2:191",
+    "candidates": [
+     "2:180",
+     "2:191"
+    ],
+    "truth_joined": [
+     "2:180"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 274.21,
+    "k": 1,
+    "dep": "2:137",
+    "candidates": [
+     "2:137"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:137"
+    ],
+    "window": [
+     247.9,
+     274.21
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 274.33,
+    "k": 1,
+    "arr": "2:197",
+    "candidates": [
+     "2:197"
+    ],
+    "truth_joined": [
+     "2:197"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 276.68,
+    "k": 1,
+    "dep": "2:144",
+    "candidates": [
+     "2:135",
+     "2:136",
+     "2:144"
+    ],
+    "arrivals": [
+     "1:208",
+     "1:213",
+     "1:221",
+     "1:228"
+    ],
+    "truth_missing": [
+     "2:136"
+    ],
+    "window": [
+     250.37,
+     276.68
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 279.61,
+    "k": 2,
+    "dep": "2:147",
+    "candidates": [
+     "2:135",
+     "2:136",
+     "2:144",
+     "2:147"
+    ],
+    "arrivals": [
+     "1:208",
+     "1:213",
+     "1:221",
+     "1:228"
+    ],
+    "truth_missing": [
+     "2:136",
+     "2:147"
+    ],
+    "window": [
+     253.3,
+     279.61
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 1,
+    "t": 286.13,
+    "k": 1,
+    "dep": "3:174",
+    "candidates": [
+     "3:167",
+     "3:174"
+    ],
+    "arrivals": [
+     "4:81",
+     "4:108",
+     "4:112",
+     "4:125",
+     "4:130",
+     "4:131",
+     "4:136",
+     "4:146",
+     "4:147",
+     "4:157",
+     "4:158"
+    ],
+    "truth_missing": [
+     "3:167"
+    ],
+    "window": [
+     237.08,
+     286.13
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 290.6,
+    "k": 1,
+    "arr": "1:260",
+    "candidates": [
+     "1:260"
+    ],
+    "truth_joined": [
+     "1:260"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 293.35,
+    "k": 1,
+    "dep": "2:151",
+    "candidates": [
+     "2:155",
+     "2:151"
+    ],
+    "arrivals": [
+     "1:244"
+    ],
+    "truth_missing": [
+     "2:155"
+    ],
+    "window": [
+     267.03,
+     293.35
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 1,
+    "t": 296.13,
+    "k": 1,
+    "arr": "3:192",
+    "candidates": [
+     "3:178",
+     "3:183",
+     "3:185",
+     "3:192"
+    ],
+    "truth_joined": [
+     "3:178"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 304.56,
+    "k": 1,
+    "dep": "3:197",
+    "candidates": [
+     "3:192",
+     "3:197"
+    ],
+    "arrivals": [
+     "2:196",
+     "2:205"
+    ],
+    "truth_missing": [
+     "3:197"
+    ],
+    "window": [
+     260.25,
+     304.56
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 307.87,
+    "k": 1,
+    "arr": "3:262",
+    "candidates": [
+     "3:262"
+    ],
+    "truth_joined": [
+     "3:262"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 315.36,
+    "k": 1,
+    "dep": "2:173",
+    "candidates": [
+     "2:170",
+     "2:173"
+    ],
+    "arrivals": [
+     "3:250"
+    ],
+    "truth_missing": [
+     "2:170"
+    ],
+    "window": [
+     280.42,
+     315.36
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 316.41,
+    "k": 1,
+    "dep": "2:180",
+    "candidates": [
+     "2:174",
+     "2:177",
+     "2:180"
+    ],
+    "arrivals": [
+     "1:254",
+     "1:266"
+    ],
+    "truth_missing": [
+     "2:174",
+     "2:180"
+    ],
+    "window": [
+     290.1,
+     316.41
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 1,
+    "t": 316.81,
+    "k": 2,
+    "dep": "2:165",
+    "candidates": [
+     "2:174",
+     "2:177",
+     "2:180",
+     "2:165"
+    ],
+    "arrivals": [
+     "1:254",
+     "1:266"
+    ],
+    "truth_missing": [
+     "2:174",
+     "2:180",
+     "2:165"
+    ],
+    "window": [
+     290.5,
+     316.81
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 325.18,
+    "k": 1,
+    "dep": "1:231",
+    "candidates": [
+     "1:231"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:231"
+    ],
+    "window": [
+     300.83,
+     325.18
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 325.8,
+    "k": 1,
+    "arr": "3:270",
+    "candidates": [
+     "3:270"
+    ],
+    "truth_joined": [
+     "3:270"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 331.8,
+    "k": 1,
+    "arr": "2:244",
+    "candidates": [
+     "2:244"
+    ],
+    "truth_joined": [
+     "2:244"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 334.65,
+    "k": 1,
+    "dep": "1:241",
+    "candidates": [
+     "1:241"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:241"
+    ],
+    "window": [
+     310.3,
+     334.65
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 337.92,
+    "k": 1,
+    "dep": "1:239",
+    "candidates": [
+     "1:222",
+     "1:234",
+     "1:237",
+     "1:240",
+     "1:239"
+    ],
+    "arrivals": [
+     "2:229",
+     "2:233",
+     "2:235",
+     "2:237"
+    ],
+    "truth_missing": [
+     "1:222"
+    ],
+    "window": [
+     313.56,
+     337.92
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 1,
+    "t": 339.25,
+    "k": 2,
+    "dep": "1:243",
+    "candidates": [
+     "1:222",
+     "1:234",
+     "1:237",
+     "1:240",
+     "1:239",
+     "1:243"
+    ],
+    "arrivals": [
+     "2:229",
+     "2:233",
+     "2:235",
+     "2:237"
+    ],
+    "truth_missing": [
+     "1:222",
+     "1:243"
+    ],
+    "window": [
+     314.9,
+     339.25
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 340.87,
+    "k": 1,
+    "arr": "1:307",
+    "candidates": [
+     "1:304",
+     "1:307"
+    ],
+    "truth_joined": [
+     "1:307"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 340.93,
+    "k": 1,
+    "arr": "3:282",
+    "candidates": [
+     "3:269",
+     "3:282"
+    ],
+    "truth_joined": [
+     "3:282"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 1,
+    "t": 344.83,
+    "k": 1,
+    "dep": "3:230",
+    "candidates": [
+     "3:230"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "3:230"
+    ],
+    "window": [
+     300.52,
+     344.83
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 346.42,
+    "k": 1,
+    "dep": "2:192",
+    "candidates": [
+     "2:192"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:192"
+    ],
+    "window": [
+     311.48,
+     346.42
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 348.0,
+    "k": 1,
+    "arr": "2:252",
+    "candidates": [
+     "2:252"
+    ],
+    "truth_joined": [
+     "2:252"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 349.73,
+    "k": 1,
+    "arr": "1:316",
+    "candidates": [
+     "1:316"
+    ],
+    "truth_joined": [
+     "1:316"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 351.9,
+    "k": 1,
+    "dep": "1:255",
+    "candidates": [
+     "1:255"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:255"
+    ],
+    "window": [
+     322.46,
+     351.9
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 352.27,
+    "k": 1,
+    "arr": "1:320",
+    "candidates": [
+     "1:320"
+    ],
+    "truth_joined": [
+     "1:320"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 353.33,
+    "k": 1,
+    "arr": "2:239",
+    "candidates": [
+     "2:234",
+     "2:239"
+    ],
+    "truth_joined": [
+     "2:234"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 355.89,
+    "k": 1,
+    "dep": "2:207",
+    "candidates": [
+     "2:207"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:207"
+    ],
+    "window": [
+     327.14,
+     355.89
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 1,
+    "t": 356.56,
+    "k": 1,
+    "dep": "2:197",
+    "candidates": [
+     "2:197"
+    ],
+    "arrivals": [],
+    "truth_missing": [],
+    "window": [
+     321.62,
+     356.56
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 357.2,
+    "k": 1,
+    "arr": "3:291",
+    "candidates": [
+     "3:291"
+    ],
+    "truth_joined": [
+     "3:291"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 357.4,
+    "k": 1,
+    "arr": "4:210",
+    "candidates": [
+     "4:210"
+    ],
+    "truth_joined": [
+     "4:210"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 359.16,
+    "k": 1,
+    "dep": "2:211",
+    "candidates": [
+     "2:211"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:211"
+    ],
+    "window": [
+     330.41,
+     359.16
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 362.67,
+    "k": 1,
+    "arr": "1:330",
+    "candidates": [
+     "1:330"
+    ],
+    "truth_joined": [
+     "1:330"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 366.33,
+    "k": 1,
+    "arr": "3:298",
+    "candidates": [
+     "3:298"
+    ],
+    "truth_joined": []
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 371.87,
+    "k": 1,
+    "arr": "2:261",
+    "candidates": [
+     "2:261"
+    ],
+    "truth_joined": [
+     "2:261"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 376.4,
+    "k": 1,
+    "arr": "3:307",
+    "candidates": [
+     "3:307"
+    ],
+    "truth_joined": [
+     "3:307"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 377.47,
+    "k": 1,
+    "arr": "1:351",
+    "candidates": [
+     "1:351"
+    ],
+    "truth_joined": [
+     "1:351"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 379.47,
+    "k": 1,
+    "arr": "1:353",
+    "candidates": [
+     "1:353"
+    ],
+    "truth_joined": [
+     "1:353"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 388.73,
+    "k": 1,
+    "arr": "1:361",
+    "candidates": [
+     "1:361"
+    ],
+    "truth_joined": [
+     "1:361"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 395.51,
+    "k": 1,
+    "dep": "2:223",
+    "candidates": [
+     "2:209",
+     "2:214",
+     "2:217",
+     "2:220",
+     "2:223"
+    ],
+    "arrivals": [
+     "3:293",
+     "3:294",
+     "3:295",
+     "3:297"
+    ],
+    "truth_missing": [
+     "2:209"
+    ],
+    "window": [
+     353.28,
+     395.51
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 396.24,
+    "k": 1,
+    "dep": "2:226",
+    "candidates": [
+     "2:226"
+    ],
+    "arrivals": [],
+    "truth_missing": [],
+    "window": [
+     354.01,
+     396.24
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 399.22,
+    "k": 1,
+    "dep": "3:268",
+    "candidates": [
+     "3:268"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "3:268"
+    ],
+    "window": [
+     354.93,
+     399.22
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 412.6,
+    "k": 1,
+    "arr": "2:280",
+    "candidates": [
+     "2:280"
+    ],
+    "truth_joined": [
+     "2:280"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 415.2,
+    "k": 1,
+    "arr": "2:276",
+    "candidates": [
+     "2:271",
+     "2:272",
+     "2:276"
+    ],
+    "truth_joined": [
+     "2:271"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 415.93,
+    "k": 1,
+    "arr": "1:371",
+    "candidates": [
+     "1:371"
+    ],
+    "truth_joined": [
+     "1:371"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 417.53,
+    "k": 1,
+    "arr": "3:353",
+    "candidates": [
+     "3:353"
+    ],
+    "truth_joined": [
+     "3:353"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 417.53,
+    "k": 1,
+    "arr": "2:287",
+    "candidates": [
+     "2:287"
+    ],
+    "truth_joined": [
+     "2:287"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 418.93,
+    "k": 1,
+    "arr": "2:290",
+    "candidates": [
+     "2:278",
+     "2:290"
+    ],
+    "truth_joined": [
+     "2:290"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 422.33,
+    "k": 1,
+    "arr": "3:347",
+    "candidates": [
+     "3:313",
+     "3:326",
+     "3:332",
+     "3:336",
+     "3:343",
+     "3:347"
+    ],
+    "truth_joined": [
+     "3:347"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 425.4,
+    "k": 1,
+    "arr": "1:373",
+    "candidates": [
+     "1:373"
+    ],
+    "truth_joined": [
+     "1:373"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 425.45,
+    "k": 1,
+    "dep": "4:206",
+    "candidates": [
+     "4:190",
+     "4:206"
+    ],
+    "arrivals": [
+     "3:324"
+    ],
+    "truth_missing": [
+     "4:190"
+    ],
+    "window": [
+     383.67,
+     425.45
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 428.2,
+    "k": 1,
+    "arr": "3:368",
+    "candidates": [
+     "3:330",
+     "3:348",
+     "3:368",
+     "3:340"
+    ],
+    "truth_joined": [
+     "3:368",
+     "3:340"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 434.33,
+    "k": 1,
+    "arr": "2:302",
+    "candidates": [
+     "2:302"
+    ],
+    "truth_joined": [
+     "2:302"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 438.27,
+    "k": 1,
+    "arr": "2:304",
+    "candidates": [
+     "2:304"
+    ],
+    "truth_joined": [
+     "2:304"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 440.27,
+    "k": 1,
+    "arr": "2:306",
+    "candidates": [
+     "2:306"
+    ],
+    "truth_joined": [
+     "2:306"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 444.07,
+    "k": 1,
+    "arr": "3:378",
+    "candidates": [
+     "3:378"
+    ],
+    "truth_joined": [
+     "3:378"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 456.53,
+    "k": 1,
+    "arr": "3:387",
+    "candidates": [
+     "3:387"
+    ],
+    "truth_joined": [
+     "3:387"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 456.87,
+    "k": 1,
+    "dep": "3:294",
+    "candidates": [
+     "3:269",
+     "3:282",
+     "3:294"
+    ],
+    "arrivals": [
+     "4:236",
+     "4:253"
+    ],
+    "truth_missing": [
+     "3:269"
+    ],
+    "window": [
+     401.7,
+     456.87
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 461.39,
+    "k": 1,
+    "dep": "4:224",
+    "candidates": [
+     "4:219",
+     "4:222",
+     "4:224"
+    ],
+    "arrivals": [
+     "3:367",
+     "3:369"
+    ],
+    "truth_missing": [
+     "4:222"
+    ],
+    "window": [
+     419.61,
+     461.39
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 461.93,
+    "k": 1,
+    "arr": "2:313",
+    "candidates": [
+     "2:313"
+    ],
+    "truth_joined": [
+     "2:313"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 470.78,
+    "k": 1,
+    "dep": "2:263",
+    "candidates": [
+     "2:251",
+     "2:253",
+     "2:263"
+    ],
+    "arrivals": [
+     "3:346",
+     "3:366",
+     "3:374",
+     "3:380"
+    ],
+    "truth_missing": [
+     "2:253"
+    ],
+    "window": [
+     428.54,
+     470.78
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 475.84,
+    "k": 2,
+    "dep": "2:265",
+    "candidates": [
+     "2:251",
+     "2:253",
+     "2:263",
+     "2:265"
+    ],
+    "arrivals": [
+     "3:346",
+     "3:366",
+     "3:374",
+     "3:380"
+    ],
+    "truth_missing": [
+     "2:253",
+     "2:265"
+    ],
+    "window": [
+     433.61,
+     475.84
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 477.38,
+    "k": 3,
+    "dep": "2:269",
+    "candidates": [
+     "2:251",
+     "2:253",
+     "2:262",
+     "2:263",
+     "2:265",
+     "2:269"
+    ],
+    "arrivals": [
+     "3:346",
+     "3:366",
+     "3:374",
+     "3:380"
+    ],
+    "truth_missing": [
+     "2:253",
+     "2:262",
+     "2:265"
+    ],
+    "window": [
+     435.14,
+     477.38
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 478.68,
+    "k": 1,
+    "dep": "3:328",
+    "candidates": [
+     "3:328"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "3:328"
+    ],
+    "window": [
+     434.4,
+     478.68
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM4->CAM3",
+    "gray": "G3",
+    "fold": 0,
+    "t": 481.33,
+    "k": 1,
+    "arr": "3:416",
+    "candidates": [
+     "3:396",
+     "3:416"
+    ],
+    "truth_joined": [
+     "3:396",
+     "3:416"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 481.35,
+    "k": 1,
+    "dep": "3:326",
+    "candidates": [
+     "3:293",
+     "3:326"
+    ],
+    "arrivals": [
+     "2:308"
+    ],
+    "truth_missing": [
+     "3:293"
+    ],
+    "window": [
+     437.07,
+     481.35
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 482.16,
+    "k": 1,
+    "dep": "2:287",
+    "candidates": [
+     "2:283",
+     "2:287"
+    ],
+    "arrivals": [
+     "1:409"
+    ],
+    "truth_missing": [
+     "2:283"
+    ],
+    "window": [
+     453.41,
+     482.16
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 495.47,
+    "k": 1,
+    "arr": "4:295",
+    "candidates": [
+     "4:248",
+     "4:261",
+     "4:264",
+     "4:266",
+     "4:267",
+     "4:275",
+     "4:282",
+     "4:286",
+     "4:291",
+     "4:293",
+     "4:295"
+    ],
+    "truth_joined": [
+     "4:264"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 495.6,
+    "k": 1,
+    "arr": "2:330",
+    "candidates": [
+     "2:329",
+     "2:330"
+    ],
+    "truth_joined": [
+     "2:330"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 497.51,
+    "k": 1,
+    "dep": "2:275",
+    "candidates": [
+     "2:270",
+     "2:275"
+    ],
+    "arrivals": [
+     "3:400"
+    ],
+    "truth_missing": [
+     "2:270"
+    ],
+    "window": [
+     455.28,
+     497.51
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 502.38,
+    "k": 1,
+    "dep": "2:291",
+    "candidates": [
+     "2:291"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:291"
+    ],
+    "window": [
+     460.14,
+     502.38
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 509.7,
+    "k": 1,
+    "dep": "1:393",
+    "candidates": [
+     "1:393"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:393"
+    ],
+    "window": [
+     480.26,
+     509.7
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 511.44,
+    "k": 1,
+    "dep": "2:294",
+    "candidates": [
+     "2:294"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:294"
+    ],
+    "window": [
+     469.21,
+     511.44
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 528.4,
+    "k": 1,
+    "arr": "3:448",
+    "candidates": [
+     "3:448"
+    ],
+    "truth_joined": [
+     "3:448"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 530.27,
+    "k": 1,
+    "arr": "2:360",
+    "candidates": [
+     "2:360"
+    ],
+    "truth_joined": [
+     "2:360"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 536.27,
+    "k": 1,
+    "arr": "2:364",
+    "candidates": [
+     "2:344",
+     "2:348",
+     "2:349",
+     "2:350",
+     "2:356",
+     "2:361",
+     "2:364"
+    ],
+    "truth_joined": [
+     "2:356",
+     "2:361"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 536.5,
+    "k": 1,
+    "dep": "1:411",
+    "candidates": [
+     "1:411"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:411"
+    ],
+    "window": [
+     507.06,
+     536.5
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 536.53,
+    "k": 1,
+    "arr": "2:365",
+    "candidates": [
+     "2:365"
+    ],
+    "truth_joined": [
+     "2:365"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 537.53,
+    "k": 1,
+    "dep": "3:378",
+    "candidates": [
+     "3:378"
+    ],
+    "arrivals": [],
+    "truth_missing": [],
+    "window": [
+     482.37,
+     537.53
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 546.64,
+    "k": 1,
+    "dep": "2:312",
+    "candidates": [
+     "2:312"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:312"
+    ],
+    "window": [
+     504.41,
+     546.64
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 551.6,
+    "k": 1,
+    "arr": "2:377",
+    "candidates": [
+     "2:340",
+     "2:354",
+     "2:377"
+    ],
+    "truth_joined": [
+     "2:377"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 555.23,
+    "k": 1,
+    "dep": "2:329",
+    "candidates": [
+     "2:329"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:329"
+    ],
+    "window": [
+     526.48,
+     555.23
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 561.13,
+    "k": 1,
+    "arr": "2:381",
+    "candidates": [
+     "2:381"
+    ],
+    "truth_joined": [
+     "2:381"
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 577.93,
+    "k": 1,
+    "arr": "2:386",
+    "candidates": [
+     "2:382",
+     "2:386"
+    ],
+    "truth_joined": [
+     "2:386"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 577.96,
+    "k": 1,
+    "dep": "1:451",
+    "candidates": [
+     "1:441",
+     "1:451"
+    ],
+    "arrivals": [
+     "2:379"
+    ],
+    "truth_missing": [
+     "1:441"
+    ],
+    "window": [
+     548.52,
+     577.96
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 582.2,
+    "k": 1,
+    "arr": "4:348",
+    "candidates": [
+     "4:319",
+     "4:345",
+     "4:348"
+    ],
+    "truth_joined": []
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM1",
+    "gray": "G1",
+    "fold": 0,
+    "t": 583.76,
+    "k": 1,
+    "dep": "2:361",
+    "candidates": [
+     "2:361"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:361"
+    ],
+    "window": [
+     555.01,
+     583.76
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM4",
+    "gray": "G3",
+    "fold": 0,
+    "t": 584.73,
+    "k": 1,
+    "arr": "4:362",
+    "candidates": [
+     "4:313",
+     "4:328",
+     "4:337",
+     "4:340",
+     "4:342",
+     "4:344",
+     "4:362"
+    ],
+    "truth_joined": [
+     "4:362"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 589.62,
+    "k": 1,
+    "dep": "3:430",
+    "candidates": [
+     "3:430"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "3:430"
+    ],
+    "window": [
+     545.33,
+     589.62
+    ]
+   },
+   {
+    "kind": "joined",
+    "link": "CAM3->CAM2",
+    "gray": "G2",
+    "fold": 0,
+    "t": 591.73,
+    "k": 1,
+    "arr": "2:392",
+    "candidates": [
+     "2:380",
+     "2:384",
+     "2:392"
+    ],
+    "truth_joined": [
+     "2:392"
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 594.5,
+    "k": 1,
+    "dep": "1:465",
+    "candidates": [
+     "1:465"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:465"
+    ],
+    "window": [
+     565.06,
+     594.5
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 596.24,
+    "k": 1,
+    "dep": "2:336",
+    "candidates": [
+     "2:336"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:336"
+    ],
+    "window": [
+     554.01,
+     596.24
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM2->CAM3",
+    "gray": "G2",
+    "fold": 0,
+    "t": 597.64,
+    "k": 1,
+    "dep": "2:339",
+    "candidates": [
+     "2:339"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "2:339"
+    ],
+    "window": [
+     555.41,
+     597.64
+    ]
+   },
+   {
+    "kind": "missing",
+    "link": "CAM1->CAM2",
+    "gray": "G1",
+    "fold": 0,
+    "t": 599.96,
+    "k": 1,
+    "dep": "1:471",
+    "candidates": [
+     "1:471"
+    ],
+    "arrivals": [],
+    "truth_missing": [
+     "1:471"
+    ],
+    "window": [
+     570.52,
+     599.96
+    ]
+   }
+  ]
+ },
+ "reid": {
+  "gate": "reid",
+  "summary": {
+   "CAM1->CAM2": {
+    "departures": 97,
+    "pending_at_end": 4,
+    "truly_missing": 17,
+    "edges": 245,
+    "mon_claimed": 8,
+    "mon_found": 8,
+    "mon_wrong": 0,
+    "mon_set": 18,
+    "mon_alerts": 6,
+    "mon_pinned": 3,
+    "mon_missed": 9,
+    "com_claimed": 8,
+    "com_found": 8,
+    "com_wrong": 0,
+    "com_missed": 9,
+    "cnt_claimed": 6,
+    "cnt_found": 6,
+    "cnt_wrong": 0,
+    "cnt_set": 53,
+    "cnt_missed": 11,
+    "arrivals": 97,
+    "truly_joined": 17,
+    "join_claimed": 7,
+    "join_found": 7,
+    "join_wrong": 0,
+    "join_set": 11
+   },
+   "CAM2->CAM1": {
+    "departures": 114,
+    "pending_at_end": 9,
+    "truly_missing": 25,
+    "edges": 252,
+    "mon_claimed": 13,
+    "mon_found": 13,
+    "mon_wrong": 0,
+    "mon_set": 31,
+    "mon_alerts": 9,
+    "mon_pinned": 2,
+    "mon_missed": 9,
+    "com_claimed": 13,
+    "com_found": 13,
+    "com_wrong": 0,
+    "com_missed": 12,
+    "cnt_claimed": 15,
+    "cnt_found": 13,
+    "cnt_wrong": 2,
+    "cnt_set": 56,
+    "cnt_missed": 12,
+    "arrivals": 116,
+    "truly_joined": 23,
+    "join_claimed": 11,
+    "join_found": 11,
+    "join_wrong": 0,
+    "join_set": 31
+   },
+   "CAM2->CAM3": {
+    "departures": 93,
+    "pending_at_end": 15,
+    "truly_missing": 23,
+    "edges": 186,
+    "mon_claimed": 17,
+    "mon_found": 15,
+    "mon_wrong": 2,
+    "mon_set": 44,
+    "mon_alerts": 11,
+    "mon_pinned": 6,
+    "mon_missed": 4,
+    "com_claimed": 17,
+    "com_found": 14,
+    "com_wrong": 3,
+    "com_missed": 9,
+    "cnt_claimed": 5,
+    "cnt_found": 5,
+    "cnt_wrong": 0,
+    "cnt_set": 42,
+    "cnt_missed": 18,
+    "arrivals": 93,
+    "truly_joined": 19,
+    "join_claimed": 11,
+    "join_found": 10,
+    "join_wrong": 1,
+    "join_set": 19
+   },
+   "CAM3->CAM2": {
+    "departures": 91,
+    "pending_at_end": 19,
+    "truly_missing": 18,
+    "edges": 289,
+    "mon_claimed": 7,
+    "mon_found": 7,
+    "mon_wrong": 0,
+    "mon_set": 12,
+    "mon_alerts": 6,
+    "mon_pinned": 4,
+    "mon_missed": 9,
+    "com_claimed": 7,
+    "com_found": 7,
+    "com_wrong": 0,
+    "com_missed": 11,
+    "cnt_claimed": 2,
+    "cnt_found": 2,
+    "cnt_wrong": 0,
+    "cnt_set": 29,
+    "cnt_missed": 16,
+    "arrivals": 103,
+    "truly_joined": 29,
+    "join_claimed": 17,
+    "join_found": 17,
+    "join_wrong": 0,
+    "join_set": 51
+   },
+   "CAM3->CAM4": {
+    "departures": 82,
+    "pending_at_end": 12,
+    "truly_missing": 5,
+    "edges": 180,
+    "mon_claimed": 2,
+    "mon_found": 2,
+    "mon_wrong": 0,
+    "mon_set": 5,
+    "mon_alerts": 2,
+    "mon_pinned": 0,
+    "mon_missed": 3,
+    "com_claimed": 2,
+    "com_found": 2,
+    "com_wrong": 0,
+    "com_missed": 3,
+    "cnt_claimed": 7,
+    "cnt_found": 3,
+    "cnt_wrong": 4,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 84,
+    "truly_joined": 8,
+    "join_claimed": 4,
+    "join_found": 4,
+    "join_wrong": 0,
+    "join_set": 13
+   },
+   "CAM4->CAM3": {
+    "departures": 100,
+    "pending_at_end": 17,
+    "truly_missing": 4,
+    "edges": 408,
+    "mon_claimed": 3,
+    "mon_found": 3,
+    "mon_wrong": 0,
+    "mon_set": 6,
+    "mon_alerts": 3,
+    "mon_pinned": 1,
+    "mon_missed": 1,
+    "com_claimed": 3,
+    "com_found": 3,
+    "com_wrong": 0,
+    "com_missed": 1,
+    "cnt_claimed": 4,
+    "cnt_found": 2,
+    "cnt_wrong": 2,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 100,
+    "truly_joined": 6,
+    "join_claimed": 5,
+    "join_found": 5,
+    "join_wrong": 0,
+    "join_set": 15
+   }
+  },
+  "total": {
+   "departures": 577,
+   "pending_at_end": 76,
+   "truly_missing": 92,
+   "edges": 1560,
+   "mon_claimed": 50,
+   "mon_found": 48,
+   "mon_wrong": 2,
+   "mon_set": 116,
+   "mon_alerts": 37,
+   "mon_pinned": 16,
+   "mon_missed": 35,
+   "com_claimed": 50,
+   "com_found": 47,
+   "com_wrong": 3,
+   "com_missed": 45,
+   "cnt_claimed": 39,
+   "cnt_found": 31,
+   "cnt_wrong": 8,
+   "cnt_set": 260,
+   "cnt_missed": 61,
+   "arrivals": 593,
+   "truly_joined": 102,
+   "join_claimed": 55,
+   "join_found": 54,
+   "join_wrong": 1,
+   "join_set": 140
+  },
+  "calibration": [
+   {
+    "fold": 0,
+    "cal_half": [
+     0.0,
+     300.0
+    ],
+    "pairs": 260,
+    "impostors": 2341,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.456,
+      "T_hi": 48.89733333333329,
+      "T_med": 29.66666666666667,
+      "n_pairs": 41
+     },
+     "CAM2->CAM1": {
+      "T_lo": 21.543999999999997,
+      "T_hi": 50.29266666666663,
+      "T_med": 30.0,
+      "n_pairs": 52
+     },
+     "CAM2->CAM3": {
+      "T_lo": 33.077333333333335,
+      "T_hi": 75.309,
+      "T_med": 49.133333333333354,
+      "n_pairs": 33
+     },
+     "CAM3->CAM2": {
+      "T_lo": 33.999999999999986,
+      "T_hi": 78.2816666666667,
+      "T_med": 49.4,
+      "n_pairs": 44
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.768,
+      "T_hi": 81.93466666666667,
+      "T_med": 40.46666666666667,
+      "n_pairs": 41
+     },
+     "CAM4->CAM3": {
+      "T_lo": 29.471999999999998,
+      "T_hi": 71.253,
+      "T_med": 40.56666666666666,
+      "n_pairs": 54
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.6729489060195384,
+     "dino": 0.35556298384892776
+    }
+   },
+   {
+    "fold": 1,
+    "cal_half": [
+     300.0,
+     600.0
+    ],
+    "pairs": 251,
+    "impostors": 2150,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.49599999999994,
+      "T_hi": 43.848999999999954,
+      "T_med": 28.900000000000006,
+      "n_pairs": 40
+     },
+     "CAM2->CAM1": {
+      "T_lo": 20.165333333333365,
+      "T_hi": 46.47933333333329,
+      "T_med": 29.066666666666663,
+      "n_pairs": 43
+     },
+     "CAM2->CAM3": {
+      "T_lo": 32.41600000000002,
+      "T_hi": 67.35733333333334,
+      "T_med": 45.89999999999995,
+      "n_pairs": 46
+     },
+     "CAM3->CAM2": {
+      "T_lo": 31.78666666666668,
+      "T_hi": 76.09333333333333,
+      "T_med": 47.39999999999998,
+      "n_pairs": 31
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.613333333333333,
+      "T_hi": 75.65999999999998,
+      "T_med": 39.86666666666662,
+      "n_pairs": 43
+     },
+     "CAM4->CAM3": {
+      "T_lo": 28.693333333333317,
+      "T_hi": 84.02766666666662,
+      "T_med": 41.866666666666674,
+      "n_pairs": 51
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.7238926066048239,
+     "dino": 0.37469441821635874
+    }
+   }
+  ],
+  "events": []
+ },
+ "dino": {
+  "gate": "dino",
+  "summary": {
+   "CAM1->CAM2": {
+    "departures": 97,
+    "pending_at_end": 4,
+    "truly_missing": 17,
+    "edges": 573,
+    "mon_claimed": 3,
+    "mon_found": 3,
+    "mon_wrong": 0,
+    "mon_set": 25,
+    "mon_alerts": 3,
+    "mon_pinned": 0,
+    "mon_missed": 12,
+    "com_claimed": 3,
+    "com_found": 3,
+    "com_wrong": 0,
+    "com_missed": 14,
+    "cnt_claimed": 6,
+    "cnt_found": 6,
+    "cnt_wrong": 0,
+    "cnt_set": 53,
+    "cnt_missed": 11,
+    "arrivals": 97,
+    "truly_joined": 17,
+    "join_claimed": 6,
+    "join_found": 6,
+    "join_wrong": 0,
+    "join_set": 24
+   },
+   "CAM2->CAM1": {
+    "departures": 114,
+    "pending_at_end": 9,
+    "truly_missing": 25,
+    "edges": 648,
+    "mon_claimed": 5,
+    "mon_found": 5,
+    "mon_wrong": 0,
+    "mon_set": 20,
+    "mon_alerts": 2,
+    "mon_pinned": 1,
+    "mon_missed": 14,
+    "com_claimed": 5,
+    "com_found": 5,
+    "com_wrong": 0,
+    "com_missed": 20,
+    "cnt_claimed": 15,
+    "cnt_found": 13,
+    "cnt_wrong": 2,
+    "cnt_set": 56,
+    "cnt_missed": 12,
+    "arrivals": 116,
+    "truly_joined": 23,
+    "join_claimed": 5,
+    "join_found": 5,
+    "join_wrong": 0,
+    "join_set": 28
+   },
+   "CAM2->CAM3": {
+    "departures": 93,
+    "pending_at_end": 15,
+    "truly_missing": 23,
+    "edges": 633,
+    "mon_claimed": 4,
+    "mon_found": 4,
+    "mon_wrong": 0,
+    "mon_set": 48,
+    "mon_alerts": 2,
+    "mon_pinned": 0,
+    "mon_missed": 8,
+    "com_claimed": 4,
+    "com_found": 4,
+    "com_wrong": 0,
+    "com_missed": 19,
+    "cnt_claimed": 5,
+    "cnt_found": 5,
+    "cnt_wrong": 0,
+    "cnt_set": 42,
+    "cnt_missed": 18,
+    "arrivals": 93,
+    "truly_joined": 19,
+    "join_claimed": 1,
+    "join_found": 1,
+    "join_wrong": 0,
+    "join_set": 1
+   },
+   "CAM3->CAM2": {
+    "departures": 91,
+    "pending_at_end": 19,
+    "truly_missing": 18,
+    "edges": 702,
+    "mon_missed": 18,
+    "com_claimed": 1,
+    "com_found": 0,
+    "com_wrong": 1,
+    "com_missed": 18,
+    "cnt_claimed": 2,
+    "cnt_found": 2,
+    "cnt_wrong": 0,
+    "cnt_set": 29,
+    "cnt_missed": 16,
+    "arrivals": 103,
+    "truly_joined": 29,
+    "join_claimed": 10,
+    "join_found": 9,
+    "join_wrong": 1,
+    "join_set": 56,
+    "mon_claimed": 1,
+    "mon_found": 0,
+    "mon_wrong": 1,
+    "mon_set": 1,
+    "mon_alerts": 1,
+    "mon_pinned": 1
+   },
+   "CAM3->CAM4": {
+    "departures": 82,
+    "pending_at_end": 12,
+    "truly_missing": 5,
+    "edges": 560,
+    "mon_missed": 4,
+    "com_claimed": 1,
+    "com_found": 1,
+    "com_wrong": 0,
+    "com_missed": 4,
+    "cnt_claimed": 7,
+    "cnt_found": 3,
+    "cnt_wrong": 4,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 84,
+    "truly_joined": 8,
+    "join_claimed": 2,
+    "join_found": 2,
+    "join_wrong": 0,
+    "join_set": 2,
+    "mon_claimed": 1,
+    "mon_found": 1,
+    "mon_wrong": 0,
+    "mon_set": 1,
+    "mon_alerts": 1,
+    "mon_pinned": 1
+   },
+   "CAM4->CAM3": {
+    "departures": 100,
+    "pending_at_end": 17,
+    "truly_missing": 4,
+    "edges": 997,
+    "mon_claimed": 2,
+    "mon_found": 2,
+    "mon_wrong": 0,
+    "mon_set": 2,
+    "mon_alerts": 2,
+    "mon_pinned": 2,
+    "mon_missed": 2,
+    "com_claimed": 2,
+    "com_found": 2,
+    "com_wrong": 0,
+    "com_missed": 2,
+    "cnt_claimed": 4,
+    "cnt_found": 2,
+    "cnt_wrong": 2,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 100,
+    "truly_joined": 6,
+    "join_claimed": 3,
+    "join_found": 3,
+    "join_wrong": 0,
+    "join_set": 3
+   }
+  },
+  "total": {
+   "departures": 577,
+   "pending_at_end": 76,
+   "truly_missing": 92,
+   "edges": 4113,
+   "mon_claimed": 16,
+   "mon_found": 15,
+   "mon_wrong": 1,
+   "mon_set": 97,
+   "mon_alerts": 11,
+   "mon_pinned": 5,
+   "mon_missed": 58,
+   "com_claimed": 16,
+   "com_found": 15,
+   "com_wrong": 1,
+   "com_missed": 77,
+   "cnt_claimed": 39,
+   "cnt_found": 31,
+   "cnt_wrong": 8,
+   "cnt_set": 260,
+   "cnt_missed": 61,
+   "arrivals": 593,
+   "truly_joined": 102,
+   "join_claimed": 27,
+   "join_found": 26,
+   "join_wrong": 1,
+   "join_set": 114
+  },
+  "calibration": [
+   {
+    "fold": 0,
+    "cal_half": [
+     0.0,
+     300.0
+    ],
+    "pairs": 260,
+    "impostors": 2341,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.456,
+      "T_hi": 48.89733333333329,
+      "T_med": 29.66666666666667,
+      "n_pairs": 41
+     },
+     "CAM2->CAM1": {
+      "T_lo": 21.543999999999997,
+      "T_hi": 50.29266666666663,
+      "T_med": 30.0,
+      "n_pairs": 52
+     },
+     "CAM2->CAM3": {
+      "T_lo": 33.077333333333335,
+      "T_hi": 75.309,
+      "T_med": 49.133333333333354,
+      "n_pairs": 33
+     },
+     "CAM3->CAM2": {
+      "T_lo": 33.999999999999986,
+      "T_hi": 78.2816666666667,
+      "T_med": 49.4,
+      "n_pairs": 44
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.768,
+      "T_hi": 81.93466666666667,
+      "T_med": 40.46666666666667,
+      "n_pairs": 41
+     },
+     "CAM4->CAM3": {
+      "T_lo": 29.471999999999998,
+      "T_hi": 71.253,
+      "T_med": 40.56666666666666,
+      "n_pairs": 54
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.6729489060195384,
+     "dino": 0.35556298384892776
+    }
+   },
+   {
+    "fold": 1,
+    "cal_half": [
+     300.0,
+     600.0
+    ],
+    "pairs": 251,
+    "impostors": 2150,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.49599999999994,
+      "T_hi": 43.848999999999954,
+      "T_med": 28.900000000000006,
+      "n_pairs": 40
+     },
+     "CAM2->CAM1": {
+      "T_lo": 20.165333333333365,
+      "T_hi": 46.47933333333329,
+      "T_med": 29.066666666666663,
+      "n_pairs": 43
+     },
+     "CAM2->CAM3": {
+      "T_lo": 32.41600000000002,
+      "T_hi": 67.35733333333334,
+      "T_med": 45.89999999999995,
+      "n_pairs": 46
+     },
+     "CAM3->CAM2": {
+      "T_lo": 31.78666666666668,
+      "T_hi": 76.09333333333333,
+      "T_med": 47.39999999999998,
+      "n_pairs": 31
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.613333333333333,
+      "T_hi": 75.65999999999998,
+      "T_med": 39.86666666666662,
+      "n_pairs": 43
+     },
+     "CAM4->CAM3": {
+      "T_lo": 28.693333333333317,
+      "T_hi": 84.02766666666662,
+      "T_med": 41.866666666666674,
+      "n_pairs": 51
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.7238926066048239,
+     "dino": 0.37469441821635874
+    }
+   }
+  ],
+  "events": []
+ },
+ "none": {
+  "gate": "none",
+  "summary": {
+   "CAM1->CAM2": {
+    "departures": 97,
+    "pending_at_end": 4,
+    "truly_missing": 17,
+    "edges": 600,
+    "mon_claimed": 3,
+    "mon_found": 3,
+    "mon_wrong": 0,
+    "mon_set": 26,
+    "mon_alerts": 3,
+    "mon_pinned": 0,
+    "mon_missed": 12,
+    "com_claimed": 3,
+    "com_found": 3,
+    "com_wrong": 0,
+    "com_missed": 14,
+    "cnt_claimed": 6,
+    "cnt_found": 6,
+    "cnt_wrong": 0,
+    "cnt_set": 53,
+    "cnt_missed": 11,
+    "arrivals": 97,
+    "truly_joined": 17,
+    "join_claimed": 5,
+    "join_found": 5,
+    "join_wrong": 0,
+    "join_set": 23
+   },
+   "CAM2->CAM1": {
+    "departures": 114,
+    "pending_at_end": 9,
+    "truly_missing": 25,
+    "edges": 719,
+    "mon_missed": 15,
+    "com_claimed": 4,
+    "com_found": 4,
+    "com_wrong": 0,
+    "com_missed": 21,
+    "cnt_claimed": 15,
+    "cnt_found": 13,
+    "cnt_wrong": 2,
+    "cnt_set": 56,
+    "cnt_missed": 12,
+    "arrivals": 116,
+    "truly_joined": 23,
+    "join_claimed": 5,
+    "join_found": 5,
+    "join_wrong": 0,
+    "join_set": 29,
+    "mon_claimed": 4,
+    "mon_found": 4,
+    "mon_wrong": 0,
+    "mon_set": 20,
+    "mon_alerts": 1,
+    "mon_pinned": 0
+   },
+   "CAM2->CAM3": {
+    "departures": 93,
+    "pending_at_end": 15,
+    "truly_missing": 23,
+    "edges": 701,
+    "mon_missed": 15,
+    "com_claimed": 1,
+    "com_found": 1,
+    "com_wrong": 0,
+    "com_missed": 22,
+    "cnt_claimed": 5,
+    "cnt_found": 5,
+    "cnt_wrong": 0,
+    "cnt_set": 42,
+    "cnt_missed": 18,
+    "arrivals": 93,
+    "truly_joined": 19,
+    "mon_claimed": 1,
+    "mon_found": 1,
+    "mon_wrong": 0,
+    "mon_set": 22,
+    "mon_alerts": 1,
+    "mon_pinned": 0
+   },
+   "CAM3->CAM2": {
+    "departures": 91,
+    "pending_at_end": 19,
+    "truly_missing": 18,
+    "edges": 900,
+    "mon_missed": 18,
+    "com_claimed": 0,
+    "com_found": 0,
+    "com_wrong": 0,
+    "com_missed": 18,
+    "cnt_claimed": 2,
+    "cnt_found": 2,
+    "cnt_wrong": 0,
+    "cnt_set": 29,
+    "cnt_missed": 16,
+    "arrivals": 103,
+    "truly_joined": 29,
+    "join_claimed": 8,
+    "join_found": 8,
+    "join_wrong": 0,
+    "join_set": 60
+   },
+   "CAM3->CAM4": {
+    "departures": 82,
+    "pending_at_end": 12,
+    "truly_missing": 5,
+    "edges": 751,
+    "mon_missed": 5,
+    "com_claimed": 0,
+    "com_found": 0,
+    "com_wrong": 0,
+    "com_missed": 5,
+    "cnt_claimed": 7,
+    "cnt_found": 3,
+    "cnt_wrong": 4,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 84,
+    "truly_joined": 8,
+    "join_claimed": 1,
+    "join_found": 1,
+    "join_wrong": 0,
+    "join_set": 16
+   },
+   "CAM4->CAM3": {
+    "departures": 100,
+    "pending_at_end": 17,
+    "truly_missing": 4,
+    "edges": 1143,
+    "mon_missed": 4,
+    "com_claimed": 0,
+    "com_found": 0,
+    "com_wrong": 0,
+    "com_missed": 4,
+    "cnt_claimed": 4,
+    "cnt_found": 2,
+    "cnt_wrong": 2,
+    "cnt_set": 40,
+    "cnt_missed": 2,
+    "arrivals": 100,
+    "truly_joined": 6,
+    "join_claimed": 1,
+    "join_found": 1,
+    "join_wrong": 0,
+    "join_set": 33
+   }
+  },
+  "total": {
+   "departures": 577,
+   "pending_at_end": 76,
+   "truly_missing": 92,
+   "edges": 4814,
+   "mon_claimed": 8,
+   "mon_found": 8,
+   "mon_wrong": 0,
+   "mon_set": 68,
+   "mon_alerts": 5,
+   "mon_pinned": 0,
+   "mon_missed": 69,
+   "com_claimed": 8,
+   "com_found": 8,
+   "com_wrong": 0,
+   "com_missed": 84,
+   "cnt_claimed": 39,
+   "cnt_found": 31,
+   "cnt_wrong": 8,
+   "cnt_set": 260,
+   "cnt_missed": 61,
+   "arrivals": 593,
+   "truly_joined": 102,
+   "join_claimed": 20,
+   "join_found": 20,
+   "join_wrong": 0,
+   "join_set": 161
+  },
+  "calibration": [
+   {
+    "fold": 0,
+    "cal_half": [
+     0.0,
+     300.0
+    ],
+    "pairs": 260,
+    "impostors": 2341,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.456,
+      "T_hi": 48.89733333333329,
+      "T_med": 29.66666666666667,
+      "n_pairs": 41
+     },
+     "CAM2->CAM1": {
+      "T_lo": 21.543999999999997,
+      "T_hi": 50.29266666666663,
+      "T_med": 30.0,
+      "n_pairs": 52
+     },
+     "CAM2->CAM3": {
+      "T_lo": 33.077333333333335,
+      "T_hi": 75.309,
+      "T_med": 49.133333333333354,
+      "n_pairs": 33
+     },
+     "CAM3->CAM2": {
+      "T_lo": 33.999999999999986,
+      "T_hi": 78.2816666666667,
+      "T_med": 49.4,
+      "n_pairs": 44
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.768,
+      "T_hi": 81.93466666666667,
+      "T_med": 40.46666666666667,
+      "n_pairs": 41
+     },
+     "CAM4->CAM3": {
+      "T_lo": 29.471999999999998,
+      "T_hi": 71.253,
+      "T_med": 40.56666666666666,
+      "n_pairs": 54
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.6729489060195384,
+     "dino": 0.35556298384892776
+    }
+   },
+   {
+    "fold": 1,
+    "cal_half": [
+     300.0,
+     600.0
+    ],
+    "pairs": 251,
+    "impostors": 2150,
+    "links": {
+     "CAM1->CAM2": {
+      "T_lo": 19.49599999999994,
+      "T_hi": 43.848999999999954,
+      "T_med": 28.900000000000006,
+      "n_pairs": 40
+     },
+     "CAM2->CAM1": {
+      "T_lo": 20.165333333333365,
+      "T_hi": 46.47933333333329,
+      "T_med": 29.066666666666663,
+      "n_pairs": 43
+     },
+     "CAM2->CAM3": {
+      "T_lo": 32.41600000000002,
+      "T_hi": 67.35733333333334,
+      "T_med": 45.89999999999995,
+      "n_pairs": 46
+     },
+     "CAM3->CAM2": {
+      "T_lo": 31.78666666666668,
+      "T_hi": 76.09333333333333,
+      "T_med": 47.39999999999998,
+      "n_pairs": 31
+     },
+     "CAM3->CAM4": {
+      "T_lo": 26.613333333333333,
+      "T_hi": 75.65999999999998,
+      "T_med": 39.86666666666662,
+      "n_pairs": 43
+     },
+     "CAM4->CAM3": {
+      "T_lo": 28.693333333333317,
+      "T_hi": 84.02766666666662,
+      "T_med": 41.866666666666674,
+      "n_pairs": 51
+     }
+    },
+    "gate": {
+     "pair": "logistic pair score",
+     "reid": 0.7238926066048239,
+     "dino": 0.37469441821635874
+    }
+   }
+  ],
+  "events": []
+ }
+}

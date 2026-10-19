@@ -1,0 +1,300 @@
+{
+  "created_utc": "2026-10-19T13:38:21.545358+00:00",
+  "scope": "Unmodified Claude WinTAK-style tactical replay sources and assets",
+  "files": [
+    {
+      "path": "research/multicam_demo/.gitignore",
+      "bytes": 53,
+      "sha256": "b7b1b28ca2b7f0e3b1880cfd4ae5880a840de3352f0f2234c52114b69d82467e"
+    },
+    {
+      "path": "research/multicam_demo/NOTES.md",
+      "bytes": 8459,
+      "sha256": "135a5252f6179b72e2947a092907b03c8ca1c8040ef1c488e32dc1785fcd4e0a"
+    },
+    {
+      "path": "research/multicam_demo/build_demo.py",
+      "bytes": 4257,
+      "sha256": "7707d88ff602f2d9f5659c330a5013aeeabc1f59979b8387fe0e2136dcb2705c"
+    },
+    {
+      "path": "research/multicam_demo/build_real_demo.py",
+      "bytes": 718,
+      "sha256": "30717b7ba2193a559b9f42836556bb4491db589bed3b33f97ac5d1f961e9f709"
+    },
+    {
+      "path": "research/multicam_demo/corridor_handoff_monitor.html",
+      "bytes": 4364050,
+      "sha256": "b03045f59375a66868d3724699225196a5fa08f1d33d400acc213c3c9f543057"
+    },
+    {
+      "path": "research/multicam_demo/demo_template.html",
+      "bytes": 35754,
+      "sha256": "624eafc26ebe622cfe709fbb756dca018d03bfb1ec671d31fed4a45d3566b469"
+    },
+    {
+      "path": "research/multicam_demo/episode.py",
+      "bytes": 2546,
+      "sha256": "e18a21ba4e56619dcc5181ad5d57c0e0dcdfb8a5a78aeb18e46394a06284ec14"
+    },
+    {
+      "path": "research/multicam_demo/evaluate.py",
+      "bytes": 7353,
+      "sha256": "ed51e5a99e4c942f702d94cae4d1df422e8ed2e64a89c525a5e1a0eef41dedc1"
+    },
+    {
+      "path": "research/multicam_demo/export_demo.py",
+      "bytes": 6620,
+      "sha256": "7f2fdae34bc13ceda8e86adb19a22b759a71577fd6ff3df565681d6d0d817e1d"
+    },
+    {
+      "path": "research/multicam_demo/monitor.py",
+      "bytes": 10163,
+      "sha256": "f30c7c2b63c760c5ebb5612636705c2df04fd7e062b4bc45a3e2b102374fdcfe"
+    },
+    {
+      "path": "research/multicam_demo/perception.py",
+      "bytes": 5792,
+      "sha256": "f19a1d80dab0754558ac13371cdf07931997312ce775698dc070533d155c3b68"
+    },
+    {
+      "path": "research/multicam_demo/perimeter_handoff_monitor.html",
+      "bytes": 573490,
+      "sha256": "d591805b7d73bc06ee9dcbd2cc456e0b98801340be17ca96fb10898ec8a22e95"
+    },
+    {
+      "path": "research/multicam_demo/picks.json",
+      "bytes": 1981,
+      "sha256": "9b61d11cc5e865af9fedb050c850563c46c01794b946758c25400d6d77367f9a"
+    },
+    {
+      "path": "research/multicam_demo/prepare_vlm_inputs.py",
+      "bytes": 3705,
+      "sha256": "a22a0c4ad267c764219c5f0fbf2f62c3cd3ac9940c702313c657afe4bcbedc6a"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_embed.py",
+      "bytes": 2377,
+      "sha256": "e7216b9eaf7088f0894a08fbd9f5527f43925209d9402d79710cacc39fbb7729"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_export.py",
+      "bytes": 9098,
+      "sha256": "9fdff51f84f1952d04331b67f99ea7df779fdcceb28e324f174699b8860969e6"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_featcheck.py",
+      "bytes": 2597,
+      "sha256": "bf79a1004bf198966b45b1e300d942a97f51d14b9cbf9fd96ff494cfc110c8e2"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_media.py",
+      "bytes": 3024,
+      "sha256": "135a05fb1c584545ee4888d78cb14b2fe41701917aaafbac030e90de012cdbae"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_monitor.py",
+      "bytes": 15617,
+      "sha256": "e734787f0935c5e09339e347bf081052ff06540ffb288d91754db23cb08b5c1a"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_pairfeat.py",
+      "bytes": 3108,
+      "sha256": "23d1454c99e6a400ca6ce270c9a809ca11ba72b022bc390f5c6f90ca15216d6f"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_reid.py",
+      "bytes": 2448,
+      "sha256": "42169e0f9a2d6e3632887a239bf7cfdc225a55155c664754a895b2327c0ac025"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_tracks.py",
+      "bytes": 8293,
+      "sha256": "c5a9f36d6fc2363da1dc04a0d4afa7e111741b6e6943537fbf3ca5108685dbf3"
+    },
+    {
+      "path": "research/multicam_demo/real/rhd_vlm.py",
+      "bytes": 11286,
+      "sha256": "9590df2daceb5d5b56a3a2e0832e6e688a1f046cab278f83322e06f43c708ab9"
+    },
+    {
+      "path": "research/multicam_demo/render.py",
+      "bytes": 5288,
+      "sha256": "2007b27d82f74596811fb92de2d06905d77d8a83c2fcbf0270a6a902b1c9ff7a"
+    },
+    {
+      "path": "research/multicam_demo/results/demo_data.json",
+      "bytes": 556632,
+      "sha256": "1802dd4eadc8c0bd1d0e515307c615d6f1d05c21dbdc0db1babd2bd05f29a5f4"
+    },
+    {
+      "path": "research/multicam_demo/results/dev_v1/calibration.json",
+      "bytes": 434,
+      "sha256": "fb80b67fb53108cbd4aa826a57926cc160eb8b630d82c04a0afb2e206b804e19"
+    },
+    {
+      "path": "research/multicam_demo/results/dev_v1/rows.json",
+      "bytes": 24445,
+      "sha256": "022569cb0adc3334c0f37e1860f1d831e6d309c192638afa9a1ce273977fbf0b"
+    },
+    {
+      "path": "research/multicam_demo/results/dev_v1/summary.json",
+      "bytes": 1476,
+      "sha256": "65b2f696e22a306bc8ee97de77f686816285fb3b2aec2eab7813cf2cb786c07d"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v1/calibration.json",
+      "bytes": 555,
+      "sha256": "a570d0d6ad6576b7d15acebcf7473b2121746802570d43eb75e01339ab0bbdb1"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v1/rows.json",
+      "bytes": 246436,
+      "sha256": "c61689add07ef1c39fb2de21206cf2fd5fb1efb429ff00bebfb76ad0ba33f908"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v1/summary.json",
+      "bytes": 1509,
+      "sha256": "481e36f14b459ef60e427a79e29d70c0fdb0c3ada4ca1ec9fa3f0707e5d44df6"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v2/calibration.json",
+      "bytes": 555,
+      "sha256": "6524c8a65f037e16c54f982d9504b2d27f584898af9928f22eeb83756a40378e"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v2/rows.json",
+      "bytes": 245093,
+      "sha256": "994dfa2a703b25350fc18bfca4e14be248dbc1c6cb96685a3f89fa9c19e60b59"
+    },
+    {
+      "path": "research/multicam_demo/results/heldout_v2/summary.json",
+      "bytes": 1523,
+      "sha256": "901a4ce0e515eec0dfa1adf80691315bb27bea3303fb45f9f1d002c592155d77"
+    },
+    {
+      "path": "research/multicam_demo/results/real/demo_real.json",
+      "bytes": 4298377,
+      "sha256": "d56712f171f09293ef4d980022a4a4e49e3c053e579b1fd4e4eedeaebd341642"
+    },
+    {
+      "path": "research/multicam_demo/results/real/monitor_report.json",
+      "bytes": 63411,
+      "sha256": "dc96c708c275199a953fec90dc4746931429b3fc55a8b0202d716c46c89f0f2e"
+    },
+    {
+      "path": "research/multicam_demo/results/real/tracks.json",
+      "bytes": 10053179,
+      "sha256": "c6377589b9954031b1c85615dae3e9e153028d43e6616b07c6dd874d9fb70281"
+    },
+    {
+      "path": "research/multicam_demo/results/real/vlm_qwen4b_real/rows.json",
+      "bytes": 16540,
+      "sha256": "a079fc42d3dc5e45b44098f16b02ebf10dda492ac3f300105ae26865da87709b"
+    },
+    {
+      "path": "research/multicam_demo/results/real/vlm_qwen4b_real/summary.json",
+      "bytes": 454,
+      "sha256": "5c267c3f12c268fd77d511909057ad93c3ef53cefe1106f0cd46260b11fc9c78"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_demo_rows/rows.json",
+      "bytes": 26271,
+      "sha256": "7d9faf8d00816972bcb148aca65ae22eaba6e8565c096f82cc0a3eab8e635235"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_extra/rows.json",
+      "bytes": 709,
+      "sha256": "95030486bc5c76aad955afcdc8bf67d6c690c07136ae94c2e63ee11e2d69c52b"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_extra/summary.json",
+      "bytes": 382,
+      "sha256": "c3e71e52a080506ae9ad692ca320eb3446e282eda7c1d34559ad83ea06af820b"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_v1/rows.json",
+      "bytes": 28591,
+      "sha256": "7e3242c7cd0978253e45651124fd74bcff4bb0379941e7081357142d84bf30f3"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_v1/summary.json",
+      "bytes": 545,
+      "sha256": "3962f03262bcf68722ab8955024c76381a028d4d95af99b4f896f9282713ac4c"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_v2/rows.json",
+      "bytes": 27940,
+      "sha256": "1a3277d1c965c4ec2628f515277ea5ef3aade975f0e2a7d127e630525eaa7c64"
+    },
+    {
+      "path": "research/multicam_demo/results/vlm_qwen4b_v2/summary.json",
+      "bytes": 546,
+      "sha256": "63c6074c98b8b25d92669c84646fa94fe91c0abee9603b7cdd24df44a7c0bc41"
+    },
+    {
+      "path": "research/multicam_demo/tactical_real_template.html",
+      "bytes": 65689,
+      "sha256": "51c8b2270d97d79fa5e8249674e98f2ae4eb413edc9074f1a1819426713b03f1"
+    },
+    {
+      "path": "research/multicam_demo/tactical_template.html",
+      "bytes": 69999,
+      "sha256": "bbb8b48c25c452334965e8f0ad15d10beea005c45a089578b5c5ce43b8f3d431"
+    },
+    {
+      "path": "research/multicam_demo/video/cam1.mp4",
+      "bytes": 10565430,
+      "sha256": "94e25e68d80b819e26780f6d862a376a2c6b3675c9e0a38c2ee2fe6b473308c2",
+      "symlink_target": "../results/real/video/cam1.mp4"
+    },
+    {
+      "path": "research/multicam_demo/video/cam2.mp4",
+      "bytes": 10591803,
+      "sha256": "7ddc8808fa0ed01d203089bd68cc2e6d179273b269848545e16d49cd5c799226",
+      "symlink_target": "../results/real/video/cam2.mp4"
+    },
+    {
+      "path": "research/multicam_demo/video/cam3.mp4",
+      "bytes": 10634098,
+      "sha256": "524b0af3aec052e8630d8018ef5efafa9eccf6ddc1391dd28ba69f7a0424b2b9",
+      "symlink_target": "../results/real/video/cam3.mp4"
+    },
+    {
+      "path": "research/multicam_demo/video/cam4.mp4",
+      "bytes": 10554670,
+      "sha256": "e46dbc65c87fc38eddd595c3c48e320d80d8eed506fbc74d321a299d9ef7274b",
+      "symlink_target": "../results/real/video/cam4.mp4"
+    },
+    {
+      "path": "research/multicam_demo/vlm_eval.py",
+      "bytes": 5234,
+      "sha256": "d738f5618ef8f266b8db47852d4694c4dc50d699eb4721fd08b73d5bbbbff077"
+    },
+    {
+      "path": "research/multicam_demo/world.py",
+      "bytes": 11073,
+      "sha256": "188c1095fd11281932cd402a330da5dfb266200dd332727d590dedf973d3ab7f"
+    },
+    {
+      "path": "research/multicam_demo/results/real/video/cam1.mp4",
+      "bytes": 10565430,
+      "sha256": "94e25e68d80b819e26780f6d862a376a2c6b3675c9e0a38c2ee2fe6b473308c2"
+    },
+    {
+      "path": "research/multicam_demo/results/real/video/cam2.mp4",
+      "bytes": 10591803,
+      "sha256": "7ddc8808fa0ed01d203089bd68cc2e6d179273b269848545e16d49cd5c799226"
+    },
+    {
+      "path": "research/multicam_demo/results/real/video/cam3.mp4",
+      "bytes": 10634098,
+      "sha256": "524b0af3aec052e8630d8018ef5efafa9eccf6ddc1391dd28ba69f7a0424b2b9"
+    },
+    {
+      "path": "research/multicam_demo/results/real/video/cam4.mp4",
+      "bytes": 10554670,
+      "sha256": "e46dbc65c87fc38eddd595c3c48e320d80d8eed506fbc74d321a299d9ef7274b"
+    }
+  ]
+}

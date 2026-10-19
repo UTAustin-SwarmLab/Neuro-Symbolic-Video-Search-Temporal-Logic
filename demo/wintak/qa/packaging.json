@@ -1,0 +1,10 @@
+{
+  "verified_utc": "2026-10-19T13:41:19.673832+00:00",
+  "extracted_git_tree": "0893e2ef3ab0fb68fa331073c2a60e160b70bdfc",
+  "source_asset_hash_checks": 58,
+  "claude_application_files_unchanged": true,
+  "real_page_rebuild_exact": true,
+  "http_range_byte_match": true,
+  "browser_functional_passed": true,
+  "known_layout_issue": "Original 8px body margin retained; see checkpoint-first.json and checkpoint.json."
+}

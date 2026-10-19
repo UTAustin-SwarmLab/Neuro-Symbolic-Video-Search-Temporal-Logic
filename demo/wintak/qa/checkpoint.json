@@ -1,0 +1,76 @@
+{
+  "created_utc": "2026-10-19T13:40:59.955Z",
+  "checks": [
+    {
+      "name": "UTF-8 HTML delivery",
+      "passed": true
+    },
+    {
+      "name": "Four actual video feeds decode",
+      "passed": true,
+      "evidence": [
+        {
+          "src": "video/cam1.mp4",
+          "duration": 600,
+          "width": 640,
+          "error": null
+        },
+        {
+          "src": "video/cam2.mp4",
+          "duration": 600,
+          "width": 640,
+          "error": null
+        },
+        {
+          "src": "video/cam3.mp4",
+          "duration": 600,
+          "width": 640,
+          "error": null
+        },
+        {
+          "src": "video/cam4.mp4",
+          "duration": 600,
+          "width": 640,
+          "error": null
+        }
+      ]
+    },
+    {
+      "name": "Four-camera seek to 300 seconds",
+      "passed": true
+    },
+    {
+      "name": "Play and pause advance replay",
+      "passed": true
+    },
+    {
+      "name": "Analysis, sensor/alert tabs and map controls",
+      "passed": true
+    },
+    {
+      "name": "Synthetic tactical page loads",
+      "passed": true
+    },
+    {
+      "name": "No application errors or failed local resources",
+      "passed": true
+    }
+  ],
+  "page_errors": [],
+  "local_http_errors": [],
+  "blocked_external": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com"
+  ],
+  "layout": {
+    "width": 1440,
+    "height": 900,
+    "scrollWidth": 1440,
+    "scrollHeight": 908,
+    "bodyMargin": "8px"
+  },
+  "known_issues": [
+    "Original page retains body margin and document extends below viewport; application source preserved."
+  ],
+  "functional_passed": true
+}

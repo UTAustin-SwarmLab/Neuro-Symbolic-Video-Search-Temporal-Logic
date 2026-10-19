@@ -1,0 +1,761 @@
+<title>Perimeter Handoff Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single-screen tactical map client. Toolbar on top, map fills the rest, drawer on the right,
+   floating video dock over the map, replay bar and status bar along the bottom. Deliberately dark-only. */
+:root {
+  --chrome: #0f1316; --chrome-2: #161b1f; --panel: rgba(18, 23, 27, 0.94); --rule: #2b333a; --rule-2: #3a444c;
+  --ink: #e7edf1; --ink-2: #b4c0c8; --muted: #7d8a94; --accent: #36c2e6; --accent-ink: #061317;
+  --friend: #80e0ff; --unknown: #ffff80; --hostile: #ff8080; --neutral: #aaffaa;
+  --ok: #3ccf6e; --warn: #ffb020; --crit: #ff4d4d; --halo: #000000;
+  --ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--chrome); color: var(--ink); font-family: var(--ui); font-size: 13px; line-height: 1.4; overflow: hidden; }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.app { height: 100%; display: grid; grid-template-rows: 44px minmax(0, 1fr) auto 26px; }
+
+/* toolbar */
+.bar { display: flex; align-items: center; gap: 8px; padding-inline: 10px; background: var(--chrome-2); border-bottom: 1px solid var(--rule); min-width: 0; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--cond); font-weight: 700; letter-spacing: 0.08em; font-size: 15px; white-space: nowrap; }
+.brand svg { flex: none; }
+.sep { width: 1px; align-self: stretch; margin-block: 8px; background: var(--rule); }
+.mission { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.mission label { font-family: var(--cond); font-size: 12px; letter-spacing: 0.08em; color: var(--muted); }
+.mission select { background: var(--chrome); border: 1px solid var(--rule-2); border-radius: 3px; padding: 4px 8px; max-width: 280px; min-width: 0; }
+.tools { margin-left: auto; display: flex; gap: 4px; align-items: center; }
+.tbtn { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding-inline: 9px; border: 1px solid transparent; border-radius: 3px; background: transparent; font-family: var(--cond); font-weight: 600; font-size: 12.5px; letter-spacing: 0.06em; color: var(--ink-2); }
+.tbtn:hover { background: #1f262b; color: var(--ink); }
+.tbtn[aria-pressed="true"] { border-color: var(--rule-2); background: #1d2a30; color: var(--accent); }
+.badge { min-width: 17px; height: 17px; padding-inline: 4px; border-radius: 9px; background: var(--crit); color: #fff; font-size: 11px; line-height: 17px; text-align: center; font-family: var(--ui); }
+.badge[hidden] { display: none; }
+
+/* body */
+.body { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: 0; }
+.body.closed { grid-template-columns: minmax(0, 1fr) 0; }
+.mapwrap { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #2a2620; }
+#map { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; display: block; }
+#map.drag { cursor: grabbing; }
+.zoom { position: absolute; right: 12px; top: 12px; display: grid; gap: 4px; }
+.zoom button { width: 32px; height: 32px; border-radius: 3px; border: 1px solid var(--rule-2); background: var(--panel); font-size: 17px; font-weight: 600; }
+.north { position: absolute; right: 12px; top: 120px; width: 32px; height: 40px; }
+.scale { position: absolute; left: 12px; bottom: 12px; font-family: var(--mono); font-size: 11px; color: #fff; text-shadow: 0 0 3px #000, 0 0 3px #000; }
+.scale div { height: 5px; border: 2px solid #fff; border-top: 0; margin-top: 2px; box-shadow: 0 1px 2px #000; }
+.toast { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: min(640px, calc(100% - 120px)); display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; padding: 9px 14px; border-radius: 4px; background: rgba(60, 8, 8, 0.94); border: 1px solid var(--crit); box-shadow: 0 4px 18px rgba(0,0,0,.5); }
+.toast.warn { background: rgba(58, 40, 4, 0.95); border-color: var(--warn); }
+.toast .sev { grid-row: span 2; font-family: var(--cond); font-weight: 700; letter-spacing: .08em; font-size: 13px; padding: 3px 8px; border-radius: 3px; align-self: start; background: var(--crit); color: #fff; }
+.toast.warn .sev { background: var(--warn); color: #1d1300; }
+.toast .msg { font-weight: 600; }
+.toast .act { color: var(--ink-2); font-size: 12.5px; }
+.legend { position: absolute; right: 12px; bottom: 12px; padding: 8px 10px; border-radius: 4px; background: var(--panel); border: 1px solid var(--rule); display: grid; gap: 5px; font-size: 12px; color: var(--ink-2); }
+.legend .row { display: flex; align-items: center; gap: 8px; }
+.legend svg { flex: none; }
+.legend[hidden] { display: none; }
+
+/* video dock */
+.dock { position: absolute; left: 12px; bottom: 50px; display: grid; grid-template-columns: repeat(2, 200px); gap: 6px; }
+.dock[hidden] { display: none; }
+.vid { background: #000; border: 1px solid var(--rule-2); border-radius: 3px; overflow: hidden; display: grid; }
+.vid.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.vid header { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 3px 7px; background: #0b0e10; font-family: var(--cond); font-weight: 600; letter-spacing: .06em; font-size: 12px; }
+.vid header .st { font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--ok); letter-spacing: 0; }
+.vid header .st.bad { color: var(--warn); }
+.vid canvas { width: 100%; height: auto; display: block; }
+
+/* drawer */
+.drawer { min-width: 0; min-height: 0; overflow: hidden; background: var(--chrome-2); border-left: 1px solid var(--rule); display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.body.closed .drawer { border-left: 0; }
+.tabs { display: flex; border-bottom: 1px solid var(--rule); }
+.tabs button { flex: 1; padding: 10px 6px 9px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: var(--cond); font-weight: 600; letter-spacing: .08em; font-size: 13px; color: var(--muted); display: inline-flex; justify-content: center; gap: 6px; align-items: center; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.pane { overflow-y: auto; padding: 10px; display: grid; gap: 10px; align-content: start; }
+.pane[hidden] { display: none; }
+.h { font-family: var(--cond); font-weight: 600; letter-spacing: .1em; font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.ev { border: 1px solid var(--rule); border-left-width: 3px; border-radius: 3px; background: #12171a; padding: 7px 9px; display: grid; gap: 3px; }
+.ev .top { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.ev .k { font-family: var(--cond); font-weight: 700; letter-spacing: .08em; font-size: 12px; }
+.ev.tip { border-left-color: var(--accent); } .ev.tip .k { color: var(--accent); }
+.ev.alert { border-left-color: var(--crit); } .ev.alert .k { color: var(--crit); }
+.ev.unv { border-left-color: var(--warn); } .ev.unv .k { color: var(--warn); }
+.ev.ok { border-left-color: var(--ok); } .ev.ok .k { color: var(--ok); }
+.ev ul { margin: 2px 0 0; padding-left: 16px; color: var(--ink-2); }
+.empty { color: var(--muted); padding: 8px 2px; }
+.link { border: 1px solid var(--rule); border-radius: 3px; background: #12171a; padding: 8px 10px; display: grid; grid-template-columns: 1fr auto; gap: 3px 8px; align-items: center; }
+.link .nm { font-family: var(--mono); font-size: 12px; }
+.link .dt { grid-column: 1 / -1; color: var(--ink-2); font-size: 12.5px; }
+.pill { font-family: var(--cond); font-weight: 700; letter-spacing: .07em; font-size: 11.5px; padding: 2px 8px; border-radius: 2px; white-space: nowrap; }
+.p-ok { background: rgba(60,207,110,.16); color: var(--ok); } .p-alert { background: rgba(255,77,77,.18); color: var(--crit); }
+.p-unv { background: rgba(255,176,32,.18); color: var(--warn); } .p-mon { background: rgba(54,194,230,.15); color: var(--accent); }
+.health { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.health div { border: 1px solid var(--rule); border-radius: 3px; padding: 6px 8px; background: #12171a; display: grid; gap: 1px; }
+.health b { font-family: var(--mono); font-weight: 500; font-size: 12px; }
+.health span { font-size: 11.5px; color: var(--ink-2); }
+table { border-collapse: collapse; width: 100%; font-size: 12px; }
+th, td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--cond); font-weight: 600; letter-spacing: .07em; color: var(--muted); font-size: 11.5px; }
+td.n { font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
+tr.ours td { background: rgba(54,194,230,.08); }
+.tw { overflow-x: auto; border: 1px solid var(--rule); border-radius: 3px; }
+.mark { font-family: var(--cond); font-weight: 700; letter-spacing: .05em; font-size: 11px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; }
+.note { color: var(--ink-2); font-size: 12.5px; margin: 0; }
+.crops { display: flex; flex-wrap: wrap; gap: 6px; }
+.crops figure { margin: 0; display: grid; gap: 2px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.crops img { height: 40px; width: auto; border-radius: 2px; image-rendering: pixelated; }
+.card { position: absolute; z-index: 5; width: 250px; padding: 9px 11px; border-radius: 4px; background: var(--panel); border: 1px solid var(--rule-2); box-shadow: 0 6px 18px rgba(0,0,0,.5); display: grid; gap: 5px; font-size: 12px; }
+.card[hidden] { display: none; }
+.card .ct { display: flex; justify-content: space-between; align-items: center; font-family: var(--cond); font-weight: 700; letter-spacing: .07em; font-size: 13px; }
+.card .ct button { border: 0; background: transparent; color: var(--muted); font-size: 15px; }
+.card dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 0; }
+.card dt { color: var(--muted); font-family: var(--cond); letter-spacing: .06em; }
+.card dd { margin: 0; font-family: var(--mono); font-size: 11.5px; }
+.card img { max-width: 100%; height: 44px; width: auto; image-rendering: pixelated; border-radius: 2px; }
+
+/* replay and status */
+.dvr { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--chrome-2); border-top: 1px solid var(--rule); min-width: 0; flex-wrap: wrap; }
+.dvr .clock { font-family: var(--mono); font-size: 12px; color: var(--ink); min-width: 15ch; }
+.dvr .speeds { display: flex; gap: 2px; }
+.dvr .speeds button, .dvr .play { height: 26px; padding-inline: 9px; border-radius: 3px; border: 1px solid var(--rule-2); background: var(--chrome); font-family: var(--mono); font-size: 11.5px; }
+.dvr .speeds button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.dvr .play { min-width: 64px; font-family: var(--cond); font-weight: 700; letter-spacing: .07em; font-size: 12.5px; }
+.scrub { position: relative; flex: 1 1 240px; min-width: 0; height: 26px; }
+.scrub input { position: absolute; inset: 5px 0 auto 0; width: 100%; accent-color: var(--accent); }
+.ticks { position: absolute; inset: 0; pointer-events: none; }
+.ticks span { position: absolute; top: 0; width: 3px; height: 7px; border-radius: 1px; }
+.status { display: flex; align-items: center; gap: 16px; padding-inline: 10px; background: #0a0d0f; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--ink-2); white-space: nowrap; overflow: hidden; }
+.status .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 5px; vertical-align: 0; }
+.status .dot.bad { background: var(--warn); }
+.status .r { margin-left: auto; color: var(--muted); }
+
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .app { height: auto; grid-template-rows: auto auto auto auto; }
+  .bar { flex-wrap: wrap; padding-block: 6px; }
+  .tools { margin-left: 0; flex-wrap: wrap; }
+  .body, .body.closed { grid-template-columns: 1fr; }
+  .mapwrap { height: 62vh; min-height: 360px; }
+  .drawer { border-left: 0; border-top: 1px solid var(--rule); max-height: none; }
+  .body.closed .drawer { display: none; }
+  .mapwrap { height: auto; min-height: 0; overflow: visible; display: grid; }
+  #map { position: relative; inset: auto; height: 62vh; min-height: 340px; }
+  .dock { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 8px; background: var(--chrome); }
+  .scale { bottom: auto; top: calc(62vh - 40px); }
+  .legend { display: none; }
+  .status { flex-wrap: wrap; white-space: normal; padding-block: 4px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="none" stroke="#36c2e6" stroke-width="1.6"/><circle cx="11" cy="11" r="4" fill="none" stroke="#36c2e6" stroke-width="1.6"/><path d="M11 0v6M11 16v6M0 11h6M16 11h6" stroke="#36c2e6" stroke-width="1.6"/></svg>PERIMETER HANDOFF MONITOR</div>
+    <div class="sep"></div>
+    <div class="mission"><label for="mission">MISSION</label><select id="mission"></select></div>
+    <div class="tools">
+      <button class="tbtn" id="tCov" aria-pressed="true">COVERAGE</button>
+      <button class="tbtn" id="tGrid" aria-pressed="true">GRID</button>
+      <button class="tbtn" id="tTruth" aria-pressed="false" title="Show where vehicles really are inside blind zones (evaluation view)">TRUTH</button>
+      <button class="tbtn" id="tVid" aria-pressed="true">VIDEO</button>
+      <button class="tbtn" id="tKey" aria-pressed="true">KEY</button>
+      <button class="tbtn" id="tDrawer" aria-pressed="true">PANEL <span class="badge" id="alertBadge" hidden>0</span></button>
+    </div>
+  </header>
+
+  <div class="body" id="body">
+    <div class="mapwrap" id="mapwrap">
+      <canvas id="map" aria-label="Tactical map of the base perimeter, cameras, blind zones and tracks"></canvas>
+      <div class="legend" id="legend">
+        <div class="row"><svg width="22" height="16"><rect x="2" y="2" width="18" height="12" fill="#80e0ff" stroke="#000" stroke-width="1.5"/><rect x="6" y="5" width="7" height="6" fill="#000"/><path d="M13 6l4-2v8l-4-2z" fill="#000"/></svg>Fixed camera, friendly</div>
+        <div class="row"><svg width="22" height="18"><g transform="translate(11 9)"><circle cx="-4" cy="0" r="4.2" fill="#ffff80" stroke="#000" stroke-width="1.2"/><circle cx="4" cy="0" r="4.2" fill="#ffff80" stroke="#000" stroke-width="1.2"/><circle cx="0" cy="-4" r="4.2" fill="#ffff80" stroke="#000" stroke-width="1.2"/><circle cx="0" cy="4" r="4.2" fill="#ffff80" stroke="#000" stroke-width="1.2"/><rect x="-4" y="-4" width="8" height="8" fill="#ffff80"/></g></svg>Vehicle track, unknown</div>
+        <div class="row"><svg width="22" height="12"><rect x="1" y="2" width="20" height="8" fill="rgba(54,194,230,.35)"/></svg>Expected position after tip-off</div>
+        <div class="row"><svg width="22" height="12"><rect x="1" y="1" width="20" height="10" fill="rgba(255,176,32,.12)" stroke="#ffb020" stroke-dasharray="4 3"/></svg>Blind zone, no camera</div>
+        <div class="row"><svg width="22" height="12"><rect x="1" y="1" width="20" height="10" fill="rgba(255,77,77,.25)" stroke="#ff4d4d"/></svg>If stopped: blind road to search</div>
+        <div class="row"><svg width="22" height="12"><rect x="1" y="3" width="20" height="6" rx="3" fill="rgba(255,138,61,.6)"/></svg>If exited: where it can be now</div>
+        <div class="row"><svg width="22" height="16"><path d="M2 13c0-11 18-11 18 0z" fill="#80e0ff" stroke="#000" stroke-width="1.2"/></svg>UAS: intercept, then sweep back</div>
+      </div>
+      <div class="toast" id="toast" hidden><span class="sev" id="toastSev">ALERT</span><span class="msg" id="toastMsg"></span><span class="act" id="toastAct"></span></div>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Fit the perimeter" style="font-size:12px">FIT</button></div>
+      <svg class="north" viewBox="0 0 32 40" aria-label="North up"><path d="M16 2l7 20-7-5-7 5z" fill="#fff" stroke="#000" stroke-width="1"/><text x="16" y="37" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="12" fill="#fff" stroke="#000" stroke-width=".6">N</text></svg>
+      <div class="scale" id="scale">200 m<div id="scaleBar" style="width:80px"></div></div>
+      <div class="dock" id="dock"></div>
+      <div class="card" id="card" hidden></div>
+    </div>
+    <aside class="drawer" id="drawer">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tabAlerts" aria-selected="true">ALERTS <span class="badge" id="tabBadge" hidden>0</span></button>
+        <button role="tab" id="tabSensors" aria-selected="false">SENSORS</button>
+        <button role="tab" id="tabAnalysis" aria-selected="false">ANALYSIS</button>
+      </div>
+      <div class="pane" id="paneAlerts"><div id="log"></div></div>
+      <div class="pane" id="paneSensors" hidden>
+        <div class="h">HANDOFF LINKS</div><div id="links" style="display:grid;gap:6px"></div>
+        <div class="h">CAMERA HEALTH</div><div class="health" id="health"></div>
+        <div class="h">MISSION BRIEF</div><p class="note" id="brief"></p>
+      </div>
+      <div class="pane" id="paneAnalysis" hidden>
+        <div class="h">THIS MISSION · CAM-W → CAM-N</div><div class="tw"><table id="cmp"></table></div>
+        <div class="crops" id="crops"></div>
+        <div class="h">HELD-OUT EVALUATION</div><div class="tw"><table id="evalTable"></table></div>
+        <p class="note" id="evalNote"></p>
+        <div class="h">ABOUT THIS REPLAY</div>
+        <p class="note">Synthetic replay. Every camera frame is rendered by a simulator and processed from pixels by a classical detector and tracker; the monitor never reads ground truth. Cameras differ in white balance, exposure and scale, so look-alike vehicles cannot be told apart across cameras. Terrain, base layout and grid coordinates are fictional. VLM answers are recorded runs of Qwen3-VL-4B on frames from the same episode.</p>
+        <p class="note" id="calNote"></p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="dvr">
+    <button class="play" id="play" aria-pressed="false">▶ PLAY</button>
+    <div class="speeds" id="speeds" role="group" aria-label="Replay speed"></div>
+    <div class="scrub"><input type="range" id="scrub" min="0" max="100" step="0.5" value="0" aria-label="Replay time"><div class="ticks" id="ticks"></div></div>
+    <span class="clock" id="clock">181400Z OCT 26</span>
+  </div>
+  <div class="status">
+    <span>OVERWATCH-1 · OPS</span>
+    <span id="sensors"><span class="dot"></span>SENSORS 4/4</span>
+    <span id="cursor">38S MB ----- -----</span>
+    <span class="r">REPLAY · SYNTHETIC DATA · NOT FOR OPERATIONAL USE</span>
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const EVAL = /*__EVAL__*/null;
+const $ = (id) => document.getElementById(id);
+const W = DATA.world, route = W.route;
+const C = { friend: "#80e0ff", unknown: "#ffff80", hostile: "#ff8080", accent: "#36c2e6", ok: "#3ccf6e", warn: "#ffb020", crit: "#ff4d4d" };
+const T0 = Date.UTC(2026, 9, 18, 14, 0, 0);
+
+// ---------- geometry
+const segLen = [], cum = [0];
+for (let i = 0; i < route.length - 1; i++) { segLen.push(Math.hypot(route[i + 1][0] - route[i][0], route[i + 1][1] - route[i][1])); cum.push(cum[i] + segLen[i]); }
+const ROUTE_LEN = cum[cum.length - 1];
+function seg(s) { let i = 0; while (i < segLen.length - 1 && cum[i + 1] < s) i++; return i; }
+function routeXY(s) { s = Math.max(0, Math.min(ROUTE_LEN, s)); const i = seg(s), f = (s - cum[i]) / segLen[i]; return [route[i][0] + f * (route[i + 1][0] - route[i][0]), route[i][1] + f * (route[i + 1][1] - route[i][1])]; }
+function routeDir(s) { const i = seg(Math.max(0, Math.min(ROUTE_LEN - 1e-6, s))); return [(route[i + 1][0] - route[i][0]) / segLen[i], (route[i + 1][1] - route[i][1]) / segLen[i]]; }
+function polyAt(p, d) {
+  for (let i = 0; i < p.length - 1; i++) { const L = Math.hypot(p[i + 1][0] - p[i][0], p[i + 1][1] - p[i][1]); if (d <= L) return [p[i][0] + (p[i + 1][0] - p[i][0]) * d / L, p[i][1] + (p[i + 1][1] - p[i][1]) * d / L]; d -= L; }
+  return p[p.length - 1];
+}
+const SIDE_EXT = W.side.concat([[-1400, 1250], [-1700, 1600], [-2050, 2050], [-2400, 2500]]);
+let SIDE_LEN = 0; for (let i = 0; i < SIDE_EXT.length - 1; i++) SIDE_LEN += Math.hypot(SIDE_EXT[i + 1][0] - SIDE_EXT[i][0], SIDE_EXT[i + 1][1] - SIDE_EXT[i][1]);
+function interp(k, t) {
+  if (!k.length || t < k[0][0]) return null;
+  for (let i = 0; i < k.length - 1; i++) { const [t0, s0] = k[i], [t1, s1] = k[i + 1]; if (t >= t0 && t <= t1) return s0 + (s1 - s0) * (t - t0) / Math.max(t1 - t0, 1e-9); }
+  return undefined;
+}
+function vehicleState(v, t) {
+  const s = interp(v.knots, t);
+  if (s !== null && s !== undefined) return { s, xy: routeXY(s), where: "route" };
+  if (s === undefined && v.fate === "stop") { const sl = v.knots[v.knots.length - 1][1]; return { s: sl, xy: routeXY(sl), where: "route" }; }
+  if (v.side.length) { const d = interp(v.side, t); if (d !== null && d !== undefined) return { s: null, xy: polyAt(SIDE_EXT, d), where: "side" }; }
+  return null;
+}
+// Ground truth position, continuing a diverted vehicle along the exit after the replay data ends.
+function truthXY(v, t) {
+  const vs = vehicleState(v, t); if (vs) return vs.xy;
+  if (v.fate === "divert" && v.side.length && t > v.side[v.side.length - 1][0]) {
+    const [t0, d0] = v.side[0], [t1, d1] = v.side[v.side.length - 1], sp = (d1 - d0) / Math.max(1e-9, t1 - t0);
+    if (sp > 0) return polyAt(SIDE_EXT, d1 + sp * (t - t1));
+  }
+  return null;
+}
+function camOf(s) { for (const c of W.cam_order) { const [lo, hi] = W.cameras[c]; if (s >= lo && s <= hi) return c; } return null; }
+function bufferRoute(s0, s1, w) {
+  const L = [], R = [], n = Math.max(2, Math.ceil((s1 - s0) / 12));
+  for (let k = 0; k <= n; k++) { const s = s0 + (s1 - s0) * k / n, [x, y] = routeXY(s), [dx, dy] = routeDir(Math.min(s, s1 - 0.5)); L.push([x - dy * w, y + dx * w]); R.push([x + dy * w, y - dx * w]); }
+  return L.concat(R.reverse());
+}
+function bufferLine(p, w) {
+  const L = [], R = [];
+  for (let i = 0; i < p.length; i++) { const a = p[Math.max(0, i - 1)], b = p[Math.min(p.length - 1, i + 1)], l = Math.hypot(b[0] - a[0], b[1] - a[1]), dx = (b[0] - a[0]) / l, dy = (b[1] - a[1]) / l; L.push([p[i][0] - dy * w, p[i][1] + dx * w]); R.push([p[i][0] + dy * w, p[i][1] - dx * w]); }
+  return L.concat(R.reverse());
+}
+const CAMPOS = {};
+for (const c of W.cam_order) {
+  const [lo, hi] = W.cameras[c], mid = (lo + hi) / 2, [x, y] = routeXY(mid), [dx, dy] = routeDir(mid);
+  let nx = dy, ny = -dx; if (nx * x + ny * y < 0) { nx = -nx; ny = -ny; }
+  CAMPOS[c] = [x + nx * 55, y + ny * 55];
+}
+const HELIPAD = [330, 190];
+function mgrs(x, y) { const e = 41000 + Math.round(x + 1080), n = 78000 + Math.round(y + 960); return `38S MB ${String(e).padStart(5, "0")} ${String(n).padStart(5, "0")}`; }
+function dtg(t) { const d = new Date(T0 + t * 1000); const p = (v) => String(v).padStart(2, "0"); return `${p(d.getUTCDate())}${p(d.getUTCHours())}${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}Z OCT 26`; }
+function hhmmss(t) { const d = new Date(T0 + t * 1000), p = (v) => String(v).padStart(2, "0"); return `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}Z`; }
+
+// ---------- terrain, baked once at 1 px per metre
+const WB = { x0: -1080, x1: 960, y0: -960, y1: 900 };            // perimeter extent used for FIT
+const TB = { x0: -2800, x1: 2200, y0: -1800, y1: 2800 }, RES = 0.56; // baked imagery extent and resolution
+const terrain = document.createElement("canvas");
+function bake() {
+  const w = Math.round((TB.x1 - TB.x0) * RES), h = Math.round((TB.y1 - TB.y0) * RES); terrain.width = w; terrain.height = h;
+  const g = terrain.getContext("2d"), img = g.createImageData(w, h), d = img.data;
+  const hash = (i, j) => { let n = (i * 374761393 + j * 668265263) | 0; n = (n ^ (n >>> 13)) * 1274126177 | 0; return ((n ^ (n >>> 16)) >>> 0) / 4294967295; };
+  const noise = (x, y) => { const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+    const a = hash(i, j), b = hash(i + 1, j), c = hash(i, j + 1), e = hash(i + 1, j + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + e) * u * v; };
+  for (let py = 0; py < h; py++) for (let px = 0; px < w; px++) {
+    const n1 = noise(px / 101, py / 101), n2 = noise(px / 25 + 7, py / 25 + 3), n3 = noise(px / 5 + 11, py / 5 + 5);
+    const n = 0.55 * n1 + 0.3 * n2 + 0.15 * n3, grain = (hash(px, py) - 0.5) * 14;
+    let r = 176 + n * 46 + grain, gg = 152 + n * 40 + grain, b = 112 + n * 34 + grain;
+    const rock = noise(px / 15 + 40, py / 15 + 9); if (rock > 0.78) { const k = (rock - 0.78) * 2.2; r -= 60 * k; gg -= 58 * k; b -= 50 * k; }
+    const o = 4 * (py * w + px); d[o] = r; d[o + 1] = gg; d[o + 2] = b; d[o + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  const P = (x, y) => [(x - TB.x0) * RES, (TB.y1 - y) * RES];
+  // dry wadis with scrub
+  g.lineCap = "round";
+  for (const [pts, wd] of [[[[-2300, -120], [-1500, -300], [-820, -180], [-640, -320], [-300, -640], [-80, -960], [200, -1700]], 26], [[[2100, 420], [1400, 520], [960, 640], [760, 720], [520, 900], [300, 1600]], 18], [[[-2300, 900], [-1400, 700], [-880, 380], [-820, 120]], 14], [[[1200, -1700], [1350, -1100], [1700, -600], [2100, -500]], 20]]) {
+    g.beginPath(); pts.forEach((p, i) => { const [x, y] = P(...p); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+    g.strokeStyle = "rgba(122,100,72,.55)"; g.lineWidth = wd; g.stroke(); g.strokeStyle = "rgba(205,186,150,.35)"; g.lineWidth = wd * 0.35; g.stroke();
+  }
+  for (let i = 0; i < 900; i++) { const x = hash(i, 3) * w, y = hash(i, 9) * h; g.fillStyle = `rgba(${86 + 20 * hash(i, 4)},${92 + 18 * hash(i, 5)},${60},.55)`; g.beginPath(); g.arc(x, y, 1.2 + hash(i, 7) * 2.6, 0, 7); g.fill(); }
+  // side track: dirt with tyre tracks, continuing off the perimeter map
+  g.beginPath(); SIDE_EXT.forEach((p, i) => { const [x, y] = P(...p); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+  g.strokeStyle = "rgba(200,178,138,.95)"; g.lineWidth = 10; g.stroke(); g.strokeStyle = "rgba(140,118,86,.6)"; g.lineWidth = 1.2; g.setLineDash([6, 4]); g.stroke(); g.setLineDash([]);
+  // base: HESCO wall, gravel, buildings, tents, helipad, towers
+  const [bx0, by0] = P(-520, 360), [bx1, by1] = P(560, -380);
+  g.fillStyle = "rgba(196,186,166,.85)"; g.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+  for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(150,142,126,${0.25 + 0.3 * hash(i, 21)})`; g.fillRect(bx0 + hash(i, 22) * (bx1 - bx0), by0 + hash(i, 23) * (by1 - by0), 2, 2); }
+  g.strokeStyle = "#8f7a58"; g.lineWidth = 7; g.strokeRect(bx0, by0, bx1 - bx0, by1 - by0);
+  g.strokeStyle = "#6e5d42"; g.lineWidth = 1; g.strokeRect(bx0 - 3.5, by0 - 3.5, bx1 - bx0 + 7, by1 - by0 + 7);
+  const bld = (x, y, ww, hh, c) => { ww *= RES; hh *= RES; const [px, py] = P(x, y); g.fillStyle = "rgba(40,36,30,.45)"; g.fillRect(px + 4, py + 4, ww, hh); g.fillStyle = c; g.fillRect(px, py, ww, hh); g.strokeStyle = "rgba(0,0,0,.25)"; g.strokeRect(px, py, ww, hh); };
+  for (let k = 0; k < 6; k++) bld(-470 + k * 62, 300, 46, 26, "#d9d6cf");
+  for (let k = 0; k < 4; k++) bld(-470 + k * 90, 220, 70, 34, "#c9c4b8");
+  for (let r = 0; r < 4; r++) for (let k = 0; k < 9; k++) bld(-460 + k * 40, 100 - r * 34, 28, 18, "#b9ab86");
+  bld(40, 300, 130, 40, "#bfc2c4"); bld(200, 300, 90, 40, "#c7c9c9"); bld(40, 200, 60, 60, "#d4d0c6");
+  for (let k = 0; k < 6; k++) for (let r = 0; r < 2; r++) bld(-440 + k * 30, -220 - r * 30, 20, 10, "#6f7563");
+  bld(-200, -120, 150, 60, "#bdbab1"); bld(60, -300, 220, 50, "#c2bfb5");
+  { const [hx, hy] = P(...HELIPAD); g.fillStyle = "#8a8f91"; g.beginPath(); g.arc(hx, hy, 22, 0, 7); g.fill(); g.strokeStyle = "#f2f2f2"; g.lineWidth = 2; g.beginPath(); g.arc(hx, hy, 17, 0, 7); g.stroke(); g.fillStyle = "#f2f2f2"; g.font = "bold 18px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("H", hx, hy + 1); }
+  for (const [x, y] of [[-520, 360], [560, 360], [-520, -380], [560, -380]]) { const [px, py] = P(x, y); g.fillStyle = "#5a4a34"; g.fillRect(px - 7, py - 7, 14, 14); }
+  // main road: asphalt with shoulders and centre line; the access road continues south off the map
+  g.beginPath(); [[400, -1700]].concat(route).forEach((p, i) => { const [x, y] = P(...p); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+  g.lineJoin = "round"; g.strokeStyle = "rgba(170,160,140,.9)"; g.lineWidth = 15; g.stroke(); g.strokeStyle = "#5b5e60"; g.lineWidth = 10; g.stroke();
+  g.strokeStyle = "rgba(230,220,180,.75)"; g.lineWidth = 0.8; g.setLineDash([5, 6]); g.stroke(); g.setLineDash([]);
+}
+bake();
+
+// ---------- view
+const map = $("map"), ctx = map.getContext("2d");
+const view = { cx: -60, cy: -30, scale: 0.4 };
+let dpr = window.devicePixelRatio || 1;
+function resize() { const r = map.getBoundingClientRect(); dpr = window.devicePixelRatio || 1; map.width = Math.max(10, Math.round(r.width * dpr)); map.height = Math.max(10, Math.round(r.height * dpr)); }
+let fitBox = WB;
+function fit(b = fitBox) { const r = map.getBoundingClientRect(); view.scale = Math.min(r.width / (b.x1 - b.x0), r.height / (b.y1 - b.y0)) * (b === WB ? 1.04 : 0.98); view.cx = (b.x0 + b.x1) / 2 + (b === WB ? -60 : 0); view.cy = (b.y0 + b.y1) / 2 + (b === WB ? -30 : 0); }
+const S = (x, y) => [(map.width / dpr) / 2 + (x - view.cx) * view.scale, (map.height / dpr) / 2 - (y - view.cy) * view.scale];
+const Winv = (sx, sy) => [view.cx + (sx - (map.width / dpr) / 2) / view.scale, view.cy - (sy - (map.height / dpr) / 2) / view.scale];
+function path(pts, close) { ctx.beginPath(); pts.forEach((p, i) => { const [x, y] = S(...p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); if (close) ctx.closePath(); }
+function label(text, x, y, opt = {}) {
+  ctx.save(); ctx.font = opt.font || "600 12px 'Barlow Condensed', 'Arial Narrow', sans-serif"; ctx.textAlign = opt.align || "center"; ctx.textBaseline = "middle";
+  ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(0,0,0,.85)"; ctx.lineJoin = "round"; ctx.strokeText(text, x, y); ctx.fillStyle = opt.color || "#fff"; ctx.fillText(text, x, y); ctx.restore();
+}
+const hatch = (() => { const c = document.createElement("canvas"); c.width = c.height = 10; const g = c.getContext("2d"); g.strokeStyle = "rgba(255,77,77,.55)"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 10); g.lineTo(10, 0); g.moveTo(-2, 2); g.lineTo(2, -2); g.moveTo(8, 12); g.lineTo(12, 8); g.stroke(); return c; })();
+
+// ---------- MIL-STD-2525 style symbols (simplified)
+function symFriendlySensor(x, y, sel) {
+  ctx.fillStyle = C.friend; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5; ctx.fillRect(x - 13, y - 9, 26, 18); ctx.strokeRect(x - 13, y - 9, 26, 18);
+  ctx.fillStyle = "#000"; ctx.fillRect(x - 7, y - 4, 9, 8); ctx.beginPath(); ctx.moveTo(x + 2, y - 2); ctx.lineTo(x + 8, y - 5); ctx.lineTo(x + 8, y + 5); ctx.lineTo(x + 2, y + 2); ctx.fill();
+  if (sel) { ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.strokeRect(x - 17, y - 13, 34, 26); }
+}
+function symUnknown(x, y, hollow, color) {
+  const r = 5.6; ctx.lineWidth = 1.4; ctx.strokeStyle = hollow ? (color || C.unknown) : "#000";
+  ctx.beginPath(); for (const [dx, dy] of [[-r, 0], [r, 0], [0, -r], [0, r]]) { ctx.moveTo(x + dx + r, y + dy); ctx.arc(x + dx, y + dy, r, 0, Math.PI * 2); }
+  if (!hollow) { ctx.fillStyle = color || C.unknown; ctx.fill(); ctx.stroke(); ctx.fillRect(x - r, y - r, 2 * r, 2 * r); ctx.strokeStyle = "#000"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x - 4, y + 2.5); ctx.lineTo(x + 4, y + 2.5); ctx.moveTo(x - 4, y - 1); ctx.lineTo(x + 4, y - 1); ctx.stroke(); }
+  else { ctx.setLineDash([3, 2]); ctx.stroke(); ctx.setLineDash([]); }
+}
+function symFriendlyAir(x, y) {
+  ctx.fillStyle = C.friend; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(x - 13, y + 7); ctx.bezierCurveTo(x - 13, y - 12, x + 13, y - 12, x + 13, y + 7); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "#000"; ctx.font = "700 9px 'Barlow Condensed', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("UAS", x, y + 1);
+}
+function symLKP(x, y) { ctx.strokeStyle = C.crit; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y - 11); ctx.lineTo(x + 11, y); ctx.lineTo(x, y + 11); ctx.lineTo(x - 11, y); ctx.closePath(); ctx.stroke(); ctx.fillStyle = C.crit; ctx.font = "700 12px 'Barlow Condensed', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", x, y + 1); }
+
+// ---------- state
+const state = { sc: 0, t: 0, playing: false, speed: 8, truth: false, cov: true, grid: true, sel: null, last: null, hits: [] };
+const sc = () => DATA.scenarios[state.sc];
+function linkStatusAt(s, t) {
+  const out = {}; for (const l of W.links) out[`${l.a}->${l.b}`] = { status: "MONITORING", ev: null };
+  for (const e of s.events) { if (e.t > t || e.type === "tipoff") continue;
+    out[e.link] = { status: e.type === "alert" ? "ALERT" : e.type === "unverified" ? "UNVERIFIED" : e.type === "pending" ? "MONITORING" : "ALL ACCOUNTED", ev: e }; }
+  return out;
+}
+function degradedAt(s, c, t) { const d = s.degraded[c]; return !!d && t >= d[0] && t <= d[1]; }
+function trackAt(tr, t) { let j = -1, best = 0.6; tr.t.forEach((tt, k) => { const d = Math.abs(tt - t); if (d < best) { best = d; j = k; } }); return j; }
+
+// ---------- where a vanished vehicle can be now, and the UAS plan
+// Two hypotheses after a certified miss: it stopped somewhere on the blind road, or it left by the
+// blind zone's exit. The exit hypothesis grows with time, so the UAS flies first to where its leading
+// edge will be when the UAS arrives (containment), then sweeps back toward the junction and along
+// both legs of the blind road. Everything that could hold the vehicle lies on that path.
+const VD = 40, VS = 14, TRACK_VMAX = 10, planCache = {};   // UAS cruise 144 km/h; assumed limit 36 km/h on the unpaved track
+function firstAlert(s, key, t) { return s.events.find((e) => e.type === "alert" && e.link === key && e.certified_missing > 0 && e.t <= t); }
+function uasPlan(s, l, ev) {
+  const key = `${s.id}|${l.gray}|${ev.t}`; if (planCache[key]) return planCache[key];
+  const g0 = l.interval[0], g1 = l.interval[1], d = g1 - g0, rlo = W.calibration.r_lo, rhi = W.calibration.r_hi;
+  const tips = s.events.filter((e) => e.type === "tipoff" && e.link === `${l.a}->${l.b}` && ev.candidates.includes(e.tid));
+  let tc = Infinity, vmax = 0, lastSeen = Infinity;
+  for (const e of tips) {
+    const v = rhi * d / Math.max(1, e.window[1] - e.t), vf = v / rlo;     // speed estimate and its plausible maximum
+    lastSeen = Math.min(lastSeen, e.t); tc = Math.min(tc, e.t + (W.nw_corner_s - g0) / vf); vmax = Math.max(vmax, Math.min(TRACK_VMAX, vf));
+  }
+  const exit = l.gray === "G2";
+  const reach = (t) => exit ? Math.max(0, Math.min(SIDE_LEN, (t - tc) * vmax)) : 0;
+  const ta = ev.t; let tau = 0, P;
+  if (exit) { for (tau = 0; tau < 900; tau += 0.5) { P = polyAt(SIDE_EXT, reach(ta + tau)); if (Math.hypot(P[0] - HELIPAD[0], P[1] - HELIPAD[1]) <= VD * tau) break; } }
+  else { P = routeXY(g1 - 10); tau = Math.hypot(P[0] - HELIPAD[0], P[1] - HELIPAD[1]) / VD; }
+  const Dstar = exit ? reach(ta + tau) : 0, sweep = [];
+  if (exit) {
+    for (let x = Dstar; x > 0; x -= 15) sweep.push(polyAt(SIDE_EXT, x)); sweep.push(polyAt(SIDE_EXT, 0));
+    for (let x = W.nw_corner_s; x >= g0; x -= 15) sweep.push(routeXY(x));
+    for (let x = g0; x <= g1; x += 15) sweep.push(routeXY(x));
+  } else for (let x = g1; x >= g0; x -= 15) sweep.push(routeXY(x));
+  const scum = [0]; for (let i = 1; i < sweep.length; i++) scum.push(scum[i - 1] + Math.hypot(sweep[i][0] - sweep[i - 1][0], sweep[i][1] - sweep[i - 1][1]));
+  const total = scum[scum.length - 1];
+  const along = (dd) => { dd = Math.min(dd, total); let i = 1; while (i < scum.length - 1 && scum[i] < dd) i++; const f = (dd - scum[i - 1]) / Math.max(1e-9, scum[i] - scum[i - 1]); return [sweep[i - 1][0] + f * (sweep[i][0] - sweep[i - 1][0]), sweep[i - 1][1] + f * (sweep[i][1] - sweep[i - 1][1])]; };
+  const raw = (t) => { const q = t - ta; if (q < 0) return null; if (q <= tau) { const f = q / Math.max(tau, 1e-9); return { xy: [HELIPAD[0] + (P[0] - HELIPAD[0]) * f, HELIPAD[1] + (P[1] - HELIPAD[1]) * f], phase: "transit" }; } const dd = (q - tau) * VS; return { xy: along(dd), phase: dd >= total ? "done" : "sweep", swept: dd }; };
+  // Simulated UAS camera: contact within 80 m of a vanished vehicle (ground truth stands in for the UAS sensor).
+  const missing = s.vehicles.filter((v) => s.truth.missing.includes(v.vid));
+  let contactT = null, contactV = null;
+  for (let t = ta; t <= ta + tau + total / VS + 1 && contactT === null; t += 0.5) { const r = raw(t); if (!r) continue; for (const v of missing) { const q = truthXY(v, t); if (q && Math.hypot(q[0] - r.xy[0], q[1] - r.xy[1]) <= 80) { contactT = t; contactV = v; break; } } }
+  const uasAt = (t) => { if (contactT !== null && t >= contactT) return { xy: truthXY(contactV, t) || raw(contactT).xy, phase: "contact" }; return raw(t); };
+  return (planCache[key] = { reach, ta, tau, P, Dstar, sweep, scum, total, uasAt, contactT, contactV, lastSeen, exit, eta: ta + tau });
+}
+function contactInfo(pl) {
+  const t = pl.contactT, a = truthXY(pl.contactV, t), b = truthXY(pl.contactV, t + 2);
+  const moving = !!(a && b && Math.hypot(b[0] - a[0], b[1] - a[1]) > 3), onSide = (vehicleState(pl.contactV, t) || { where: "side" }).where === "side";
+  let where = "ON G2 ROAD"; if (onSide) { let best = 0, bd = 1e9; for (let x = 0; x <= SIDE_LEN; x += 10) { const q = polyAt(SIDE_EXT, x), dd = Math.hypot(q[0] - a[0], q[1] - a[1]); if (dd < bd) { bd = dd; best = x; } } where = `ON NW SIDE TRACK, ${(best / 1000).toFixed(2)} KM FROM JUNCTION`; }
+  return { moving, where, xy: a };
+}
+function strokeSide(d0, d1, wpx, color) { ctx.beginPath(); for (let x = d0; x <= d1 + 0.01; x += Math.max(5, (d1 - d0) / 60)) { const [sx, sy] = S(...polyAt(SIDE_EXT, Math.min(x, d1))); x === d0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy); } ctx.lineWidth = wpx; ctx.strokeStyle = color; ctx.lineCap = "round"; ctx.stroke(); ctx.lineCap = "butt"; }
+
+// ---------- map drawing
+function drawMap(s, t) {
+  const w = map.width / dpr, h = map.height / dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#b49a72"; ctx.fillRect(0, 0, w, h);
+  const [ox, oy] = S(TB.x0, TB.y1); ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(terrain, ox, oy, (TB.x1 - TB.x0) * view.scale, (TB.y1 - TB.y0) * view.scale);
+  ctx.fillStyle = "rgba(10,14,18,.18)"; ctx.fillRect(0, 0, w, h);
+  state.hits = [];
+  if (state.grid) {
+    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1;
+    for (let gx = -2250; gx <= 2100; gx += 250) { const [x0, y0] = S(gx, TB.y0), [, y1] = S(gx, TB.y1); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0, y1); ctx.stroke(); if (gx % 500 === 0) label(String(41000 + gx + 1080).slice(-5, -2), x0 + 2, 12, { font: "500 11px 'IBM Plex Mono', monospace", align: "left", color: "#e8f2f6" }); }
+    for (let gy = -1500; gy <= 1600; gy += 250) { const [x0, y0] = S(TB.x0, gy), [x1] = S(TB.x1, gy); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke(); if (gy % 500 === 0 && y0 < h - 60) label(String(78000 + gy + 960).slice(-5, -2), 8, y0 - 8, { font: "500 11px 'IBM Plex Mono', monospace", align: "left", color: "#e8f2f6" }); }
+  }
+  // base and side-track labels
+  { const [x, y] = S(20, 30); label("FOB RAVEN", x, y, { font: "700 14px 'Barlow Condensed', sans-serif" }); }
+  { const [x, y] = S(-930, 700); label("NW SIDE TRACK", x + 10, y - 14, { color: "#f1e6cc" }); }
+  const st = linkStatusAt(s, t);
+  // blind-zone geofences
+  for (const l of W.links) {
+    path(bufferRoute(l.interval[0], l.interval[1], 42), true);
+    ctx.fillStyle = "rgba(255,176,32,.10)"; ctx.fill(); ctx.strokeStyle = C.warn; ctx.lineWidth = 1.5; ctx.setLineDash([7, 5]); ctx.stroke(); ctx.setLineDash([]);
+    const mid = routeXY((l.interval[0] + l.interval[1]) / 2), [mx, my] = S(...mid);
+    const ins = Math.abs(mid[0]) > 600 ? [mid[0] > 0 ? 92 : -92, 0] : [0, mid[1] > 0 ? 74 : -74];   // outside the ring
+    const [lx, ly] = S(mid[0] + ins[0], mid[1] + ins[1]);
+    label(`${l.gray} · BLIND`, lx, ly - 7, { color: C.warn }); label("NO CAMERA", lx, ly + 7, { color: "#f5d9a0", font: "500 11px 'Barlow Condensed', sans-serif" });
+    const ls = st[`${l.a}->${l.b}`];
+    if (ls.status === "ALERT" && ls.ev && ls.ev.certified_missing > 0) {
+      path(bufferRoute(l.interval[0], l.interval[1], 42), true); ctx.fillStyle = ctx.createPattern(hatch, "repeat"); ctx.fill(); ctx.strokeStyle = C.crit; ctx.lineWidth = 2; ctx.stroke();
+    }
+  }
+  // camera coverage fans and sensors
+  for (const c of W.cam_order) {
+    const [lo, hi] = W.cameras[c], bad = degradedAt(s, c, t);
+    if (state.cov) {
+      const fan = [CAMPOS[c]].concat(bufferRoute(lo, hi, -14).slice(0, Math.ceil((hi - lo) / 12) + 1));
+      path(fan, true); ctx.fillStyle = bad ? "rgba(255,176,32,.22)" : "rgba(128,224,255,.20)"; ctx.fill(); ctx.strokeStyle = bad ? C.warn : "rgba(128,224,255,.85)"; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+    const [x, y] = S(...CAMPOS[c]); symFriendlySensor(x, y, state.sel === c);
+    const below = CAMPOS[c][1] < 0 || Math.abs(CAMPOS[c][0]) > 600;
+    label(c, x, y + 20, {}); label(bad ? "DEGRADED · DUST" : "EO · LIVE", x, y + 33, { color: bad ? C.warn : "#bfefff", font: "500 10.5px 'Barlow Condensed', sans-serif" });
+    state.hits.push({ kind: "cam", id: c, x, y, r: 18 });
+  }
+  // expected-position bands after tip-off
+  for (const l of W.links) {
+    const key = `${l.a}->${l.b}`, fin = s.final[key];
+    for (const d of s.events.filter((e) => e.type === "tipoff" && e.link === key && e.t <= t)) {
+      const [w0, w1] = d.window; if (t > w1 + 3) continue;
+      if (fin.edges.some(([dt, at]) => dt === d.tid && arrived(s, l.b, at, t))) continue;
+      const travel = l.interval[1] - l.interval[0];
+      const a = l.interval[0] + Math.min(1, (t - d.t) / (w1 - d.t)) * travel, b = l.interval[0] + Math.min(1, (t - d.t) / (w0 - d.t)) * travel;
+      if (b - a < 2) continue;
+      path(bufferRoute(Math.max(l.interval[0], a), Math.min(l.interval[1], b), 9), true); ctx.fillStyle = "rgba(54,194,230,.35)"; ctx.fill(); ctx.strokeStyle = "rgba(54,194,230,.9)"; ctx.lineWidth = 1; ctx.stroke();
+      const sm = (Math.max(l.interval[0], a) + Math.min(l.interval[1], b)) / 2, [mx0, my0] = routeXY(sm), [ddx, ddy] = routeDir(sm);
+      const [hx, hy] = S(mx0 + ddy * 30, my0 - ddx * 30);
+      label(`${d.tid} ETA ${hhmmss(w0).slice(0, 5)}–${hhmmss(w1).slice(0, 5)}Z`, hx, hy, { color: "#bfefff", font: "500 10.5px 'Barlow Condensed', sans-serif" });
+    }
+  }
+  // alert: last known position, where the vehicle can be now, UAS intercept then sweep back
+  for (const l of W.links) {
+    const key = `${l.a}->${l.b}`, ls = st[key], ev0 = firstAlert(s, key, t);
+    if (!ev0 || !(ls.status === "ALERT" && ls.ev && ls.ev.certified_missing > 0)) continue;
+    const pl = uasPlan(s, l, ev0);
+    const [lx, ly] = S(...routeXY(l.interval[0] + 10)); symLKP(lx, ly);
+    label(`LKP ${ls.ev.candidates.join("/")} · ${hhmmss(pl.lastSeen)}`, lx + 18, ly, { color: "#ffb3b3", align: "left" });
+    const found = pl.contactT !== null && t >= pl.contactT;   // the UAS has eyes on: both hypotheses collapse
+    const rm = routeXY(l.gray === "G2" ? 2300 : (l.interval[0] + l.interval[1]) / 2), [rmx, rmy] = S(rm[0] + (l.gray === "G2" ? 70 : 0), rm[1]);
+    if (!found) { label("IF STOPPED", rmx, rmy - 7, { color: "#ffb3b3" }); label("ON THIS ROAD", rmx, rmy + 7, { color: "#ffb3b3", font: "500 10.5px 'Barlow Condensed', sans-serif" }); }
+    if (pl.exit && !found) {
+      const D = pl.reach(t);
+      if (D > 1) {
+        strokeSide(0, D, Math.max(10, 46 * view.scale), "rgba(255,138,61,.42)");
+        const [ex, ey] = S(...polyAt(SIDE_EXT, D)); ctx.fillStyle = "#ff8a3d"; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(ex, ey, 5, 0, 7); ctx.fill(); ctx.stroke();
+        label(`IF EXITED: UP TO ${(D / 1000).toFixed(2)} KM OUT`, ex + 12, ey - 4, { color: "#ffc59e", align: "left" });
+      }
+    }
+    const u = pl.uasAt(t); if (!u) continue;
+    const [hx, hy] = S(...HELIPAD), [px, py] = S(...pl.P); let [ux, uy] = S(...u.xy);
+    if (u.phase === "transit") {
+      ctx.strokeStyle = "rgba(128,224,255,.95)"; ctx.lineWidth = 1.6; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+      const dist = Math.hypot(pl.P[0] - HELIPAD[0], pl.P[1] - HELIPAD[1]), brg = (Math.atan2(pl.P[0] - HELIPAD[0], pl.P[1] - HELIPAD[1]) * 180 / Math.PI + 360) % 360;
+      ctx.strokeStyle = C.friend; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(px, py, 9, 0, 7); ctx.moveTo(px - 13, py); ctx.lineTo(px + 13, py); ctx.moveTo(px, py - 13); ctx.lineTo(px, py + 13); ctx.stroke();
+      label(`INTERCEPT · RNG ${(dist / 1000).toFixed(2)} km · BRG ${String(Math.round(brg)).padStart(3, "0")}°`, px + 14, py + 16, { color: "#bfefff", align: "left" });
+    }
+    if (u.phase !== "contact") {   // remaining sweep path
+      ctx.beginPath(); let started = false;
+      for (let i = 0; i < pl.sweep.length; i++) { if (u.phase === "sweep" && pl.scum[i] < u.swept) continue; const [sx, sy] = S(...pl.sweep[i]); started ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy); started = true; }
+      ctx.strokeStyle = "rgba(128,224,255,.55)"; ctx.lineWidth = 1.2; ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+    if (u.phase === "contact") { ux += 22; uy -= 18; }
+    symFriendlyAir(ux, uy);
+    const st2 = u.phase === "transit" ? `UAS-1 → INTERCEPT · ETA ${hhmmss(pl.eta)}` : u.phase === "sweep" ? "UAS-1 · SWEEPING BACK" : u.phase === "contact" ? "UAS-1 · CONTACT · TRACKING" : "UAS-1 · SWEEP COMPLETE";
+    label(st2, ux, uy - 18, { color: u.phase === "contact" ? "#ffb3b3" : "#bfefff" });
+    if (u.phase === "contact") {   // suspect track from the UAS sensor, hostile-colour diamond frame
+      const [cx2, cy2] = S(...u.xy), ci = contactInfo(pl);
+      ctx.fillStyle = C.hostile; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx2, cy2 - 11); ctx.lineTo(cx2 + 11, cy2); ctx.lineTo(cx2, cy2 + 11); ctx.lineTo(cx2 - 11, cy2); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#000"; ctx.font = "700 9px 'Barlow Condensed', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("SUS", cx2, cy2 + 1);
+      label(`SUSPECT · ${ls.ev.candidates.join("/")} · ${ci.moving ? "MOVING" : "STATIONARY"}`, cx2 + 16, cy2 + 18, { color: "#ffb3b3", align: "left" });
+    }
+  }
+  // what the system sees: perception tracks inside camera views
+  for (const c of W.cam_order) {
+    const lo = W.cameras[c][0];
+    for (const tr of s.tracks[c] || []) {
+      const j = trackAt(tr, t); if (j < 0) continue;
+      const [x, y] = S(...routeXY(lo + tr.u[j])); symUnknown(x, y, false);
+      label(tr.tid, x + 16, y - 10, { align: "left", color: "#fffbb0" });
+      state.hits.push({ kind: "track", id: tr.tid, cam: c, x, y, r: 13 });
+    }
+  }
+  // evaluation view: true positions, including inside blind zones
+  if (state.truth) for (const v of s.vehicles) {
+    const vs = vehicleState(v, t); if (!vs) continue;
+    const [x, y] = S(...vs.xy); symUnknown(x, y, true, v.decoy ? C.hostile : "#ffffff");
+    label(v.vid + (v.decoy ? " (NEW)" : ""), x - 14, y + 14, { align: "right", color: "#ffffff", font: "500 10.5px 'IBM Plex Mono', monospace" });
+  }
+  // scale bar: pick 100/200/500 m to fit ~80-160 px
+  const opts = [50, 100, 200, 250, 500, 1000]; let m = opts[0]; for (const o of opts) if (o * view.scale <= 150) m = o;
+  $("scaleBar").style.width = Math.round(m * view.scale) + "px"; $("scale").firstChild.nodeValue = (m >= 1000 ? m / 1000 + " km" : m + " m");
+}
+function arrived(s, cam, tid, t) { const tr = (s.tracks[cam] || []).find((x) => x.tid === tid); return !!tr && tr.t[0] <= t; }
+
+// ---------- video dock
+const FW = 320, FH = 180, PXM = FW / (2 * W.half_view);
+let feeds = {};
+function buildDock() {
+  const dock = $("dock"); dock.innerHTML = ""; feeds = {};
+  for (const c of W.cam_order) {
+    const el = document.createElement("div"); el.className = "vid"; el.tabIndex = 0;
+    el.innerHTML = `<header><span>${c} · EO</span><span class="st">● LIVE</span></header><canvas width="${FW}" height="${FH}" aria-label="${c} video"></canvas>`;
+    el.onclick = () => select(c); dock.appendChild(el);
+    feeds[c] = { el, canvas: el.querySelector("canvas"), st: el.querySelector(".st") };
+  }
+}
+function drawFeed(s, c, t) {
+  const f = feeds[c], g = f.canvas.getContext("2d"), [lo, hi] = W.cameras[c];
+  g.fillStyle = "#c2ab84"; g.fillRect(0, 0, FW, FH);
+  g.fillStyle = "rgba(120,98,70,.35)"; for (let i = 0; i < 40; i++) { const x = (i * 97 + c.length * 31) % FW, y = (i * 37) % 60 + (i % 2 ? 122 : 0); g.beginPath(); g.arc(x, y, 1.5 + (i % 4), 0, 7); g.fill(); }
+  const y0 = FH / 2 - 4.6 * PXM, y1 = FH / 2 + 4.6 * PXM;
+  g.fillStyle = "#5e6163"; g.fillRect(0, y0, FW, y1 - y0); g.strokeStyle = "#d5d8db"; g.setLineDash([9, 10]); g.beginPath(); g.moveTo(0, FH / 2); g.lineTo(FW, FH / 2); g.stroke(); g.setLineDash([]);
+  for (const v of s.vehicles) {
+    const vs = vehicleState(v, t); if (!vs || vs.where !== "route" || vs.s < lo - 6 || vs.s > hi + 6) continue;
+    const u = vs.s - lo, L = v.length * PXM, Wd = v.width * PXM, cx = u * PXM, cy = FH / 2 + 2 * PXM, col = `rgb(${v.bgr[2]},${v.bgr[1]},${v.bgr[0]})`;
+    g.fillStyle = "rgba(50,55,60,.75)"; g.fillRect(cx - L / 2 + 2, cy - Wd / 2 + 2, L, Wd);
+    g.fillStyle = col; g.fillRect(cx - L / 2, cy - Wd / 2, L, Wd);
+    g.fillStyle = "rgba(30,36,40,.9)"; g.fillRect(cx + L / 2 - 0.22 * L, cy - Wd / 2 + 1, 0.1 * L, Wd - 2);
+  }
+  const bad = degradedAt(s, c, t);
+  if (bad) { const d = s.degraded[c], a = 0.86 * Math.min(1, (t - d[0]) / 6, (d[1] - t) / 6); g.fillStyle = `rgba(205,188,165,${a})`; g.fillRect(0, 0, FW, FH); }
+  for (const tr of s.tracks[c] || []) {
+    const j = trackAt(tr, t); if (j < 0) continue;
+    const x = tr.u[j] * PXM, hb = tr.box_h[j] * FH / 270 + 6, yb = FH / 2 + 2 * PXM - hb / 2;
+    g.strokeStyle = C.unknown; g.lineWidth = 1.5; g.strokeRect(x - 12, yb, 24, hb);
+    g.fillStyle = "rgba(0,0,0,.7)"; g.fillRect(x - 12, yb - 13, 28, 12); g.fillStyle = C.unknown; g.font = "10px 'IBM Plex Mono', monospace"; g.textAlign = "left"; g.fillText(tr.tid, x - 10, yb - 4);
+  }
+  // reticle and burn-in
+  g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1; g.beginPath(); g.moveTo(FW / 2 - 10, FH / 2); g.lineTo(FW / 2 + 10, FH / 2); g.moveTo(FW / 2, FH / 2 - 10); g.lineTo(FW / 2, FH / 2 + 10); g.stroke();
+  g.fillStyle = "rgba(255,255,255,.92)"; g.font = "10px 'IBM Plex Mono', monospace"; g.textAlign = "left"; g.fillText(`${hhmmss(t)}  4 FPS`, 6, FH - 6);
+  g.textAlign = "right"; g.fillText(mgrs(...CAMPOS[c]).slice(7), FW - 6, 12);
+  f.st.textContent = bad ? "● DEGRADED" : "● LIVE"; f.st.className = "st" + (bad ? " bad" : "");
+  f.el.classList.toggle("sel", state.sel === c);
+}
+
+// ---------- drawer
+function pillClass(st) { return st === "ALERT" ? "p-alert" : st === "UNVERIFIED" ? "p-unv" : st === "ALL ACCOUNTED" ? "p-ok" : "p-mon"; }
+function drawDrawer(s, t) {
+  const st = linkStatusAt(s, t);
+  $("links").innerHTML = W.links.map((l) => {
+    const key = `${l.a}->${l.b}`, cur = st[key], tipped = s.events.filter((e) => e.type === "tipoff" && e.link === key && e.t <= t).length;
+    let dt = `${tipped} tipped off`;
+    if (cur.ev && cur.status === "ALERT") dt = [cur.ev.certified_missing ? `${cur.ev.certified_missing} certified missing · candidates ${cur.ev.candidates.join(", ")}` : "", cur.ev.unexplained.length ? `unexplained arrival ${cur.ev.unexplained.join(", ")}` : ""].filter(Boolean).join(" · ");
+    else if (cur.ev && cur.status === "UNVERIFIED") dt = `${cur.ev.unverified} handoff(s) unconfirmed · camera degraded`;
+    else if (cur.status === "ALL ACCOUNTED") dt = `${tipped} tipped off · all accounted for`;
+    return `<div class="link"><span class="nm">${l.a} → ${l.b} · ${l.gray}</span><span class="pill ${pillClass(cur.status)}">${cur.status}</span><span class="dt">${dt}</span></div>`;
+  }).join("");
+  $("health").innerHTML = W.cam_order.map((c) => {
+    const q = (s.quality[c] || []).filter(([tt]) => tt <= t).pop(), bad = degradedAt(s, c, t);
+    return `<div><b style="color:${bad ? C.warn : C.ok}">${c}</b><span>${bad ? "Degraded: dust" : "Clear"} · contrast ${q ? q[1].toFixed(0) : "--"}</span></div>`;
+  }).join("");
+  const contacts = [];
+  for (const l of W.links) { const key = `${l.a}->${l.b}`, ev0 = firstAlert(s, key, t); if (!ev0) continue; const pl = uasPlan(s, l, ev0);
+    if (pl.contactT !== null && pl.contactT <= t) { const ci = contactInfo(pl); contacts.push({ t: pl.contactT, type: "contact", link: key, gray: l.gray, info: ci, candidates: ev0.candidates }); } }
+  const evs = s.events.filter((e) => e.t <= t && e.type !== "pending").concat(contacts).sort((a, b) => a.t - b.t).reverse();
+  const alerts = s.events.filter((e) => e.t <= t && (e.type === "alert" || e.type === "unverified")).length;
+  for (const b of [$("alertBadge"), $("tabBadge")]) { b.hidden = alerts === 0; b.textContent = alerts; }
+  $("log").innerHTML = evs.length ? evs.slice(0, 80).map((e) => {
+    const cls = e.type === "tipoff" ? "tip" : e.type === "alert" || e.type === "contact" ? "alert" : e.type === "unverified" ? "unv" : "ok";
+    const kind = e.type === "tipoff" ? "TIP-OFF" : e.type === "alert" ? "HANDOFF ALERT" : e.type === "contact" ? "UAS CONTACT" : e.type === "unverified" ? "COVERAGE GAP" : "ALL ACCOUNTED";
+    let body = e.type === "tipoff" ? e.text.replace(/T\+(\d+)s/g, (m, n) => hhmmss(+n)).replace(/->/g, "→") : e.type === "all_accounted" ? `${e.link}: every tipped-off vehicle arrived.` : "";
+    if (e.type === "alert") body = [e.certified_missing ? `${e.link}: ${e.certified_missing} vehicle(s) never arrived. Candidates ${e.candidates.join(", ")}; the proof holds for any identity assignment.` : "", e.unexplained.length ? `${e.link}: ${e.unexplained.join(", ")} matches no departure.` : ""].filter(Boolean).join(" ");
+    if (e.type === "unverified") body = `${e.link}: camera degraded, ${e.unverified} handoff(s) cannot be confirmed. No all-clear issued.`;
+    if (e.type === "contact") body = `UAS-1 has a ${e.info.moving ? "moving" : "stationary"} vehicle ${e.info.where.toLowerCase()}, at ${mgrs(...e.info.xy)}. Candidates ${e.candidates.join(", ")}.`;
+    let actList = (e.actions || []).filter((a) => !a.startsWith("Dispatch"));
+    if (e.type === "alert" && e.certified_missing > 0) { const l = W.links.find((x) => `${x.a}->${x.b}` === e.link), first = firstAlert(s, e.link, e.t); if (first) { const pl = uasPlan(s, l, first);
+      actList = [pl.exit ? `UAS-1: fly to the predicted leading edge on the NW side track, ${Math.round(pl.Dstar)} m past the junction at ETA ${hhmmss(pl.eta)}, then sweep back along the track and both legs of the G2 road.` : `UAS-1: sweep the ${l.gray} road back from ${l.b}.`].concat(actList); } }
+    if (e.type === "contact") actList = [`Hand off to the ground response with ${mgrs(...e.info.xy)}; UAS-1 keeps eyes on.`];
+    const acts = actList.length ? `<ul>${actList.map((a) => `<li>${a}</li>`).join("")}</ul>` : "";
+    return `<div class="ev ${cls}"><div class="top"><span class="k">${kind}</span><span>${hhmmss(e.t)}</span></div><div>${body}</div>${acts}</div>`;
+  }).join("") : `<div class="empty">No traffic yet. Tip-offs appear when a vehicle leaves a camera.</div>`;
+  // toast for the newest alert or gap within the last 50 s of replay time
+  const recent = s.events.filter((e) => (e.type === "alert" || e.type === "unverified") && e.t <= t && t - e.t <= 50).concat(contacts.filter((c) => t - c.t <= 60)).sort((a, b) => a.t - b.t).pop();
+  const toast = $("toast");
+  if (!recent) { toast.hidden = true; } else {
+    toast.hidden = false; toast.className = "toast" + (recent.type === "unverified" ? " warn" : "");
+    $("toastSev").textContent = recent.type === "alert" ? "ALERT" : recent.type === "contact" ? "CONTACT" : "GAP";
+    $("toastMsg").textContent = recent.type === "contact" ? `UAS-1: ${recent.info.moving ? "MOVING" : "STATIONARY"} VEHICLE ${recent.info.where}` : recent.type === "alert"
+      ? (recent.certified_missing ? `${recent.link}: ${recent.certified_missing} TRACK(S) DID NOT ARRIVE · CANDIDATES ${recent.candidates.join("/")}` : `${recent.link}: ARRIVAL MATCHES NO DEPARTURE`)
+      : `${recent.link}: CAMERA DEGRADED · ${recent.unverified} HANDOFF(S) UNCONFIRMED`;
+    let act = `No all-clear issued · request alternate sensor · ${hhmmss(recent.t)}`;
+    if (recent.type === "contact") act = `${mgrs(...recent.info.xy)} · candidates ${recent.candidates.join("/")} · ${hhmmss(recent.t)}`;
+    if (recent.type === "alert") { const l = W.links.find((x) => `${x.a}->${x.b}` === recent.link), first = firstAlert(s, recent.link, recent.t);
+      act = first && recent.certified_missing ? (() => { const pl = uasPlan(s, l, first); return pl.exit ? `UAS-1 → intercept ${Math.round(pl.Dstar)} m out on NW side track, ETA ${hhmmss(pl.eta)}, then sweep back` : `UAS-1 → sweep ${l.gray} road`; })() : `Track the unexplained arrival at ${recent.link.split("->")[1]} · ${hhmmss(recent.t)}`; }
+    $("toastAct").textContent = act;
+  }
+  const badCams = W.cam_order.filter((c) => degradedAt(s, c, t));
+  $("sensors").innerHTML = `<span class="dot${badCams.length ? " bad" : ""}"></span>SENSORS ${4 - badCams.length}/4${badCams.length ? " · " + badCams.join(", ") + " DEGRADED" : ""}`;
+}
+const ids = (a) => a.length > 4 ? `${a.length} detections` : a.join(", ");
+function buildAnalysis() {
+  const s = sc(), key = "CAM-W->CAM-N", fin = s.final[key], com = s.committed[key], cnt = s.counts[key];
+  const truthWord = { none: "all clear", stop: "alert", divert: "alert", swap: "alert", degraded: "unverified" }[s.kind];
+  const v = (st) => st === "ALERT" ? "alert" : st === "UNVERIFIED" ? "unverified" : "all clear";
+  const truthText = { none: "Every vehicle arrived.", stop: `${s.truth.missing.join(", ")} stopped inside G2 and never reached CAM-N.`, divert: `${s.truth.missing.join(", ")} left the road on the NW side track.`, swap: `${s.truth.missing.join(", ")} left on the side track; ${s.truth.decoy} joined in its place.`, degraded: "Every vehicle arrived, but dust blinded CAM-N." }[s.kind];
+  const mark = (ok) => `<span class="mark ${ok ? "p-ok" : "p-alert"}">${ok ? "CORRECT" : "WRONG"}</span>`;
+  const misT = s.tracks["CAM-W"].filter((x) => s.truth.missing.includes(x.truth)).map((x) => x.tid);
+  const rows = [["Ground truth", truthText, ""]];
+  rows.push(["Count-only", cnt.status === "ALERT" ? `Fewer arrivals than departures (${cnt.arrivals} vs ${cnt.departures}).` : "Counts match: all clear.", mark(v(cnt.status) === truthWord)]);
+  let ct = com.status === "ALERT" ? [com.named_missing.length ? `Names ${ids(com.named_missing)} as missing.` : "", com.named_unknown.length ? `Flags ${ids(com.named_unknown)} as unknown.` : ""].filter(Boolean).join(" ") : "Every departure matched: all clear.";
+  let cok = v(com.status) === truthWord;
+  if (cok && misT.length && com.named_missing.length && com.named_missing.join() !== misT.join()) { cok = false; ct += ` Wrong vehicle: it was ${misT.join(", ")}.`; }
+  rows.push(["Committed re-ID tracker", ct, mark(cok)]);
+  if (s.vlm) { const p = s.vlm.parsed || {}, vw = { all_arrived: "all clear", vehicle_missing: "alert", unexpected_vehicle: "alert", cannot_confirm: "unverified" }[s.vlm.verdict];
+    rows.push([`Qwen3-VL-4B · ${s.vlm.images} frames`, `“${s.vlm.verdict}”; counted ${p.w_count ?? "?"} at CAM-W, ${p.n_count ?? "?"} at CAM-N; ${s.vlm.seconds} s.${s.vlm.verdict === "cannot_confirm" && EVAL ? ` Default answer in ${EVAL.vlm_default}/${EVAL.vlm_n} tests.` : ""}`, mark(vw === truthWord)]); }
+  const ot = fin.status === "ALERT" ? [fin.certified_missing ? `Certifies ${fin.certified_missing} missing; candidates ${fin.missing_candidates.join(", ")}.` : "", fin.unexplained_arrivals.length ? `Arrival ${ids(fin.unexplained_arrivals)} matches no departure.` : ""].filter(Boolean).join(" ") + " Tasks UAS-1."
+    : fin.status === "UNVERIFIED" ? "Coverage gap; no all-clear; requests another sensor." : "Every departure has a compatible arrival: all clear.";
+  rows.push(["This monitor", ot, mark(v(fin.status) === truthWord && (!misT.length || misT.every((x) => fin.missing_candidates.includes(x))))]);
+  $("cmp").innerHTML = `<thead><tr><th>APPROACH</th><th>CONCLUSION</th><th></th></tr></thead><tbody>${rows.map((r, i) => `<tr class="${i === rows.length - 1 ? "ours" : ""}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</tbody>`;
+  $("crops").innerHTML = ["CAM-W", "CAM-N"].flatMap((c) => s.tracks[c].filter((tr) => tr.crop).map((tr) => `<figure><img src="${tr.crop}" alt="${tr.tid} crop"><figcaption>${tr.tid} · ${tr.desc}</figcaption></figure>`)).join("");
+  $("brief").innerHTML = s.blurb;
+}
+function buildEval() {
+  if (!EVAL) return;
+  $("evalTable").innerHTML = `<thead><tr><th>APPROACH</th><th>CORRECT</th><th>FALSE CLEAR</th><th>FALSE ALARM</th><th>COMPUTE</th></tr></thead><tbody>${EVAL.rows.map((x, i) => `<tr class="${i === EVAL.rows.length - 1 ? "ours" : ""}"><td>${x.name}</td><td class="n">${x.acc}</td><td class="n">${x.false_clear}</td><td class="n">${x.false_alarm}</td><td class="n">${x.compute}</td></tr>`).join("")}</tbody>`;
+  $("evalNote").textContent = EVAL.note; $("calNote").textContent = EVAL.cal;
+}
+
+// ---------- details card
+function select(id) { state.sel = state.sel === id ? null : id; draw(); }
+function showCard(hit, sx, sy) {
+  const s = sc(), card = $("card");
+  if (hit.kind === "cam") {
+    const c = hit.id, bad = degradedAt(s, c, state.t), [lo, hi] = W.cameras[c];
+    card.innerHTML = `<div class="ct"><span>${c} · FIXED EO CAMERA</span><button aria-label="Close">×</button></div><dl><dt>UID</dt><dd>SNSR-${c}</dd><dt>TYPE</dt><dd>a-f-G-E-S</dd><dt>POSITION</dt><dd>${mgrs(...CAMPOS[c])}</dd><dt>COVERS</dt><dd>${(hi - lo).toFixed(0)} m of road</dd><dt>STATUS</dt><dd style="color:${bad ? C.warn : C.ok}">${bad ? "DEGRADED · DUST" : "LIVE"}</dd><dt>TRACKS</dt><dd>${(s.tracks[c] || []).filter((x) => x.t[0] <= state.t).length} so far</dd></dl>`;
+    select(c);
+  } else {
+    const tr = s.tracks[hit.cam].find((x) => x.tid === hit.id), j = trackAt(tr, state.t);
+    const sp = tr.t.length > 2 ? ((tr.u[tr.u.length - 1] - tr.u[0]) / Math.max(0.1, tr.t[tr.t.length - 1] - tr.t[0])) : 0;
+    card.innerHTML = `<div class="ct"><span>TRACK ${tr.tid}</span><button aria-label="Close">×</button></div><dl><dt>TYPE</dt><dd>a-u-G (unknown ground)</dd><dt>SEEN BY</dt><dd>${hit.cam}</dd><dt>FIRST SEEN</dt><dd>${hhmmss(tr.t[0])}</dd><dt>SPEED</dt><dd>${(sp * 3.6).toFixed(0)} km/h</dd><dt>LOOKS LIKE</dt><dd>${tr.desc}</dd><dt>POSITION</dt><dd>${mgrs(...routeXY(W.cameras[hit.cam][0] + tr.u[Math.max(0, j)]))}</dd></dl>${tr.crop ? `<img src="${tr.crop}" alt="${tr.tid} crop">` : ""}`;
+  }
+  const r = $("mapwrap").getBoundingClientRect();
+  card.style.left = Math.min(r.width - 262, sx + 14) + "px"; card.style.top = Math.max(8, Math.min(r.height - 230, sy - 20)) + "px";
+  card.hidden = false; card.querySelector("button").onclick = () => { card.hidden = true; };
+}
+
+// ---------- controls
+DATA.scenarios.forEach((s, i) => { const o = document.createElement("option"); o.value = i; o.textContent = s.label.toUpperCase(); $("mission").appendChild(o); });
+$("mission").onchange = (e) => selectScenario(+e.target.value);
+[4, 8, 16, 32].forEach((x) => { const b = document.createElement("button"); b.textContent = x + "×"; b.setAttribute("aria-pressed", x === state.speed);
+  b.onclick = () => { state.speed = x; [...$("speeds").children].forEach((c) => c.setAttribute("aria-pressed", c === b)); }; $("speeds").appendChild(b); });
+$("play").onclick = () => setPlaying(!state.playing);
+$("scrub").oninput = (e) => { state.t = +e.target.value; draw(); };
+const toggle = (btn, key, after) => { $(btn).onclick = () => { state[key] = !state[key]; $(btn).setAttribute("aria-pressed", state[key]); if (after) after(); draw(); }; };
+toggle("tCov", "cov"); toggle("tGrid", "grid"); toggle("tTruth", "truth");
+$("tVid").onclick = () => { const d = $("dock"); d.hidden = !d.hidden; $("tVid").setAttribute("aria-pressed", !d.hidden); };
+$("tKey").onclick = () => { const d = $("legend"); d.hidden = !d.hidden; $("tKey").setAttribute("aria-pressed", !d.hidden); };
+$("tDrawer").onclick = () => { const b = $("body"); b.classList.toggle("closed"); $("tDrawer").setAttribute("aria-pressed", !b.classList.contains("closed")); requestAnimationFrame(() => { resize(); draw(); }); };
+const tabs = [["tabAlerts", "paneAlerts"], ["tabSensors", "paneSensors"], ["tabAnalysis", "paneAnalysis"]];
+tabs.forEach(([t, p]) => { $(t).onclick = () => tabs.forEach(([t2, p2]) => { $(t2).setAttribute("aria-selected", t2 === t); $(p2).hidden = p2 !== p; }); });
+$("zin").onclick = () => { view.scale = Math.min(4, view.scale * 1.35); draw(); };
+$("zout").onclick = () => { view.scale = Math.max(0.15, view.scale / 1.35); draw(); };
+$("zfit").onclick = () => { fit(); draw(); };
+let drag = null;
+map.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy, moved: false }; map.setPointerCapture(e.pointerId); map.classList.add("drag"); });
+map.addEventListener("pointermove", (e) => {
+  const r = map.getBoundingClientRect(), [wx, wy] = Winv(e.clientX - r.left, e.clientY - r.top); $("cursor").textContent = mgrs(wx, wy);
+  if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+  view.cx = drag.cx - dx / view.scale; view.cy = drag.cy + dy / view.scale; draw();
+});
+map.addEventListener("pointerup", (e) => {
+  map.classList.remove("drag"); const r = map.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
+  if (drag && !drag.moved) { const hit = state.hits.slice().reverse().find((h) => Math.hypot(h.x - sx, h.y - sy) <= h.r); if (hit) showCard(hit, sx, sy); else $("card").hidden = true; }
+  drag = null;
+});
+map.addEventListener("wheel", (e) => { e.preventDefault(); const r = map.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top, [wx, wy] = Winv(sx, sy);
+  view.scale = Math.max(0.15, Math.min(4, view.scale * (e.deltaY < 0 ? 1.15 : 1 / 1.15))); const [nx, ny] = Winv(sx, sy); view.cx += wx - nx; view.cy += wy - ny; draw(); }, { passive: false });
+addEventListener("keydown", (e) => { if (e.code === "Space" && e.target === document.body) { e.preventDefault(); setPlaying(!state.playing); } });
+function setPlaying(p) { state.playing = p; $("play").textContent = p ? "❚❚ PAUSE" : "▶ PLAY"; $("play").setAttribute("aria-pressed", p);
+  if (p) { if (state.t >= sc().duration) state.t = 0; state.last = null; requestAnimationFrame(tick); } }
+function tick(ts) { if (!state.playing) return; if (state.last !== null) state.t = Math.min(sc().duration, state.t + (ts - state.last) / 1000 * state.speed);
+  state.last = ts; $("scrub").value = state.t; draw(); if (state.t >= sc().duration) { setPlaying(false); return; } requestAnimationFrame(tick); }
+function selectScenario(i) {
+  state.sc = i; setPlaying(false); $("mission").value = i; $("card").hidden = true;
+  const s = sc(); $("scrub").max = s.duration;
+  const first = s.events.find((e) => e.type === "alert" || e.type === "unverified");
+  // Open on the moment after the first alert or gap with the most vehicles in view, so the map reads at rest.
+  const visible = (t) => W.cam_order.reduce((n, c) => n + (s.tracks[c] || []).filter((tr) => trackAt(tr, t) >= 0).length, 0);
+  let best = first ? first.t + 20 : s.duration * 0.55, most = -1;
+  if (first) for (let t = first.t + 2; t <= Math.min(s.duration, first.t + 48); t += 1) { const n = visible(t); if (n > most) { most = n; best = t; } }
+  state.t = Math.min(s.duration, best); $("scrub").value = state.t;
+  $("ticks").innerHTML = s.events.filter((e) => e.type === "alert" || e.type === "unverified").map((e) => `<span style="left:${100 * e.t / s.duration}%;background:${e.type === "alert" ? C.crit : C.warn}"></span>`).join("");
+  // Frame the perimeter, plus the UAS intercept and sweep when this mission has one.
+  fitBox = WB;
+  for (const l of W.links) { const ev0 = s.events.find((e) => e.type === "alert" && e.link === `${l.a}->${l.b}` && e.certified_missing > 0); if (!ev0) continue;
+    const pl = uasPlan(s, l, ev0); const xs = [WB.x0, WB.x1, pl.P[0] - 150, pl.P[0] + 150], ys = [WB.y0, WB.y1, pl.P[1] - 150, pl.P[1] + 150];
+    fitBox = { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) }; }
+  fit();
+  buildDock(); buildAnalysis(); draw();
+}
+function draw() {
+  const s = sc(); $("clock").textContent = dtg(state.t);
+  drawMap(s, state.t); for (const c of W.cam_order) drawFeed(s, c, state.t); drawDrawer(s, state.t);
+}
+new ResizeObserver(() => { resize(); draw(); }).observe($("mapwrap"));
+resize(); fit(); buildEval(); selectScenario(0);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
+</script>

@@ -1,0 +1,19 @@
+{
+  "model": "Qwen3-VL-4B-Instruct-4bit",
+  "queries": 26,
+  "correct": 10,
+  "missing_caught": 2,
+  "missing_total": 15,
+  "false_all_clear": 12,
+  "false_alarm": 3,
+  "clear_total": 11,
+  "cannot_confirm": 0,
+  "parse_failures": 1,
+  "count_a_ok": 2,
+  "monitor_correct": 21,
+  "monitor_missing_caught": 11,
+  "monitor_false_alarm": 1,
+  "mean_seconds": 35.8126321250143,
+  "mean_images": 41.76923076923077,
+  "mean_prompt_tokens": 10136.346153846154
+}

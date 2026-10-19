@@ -165,3 +165,12 @@ cython_debug/
 
 # VS Code
 .vscode
+
+# Local inputs and derived caches for the WinTAK-style replay demo.
+research/multicam_demo/.venv*/
+research/multicam_demo/real_data/
+research/multicam_demo/results/real/crops/
+research/multicam_demo/results/real/features_*.json
+research/multicam_demo/results/real/vlm_inputs/
+research/multicam_demo/results/real/video/
+research/multicam_demo/results/*/episodes.jsonl

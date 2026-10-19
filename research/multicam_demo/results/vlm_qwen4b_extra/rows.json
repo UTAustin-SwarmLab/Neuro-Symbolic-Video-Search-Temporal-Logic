@@ -1,0 +1,26 @@
+[
+ {
+  "key": "stop_31008",
+  "images": 49,
+  "seconds": 21.608219916000962,
+  "text": "{\n  \"w_count\": 0,\n  \"n_count\": 0,\n  \"verdict\": \"cannot_confirm\",\n  \"missing_or_unexpected\": \"No vehicles detected at CAM-W or CAM-N in the provided frames.\"\n}",
+  "prompt_tokens": 8360,
+  "kind": "stop",
+  "seed": 31008,
+  "passed_w": 3,
+  "passed_n": 2,
+  "expected": "vehicle_missing",
+  "degraded": {},
+  "parsed": {
+   "w_count": 0,
+   "n_count": 0,
+   "verdict": "cannot_confirm",
+   "missing_or_unexpected": "No vehicles detected at CAM-W or CAM-N in the provided frames."
+  },
+  "parse_ok": true,
+  "verdict": "cannot_confirm",
+  "correct": false,
+  "w_count_ok": false,
+  "n_count_ok": false
+ }
+]

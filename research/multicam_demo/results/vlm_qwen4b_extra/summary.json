@@ -1,0 +1,22 @@
+{
+  "model": "Qwen3-VL-4B-Instruct-4bit",
+  "episodes": 1,
+  "correct": 0,
+  "by_kind": {
+    "stop": [
+      0,
+      1
+    ]
+  },
+  "parse_failures": 0,
+  "w_count_ok": 0,
+  "n_count_ok": 0,
+  "verdict_counts": {
+    "all_arrived": 0,
+    "vehicle_missing": 0,
+    "unexpected_vehicle": 0,
+    "cannot_confirm": 1
+  },
+  "mean_seconds": 21.608219916000962,
+  "mean_images": 49.0
+}

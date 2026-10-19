@@ -1,0 +1,532 @@
+<title>Perimeter Handoff Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an operations console. Map left, network status and action log right, four camera feeds below, evidence last. */
+:root {
+  --bg: #eef0ec; --panel: #f8f9f6; --ink: #1b2224; --ink-2: #4c5759; --muted: #7d8789; --rule: #d3d8d2;
+  --terrain: #e2e0d2; --terrain-2: #d8d5c3; --road: #6c7174; --base: #cfd6cc; --fog: rgba(108, 117, 126, 0.30);
+  --accent: #11605e; --accent-ink: #ffffff; --cam: #11605e;
+  --good: #1e7a3b; --warn: #a86a00; --crit: #b3261e; --info: #2d5f9e;
+  --good-bg: #e2f1e5; --warn-bg: #f7ead2; --crit-bg: #f8e1df; --info-bg: #e3ebf6;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121618; --panel: #191e21; --ink: #e6ebe8; --ink-2: #b2bcb9; --muted: #85908e; --rule: #2c3437;
+  --terrain: #22282a; --terrain-2: #2a3033; --road: #8d9396; --base: #2b3531; --fog: rgba(150, 160, 170, 0.22);
+  --accent: #3fb3ac; --accent-ink: #0b1213; --cam: #3fb3ac;
+  --good: #5cc27a; --warn: #e0a640; --crit: #f07068; --info: #7fa9e3;
+  --good-bg: #17301f; --warn-bg: #352a12; --crit-bg: #3a1a18; --info-bg: #182638; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121618; --panel: #191e21; --ink: #e6ebe8; --ink-2: #b2bcb9; --muted: #85908e; --rule: #2c3437;
+  --terrain: #22282a; --terrain-2: #2a3033; --road: #8d9396; --base: #2b3531; --fog: rgba(150, 160, 170, 0.22);
+  --accent: #3fb3ac; --accent-ink: #0b1213; --cam: #3fb3ac;
+  --good: #5cc27a; --warn: #e0a640; --crit: #f07068; --info: #7fa9e3;
+  --good-bg: #17301f; --warn-bg: #352a12; --crit-bg: #3a1a18; --info-bg: #182638; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14px; line-height: 1.45; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 16px; }
+header.top { display: grid; gap: 10px; }
+.brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+.sub { color: var(--ink-2); max-width: 78ch; margin: 0; }
+.tag { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; cursor: pointer; }
+.seg button, .tbtn { border: 1px solid var(--rule); background: var(--panel); color: var(--ink); padding: 6px 11px; border-radius: 6px; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tbtn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; flex: 1 1 420px; min-width: 0; }
+.clock { font-family: var(--mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 9ch; }
+.scrub { position: relative; flex: 1 1 260px; min-width: 0; height: 30px; }
+.scrub input { width: 100%; position: absolute; inset: 7px 0 auto 0; accent-color: var(--accent); }
+.ticks { position: absolute; inset: 0; pointer-events: none; }
+.ticks span { position: absolute; top: 0; width: 2px; height: 8px; border-radius: 1px; }
+.blurb { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 14px; color: var(--ink-2); }
+.blurb b { color: var(--ink); font-weight: 600; }
+.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.mapbox { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 10px; display: grid; gap: 8px; min-width: 0; }
+.mapbox canvas { width: 100%; height: auto; display: block; border-radius: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 18px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+.side { display: grid; gap: 12px; min-width: 0; }
+.h2 { font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; color: var(--ink-2); }
+.links { display: grid; gap: 8px; }
+.link { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; }
+.link .name { font-family: var(--mono); font-size: 13px; }
+.link .detail { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-2); }
+.pill { font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: 0.05em; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.s-ok { background: var(--good-bg); color: var(--good); }
+.s-alert { background: var(--crit-bg); color: var(--crit); }
+.s-unv { background: var(--warn-bg); color: var(--warn); }
+.s-pend { background: var(--info-bg); color: var(--info); }
+.log { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; max-height: 420px; overflow-y: auto; display: grid; }
+.ev { display: grid; grid-template-columns: 62px 1fr; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.ev:last-child { border-bottom: 0; }
+.ev .t { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.ev .k { font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+.ev.alert { box-shadow: inset 3px 0 0 var(--crit); }
+.ev.unv { box-shadow: inset 3px 0 0 var(--warn); }
+.ev.ok { box-shadow: inset 3px 0 0 var(--good); }
+.ev.tip .k { color: var(--info); } .ev.alert .k { color: var(--crit); } .ev.unv .k { color: var(--warn); } .ev.ok .k { color: var(--good); }
+.ev ul { margin: 4px 0 0; padding-left: 18px; color: var(--ink-2); }
+.empty { padding: 12px; color: var(--muted); font-size: 13px; }
+.feeds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.feed { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 8px; display: grid; gap: 6px; min-width: 0; }
+.feed canvas { width: 100%; height: auto; display: block; border-radius: 4px; background: var(--terrain); }
+.feed .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; }
+.feed .cam { font-family: var(--mono); font-weight: 500; }
+.cmp { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-2); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mark { font-family: var(--display); font-weight: 600; font-size: 12px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.ours td { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.note { color: var(--ink-2); font-size: 13px; max-width: 80ch; margin: 0; }
+.crops { display: flex; flex-wrap: wrap; gap: 6px; }
+.crops figure { margin: 0; display: grid; gap: 2px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.crops img { height: 44px; width: auto; border-radius: 3px; image-rendering: pixelated; }
+@media (max-width: 980px) { .main, .two { grid-template-columns: 1fr; } .feeds { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .feeds { grid-template-columns: 1fr; } h1 { font-size: 22px; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Perimeter Handoff Monitor</h1><span class="tag">synthetic replay · 4 fixed cameras · 3 blind zones</span></div>
+    <p class="sub">Four cameras watch the ring road around a forward operating base. Each camera tips off the next one with an arrival window. When a vehicle fails to arrive, the monitor proves it without deciding which look-alike vehicle it was. When a camera cannot see, it reports the gap instead of "all clear".</p>
+    <div class="controls">
+      <div class="seg" id="scenarios" role="group" aria-label="Scenario"></div>
+    </div>
+    <div class="controls">
+      <div class="transport">
+        <button class="tbtn" id="play" aria-pressed="false">Play</button>
+        <div class="seg" id="speeds" role="group" aria-label="Playback speed"></div>
+        <span class="clock" id="clock">T+0000 s</span>
+        <div class="scrub"><input type="range" id="scrub" min="0" max="100" step="0.5" value="0" aria-label="Replay time"><div class="ticks" id="ticks"></div></div>
+        <button class="tbtn" id="truth" aria-pressed="false" title="Draw vehicles inside blind zones, which no camera sees">Show hidden vehicles</button>
+      </div>
+    </div>
+    <div class="blurb" id="blurb"></div>
+  </header>
+
+  <section class="main">
+    <div class="mapbox">
+      <canvas id="map" width="900" height="821" aria-label="Map of the perimeter road, cameras and blind zones"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--cam)"></i>camera view</span>
+        <span><i style="background:var(--fog)"></i>blind zone</span>
+        <span><i style="background:var(--info);opacity:.45"></i>where a tipped-off vehicle can be now</span>
+        <span><i style="background:var(--crit);opacity:.55"></i>search area after an alert</span>
+      </div>
+    </div>
+    <div class="side">
+      <h2 class="h2">Handoff links</h2>
+      <div class="links" id="links"></div>
+      <h2 class="h2">Tip-offs, alerts and tasking</h2>
+      <div class="log" id="log" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section style="display:grid;gap:8px">
+    <h2 class="h2">Camera feeds with detections</h2>
+    <div class="feeds" id="feeds"></div>
+  </section>
+
+  <section style="display:grid;gap:8px">
+    <h2 class="h2">Same scenario, other approaches · CAM-W → CAM-N</h2>
+    <div class="cmp"><table id="cmp"></table></div>
+    <div class="crops" id="crops"></div>
+  </section>
+
+  <section class="two">
+    <div style="display:grid;gap:8px;align-content:start">
+      <h2 class="h2">Held-out evaluation</h2>
+      <div class="cmp"><table id="evalTable"></table></div>
+      <p class="note" id="evalNote"></p>
+    </div>
+    <div style="display:grid;gap:8px;align-content:start">
+      <h2 class="h2">What this replay is</h2>
+      <p class="note">Every camera frame is rendered by a simulator and processed from pixels by a classical detector and tracker; the monitor never reads ground truth. Cameras differ in white balance, exposure and scale, so look-alike vehicles cannot be told apart across cameras. Arrival windows and the appearance gate are calibrated on separate normal-traffic episodes. The VLM answers shown are recorded runs of Qwen3-VL-4B on frames from the same episode. This is synthetic evidence, not field video.</p>
+      <p class="note" id="calNote"></p>
+    </div>
+  </section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const EVAL = /*__EVAL__*/null;
+
+const $ = (id) => document.getElementById(id);
+const W = DATA.world;
+const route = W.route;
+const segLen = [], cum = [0];
+for (let i = 0; i < route.length - 1; i++) {
+  const dx = route[i + 1][0] - route[i][0], dy = route[i + 1][1] - route[i][1];
+  segLen.push(Math.hypot(dx, dy)); cum.push(cum[i] + segLen[i]);
+}
+const ROUTE_LEN = cum[cum.length - 1];
+function routeXY(s) {
+  s = Math.max(0, Math.min(ROUTE_LEN, s));
+  let i = 0; while (i < segLen.length - 1 && cum[i + 1] < s) i++;
+  const f = (s - cum[i]) / segLen[i];
+  return [route[i][0] + f * (route[i + 1][0] - route[i][0]), route[i][1] + f * (route[i + 1][1] - route[i][1])];
+}
+function sideXY(d) {
+  const p = W.side; let rem = d;
+  for (let i = 0; i < p.length - 1; i++) {
+    const L = Math.hypot(p[i + 1][0] - p[i][0], p[i + 1][1] - p[i][1]);
+    if (rem <= L) return [p[i][0] + (p[i + 1][0] - p[i][0]) * rem / L, p[i][1] + (p[i + 1][1] - p[i][1]) * rem / L];
+    rem -= L;
+  }
+  return p[p.length - 1];
+}
+function interp(knots, t) {
+  if (!knots.length || t < knots[0][0]) return null;
+  for (let i = 0; i < knots.length - 1; i++) {
+    const [t0, s0] = knots[i], [t1, s1] = knots[i + 1];
+    if (t >= t0 && t <= t1) return s0 + (s1 - s0) * (t - t0) / Math.max(t1 - t0, 1e-9);
+  }
+  return undefined;   // past the last knot
+}
+function vehicleState(v, t) {
+  const s = interp(v.knots, t);
+  if (s !== null && s !== undefined) return { s, xy: routeXY(s), where: "route" };
+  if (s === undefined && v.fate === "stop") { const sl = v.knots[v.knots.length - 1][1]; return { s: sl, xy: routeXY(sl), where: "route" }; }
+  if (v.side.length) { const d = interp(v.side, t); if (d !== null && d !== undefined) return { s: null, xy: sideXY(d), where: "side" }; }
+  return null;
+}
+function camOf(s) {
+  for (const c of W.cam_order) { const [lo, hi] = W.cameras[c]; if (s >= lo && s <= hi) return c; }
+  return null;
+}
+
+let tokens = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ["bg", "panel", "ink", "ink-2", "muted", "rule", "terrain", "terrain-2", "road", "base", "fog", "accent", "cam", "good", "warn", "crit", "info"])
+    tokens[k] = cs.getPropertyValue("--" + k).trim();
+}
+readTokens();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readTokens(); draw(); });
+new MutationObserver(() => { readTokens(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+const state = { sc: 0, t: 0, playing: false, speed: 8, truth: false, last: null };
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- controls
+DATA.scenarios.forEach((s, i) => {
+  const b = document.createElement("button"); b.textContent = s.label; b.setAttribute("aria-pressed", i === 0);
+  b.onclick = () => selectScenario(i); $("scenarios").appendChild(b);
+});
+[4, 8, 16, 32].forEach((x) => {
+  const b = document.createElement("button"); b.textContent = x + "×"; b.setAttribute("aria-pressed", x === state.speed);
+  b.onclick = () => { state.speed = x; [...$("speeds").children].forEach((c) => c.setAttribute("aria-pressed", c === b)); };
+  $("speeds").appendChild(b);
+});
+$("play").onclick = () => setPlaying(!state.playing);
+$("truth").onclick = () => { state.truth = !state.truth; $("truth").setAttribute("aria-pressed", state.truth); draw(); };
+$("scrub").oninput = (e) => { state.t = +e.target.value; draw(); };
+function setPlaying(p) {
+  state.playing = p; $("play").textContent = p ? "Pause" : "Play"; $("play").setAttribute("aria-pressed", p);
+  if (p) { if (state.t >= sc().duration) state.t = 0; state.last = null; requestAnimationFrame(tick); }
+}
+function tick(ts) {
+  if (!state.playing) return;
+  if (state.last !== null) state.t = Math.min(sc().duration, state.t + (ts - state.last) / 1000 * state.speed);
+  state.last = ts; $("scrub").value = state.t; draw();
+  if (state.t >= sc().duration) { setPlaying(false); return; }
+  requestAnimationFrame(tick);
+}
+const sc = () => DATA.scenarios[state.sc];
+function selectScenario(i) {
+  state.sc = i; state.t = 0; setPlaying(false);
+  [...$("scenarios").children].forEach((c, k) => c.setAttribute("aria-pressed", k === i));
+  const s = sc();
+  $("scrub").max = s.duration; $("scrub").value = 0;
+  $("blurb").innerHTML = s.blurb;
+  const ticks = $("ticks"); ticks.innerHTML = "";
+  s.events.filter((e) => e.type === "alert" || e.type === "unverified").forEach((e) => {
+    const sp = document.createElement("span"); sp.style.left = (100 * e.t / s.duration) + "%";
+    sp.style.background = e.type === "alert" ? tokens.crit : tokens.warn; ticks.appendChild(sp);
+  });
+  buildFeeds(); buildComparison(); draw();
+}
+
+// ---------- map
+const map = $("map"), mctx = map.getContext("2d");
+const BOUNDS = { x0: -1080, x1: 960, y0: -960, y1: 900 };
+function fitCanvas(c) {
+  const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(200, Math.round(r.width * dpr)), h = Math.round(w * c.height / c.width);
+  if (c.width !== w) { const ratio = c.height / c.width; c.width = w; c.height = Math.round(w * ratio); }
+}
+function P(x, y) {
+  const sx = map.width / (BOUNDS.x1 - BOUNDS.x0), sy = map.height / (BOUNDS.y1 - BOUNDS.y0);
+  return [(x - BOUNDS.x0) * sx, (BOUNDS.y1 - y) * sy];
+}
+const mScale = () => map.width / (BOUNDS.x1 - BOUNDS.x0);
+function strokeRoute(ctx, s0, s1, width, color, dash) {
+  ctx.beginPath(); const n = Math.max(2, Math.ceil((s1 - s0) / 20));
+  for (let k = 0; k <= n; k++) { const [x, y] = P(...routeXY(s0 + (s1 - s0) * k / n)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+  ctx.lineWidth = width; ctx.strokeStyle = color; ctx.setLineDash(dash || []); ctx.lineCap = "butt"; ctx.stroke(); ctx.setLineDash([]);
+}
+function rgb(bgr, a = 1) { return `rgba(${bgr[2]},${bgr[1]},${bgr[0]},${a})`; }
+
+function linkStatusAt(s, t) {
+  const out = {};
+  for (const l of W.links) out[`${l.a}->${l.b}`] = { status: "MONITORING", ev: null };
+  for (const e of s.events) {
+    if (e.t > t || e.type === "tipoff") continue;
+    out[e.link] = { status: e.type === "alert" ? "ALERT" : e.type === "unverified" ? "UNVERIFIED" : e.type === "pending" ? "MONITORING" : "ALL ACCOUNTED", ev: e };
+  }
+  return out;
+}
+
+function drawMap(s, t) {
+  const ctx = mctx, k = mScale();
+  ctx.clearRect(0, 0, map.width, map.height);
+  ctx.fillStyle = tokens.terrain; ctx.fillRect(0, 0, map.width, map.height);
+  // terrain texture: faint contour-like dots, deterministic
+  ctx.fillStyle = tokens["terrain-2"];
+  for (let i = 0; i < 260; i++) { const x = (i * 73.13) % map.width, y = (i * 151.7) % map.height; ctx.fillRect(x, y, 2 * k * 4, 2 * k * 4); }
+  // base compound
+  const [bx0, by0] = P(-520, 360), [bx1, by1] = P(560, -380);
+  ctx.fillStyle = tokens.base; ctx.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+  ctx.strokeStyle = tokens.muted; ctx.lineWidth = 1; ctx.setLineDash([6, 4]); ctx.strokeRect(bx0, by0, bx1 - bx0, by1 - by0); ctx.setLineDash([]);
+  ctx.fillStyle = tokens["ink-2"]; ctx.font = `600 ${Math.round(15 * map.width / 900)}px ${getComputedStyle(document.body).getPropertyValue("--display") || "sans-serif"}`;
+  ctx.textAlign = "center"; ctx.fillText("FORWARD OPERATING BASE", (bx0 + bx1) / 2, (by0 + by1) / 2);
+  // roads
+  strokeRoute(ctx, 0, ROUTE_LEN, 14 * k * 1.6, tokens.road);
+  ctx.beginPath(); W.side.forEach((p, i) => { const [x, y] = P(...p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+  ctx.lineWidth = 8 * k * 1.6; ctx.strokeStyle = tokens.road; ctx.setLineDash([10, 7]); ctx.stroke(); ctx.setLineDash([]);
+  { const [sx, sy] = P(-960, 760); ctx.fillStyle = tokens.muted; ctx.font = `600 ${Math.round(12 * map.width / 900)}px sans-serif`; ctx.textAlign = "left"; ctx.fillText("NW side track", sx + 14, sy + 4); }
+  // blind zones
+  const st = linkStatusAt(s, t);
+  for (const l of W.links) {
+    strokeRoute(ctx, l.interval[0], l.interval[1], 46 * k * 1.6, tokens.fog);
+    const mid = routeXY((l.interval[0] + l.interval[1]) / 2), off = [mid[0] < 0 ? -95 : 95, mid[1] < 0 ? -70 : 70];
+    const [lx, ly] = P(mid[0] + (Math.abs(mid[0]) > 600 ? off[0] : 0), mid[1] + (Math.abs(mid[0]) > 600 ? 0 : off[1]));
+    ctx.fillStyle = tokens.muted; ctx.font = `600 ${Math.round(13 * map.width / 900)}px sans-serif`; ctx.textAlign = "center";
+    ctx.fillText(l.gray + " blind", lx, ly);
+    const ls = st[`${l.a}->${l.b}`];
+    if (ls.status === "ALERT" && ls.ev && ls.ev.certified_missing > 0) {
+      strokeRoute(ctx, l.interval[0], l.interval[1], 30 * k * 1.6, tokens.crit + "88");
+      if (l.gray === "G2") {
+        ctx.beginPath(); W.side.forEach((p, i) => { const [x, y] = P(...p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+        ctx.lineWidth = 22 * k * 1.6; ctx.strokeStyle = tokens.crit + "66"; ctx.stroke();
+      }
+      // drone tasking: fly from the base centre toward the zone midpoint
+      const dt = Math.max(0, t - ls.ev.t), f = Math.min(1, dt / 40);
+      const [ox, oy] = P(0, 0), [zx, zy] = P(...mid);
+      const dx = ox + (zx - ox) * f, dy = oy + (zy - oy) * f;
+      ctx.setLineDash([4, 5]); ctx.strokeStyle = tokens.crit; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(dx, dy); ctx.stroke(); ctx.setLineDash([]);
+      drawDrone(ctx, dx, dy, tokens.crit);
+    }
+  }
+  // camera views
+  for (const c of W.cam_order) {
+    const [lo, hi] = W.cameras[c];
+    strokeRoute(ctx, lo, hi, 30 * k * 1.6, tokens.cam + "55");
+    const [x, y] = P(...routeXY((lo + hi) / 2));
+    const out = routeXY((lo + hi) / 2), nx = Math.sign(out[0]) * (Math.abs(out[0]) > 600 ? 1 : 0), ny = Math.sign(out[1]) * (Math.abs(out[0]) > 600 ? 0 : 1);
+    const ix = x + nx * 34 * map.width / 900, iy = y - ny * 34 * map.width / 900;
+    ctx.fillStyle = tokens.cam; ctx.beginPath(); ctx.arc(ix, iy, 9 * map.width / 900, 0, 7); ctx.fill();
+    ctx.fillStyle = tokens.panel; ctx.beginPath(); ctx.arc(ix, iy, 3.5 * map.width / 900, 0, 7); ctx.fill();
+    ctx.fillStyle = tokens.ink; ctx.font = `500 ${Math.round(12.5 * map.width / 900)}px ui-monospace, monospace`;
+    ctx.textAlign = nx > 0 ? "left" : nx < 0 ? "right" : "center";
+    ctx.fillText(c, ix + nx * 14 * map.width / 900, iy - ny * 16 * map.width / 900 + (ny < 0 ? 12 : 0) + (nx ? 4 : 0));
+  }
+  // reachable bands for tipped-off vehicles still inside a blind zone
+  for (const l of W.links) {
+    const key = `${l.a}->${l.b}`;
+    const deps = s.events.filter((e) => e.type === "tipoff" && e.link === key && e.t <= t);
+    const fin = s.final[key];
+    for (const d of deps) {
+      const [w0, w1] = d.window;
+      if (t > w1 + 4) continue;
+      const explained = fin.edges.some(([dt, at]) => dt === d.tid && arrivalSeen(s, l.b, at, t));
+      if (explained) continue;
+      const travel = l.interval[1] - l.interval[0];
+      const sLo = l.interval[0] + Math.min(1, (t - d.t) / (w1 - d.t)) * travel;
+      const sHi = l.interval[0] + Math.min(1, (t - d.t) / (w0 - d.t)) * travel;
+      strokeRoute(ctx, Math.max(l.interval[0], sLo), Math.min(l.interval[1], sHi), 18 * k * 1.6, tokens.info + "70");
+    }
+  }
+  // vehicles
+  for (const v of s.vehicles) {
+    const vs = vehicleState(v, t); if (!vs) continue;
+    const seen = vs.where === "route" && camOf(vs.s) !== null;
+    if (!seen && !state.truth) continue;
+    const [x, y] = P(...vs.xy), r = 6.5 * map.width / 900;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 7);
+    if (seen) { ctx.fillStyle = rgb(v.bgr); ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = tokens.panel; ctx.stroke(); }
+    else { ctx.lineWidth = 2; ctx.strokeStyle = rgb(v.bgr); ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]); }
+    if (state.truth) {
+      ctx.fillStyle = tokens.ink; ctx.font = `500 ${Math.round(11 * map.width / 900)}px ui-monospace, monospace`; ctx.textAlign = "left";
+      ctx.fillText(v.vid + (v.decoy ? " (new)" : ""), x + r + 3, y + 4);
+    }
+  }
+}
+function arrivalSeen(s, cam, tid, t) {
+  const tr = (s.tracks[cam] || []).find((x) => x.tid === tid); return !!tr && tr.t[0] <= t;
+}
+function drawDrone(ctx, x, y, color) {
+  const r = 7 * map.width / 900; ctx.strokeStyle = color; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x - r, y - r); ctx.lineTo(x + r, y + r); ctx.moveTo(x + r, y - r); ctx.lineTo(x - r, y + r); ctx.stroke();
+  for (const [a, b] of [[-r, -r], [r, r], [r, -r], [-r, r]]) { ctx.beginPath(); ctx.arc(x + a, y + b, r * 0.45, 0, 7); ctx.stroke(); }
+}
+
+// ---------- camera feeds
+const FW = 480, FH = 270, PXM = FW / (2 * W.half_view);
+let feeds = {};
+function buildFeeds() {
+  const box = $("feeds"); box.innerHTML = ""; feeds = {};
+  for (const c of W.cam_order) {
+    const div = document.createElement("div"); div.className = "feed";
+    div.innerHTML = `<canvas width="${FW}" height="${FH}" aria-label="${c} feed"></canvas><div class="row"><span class="cam">${c}</span><span class="pill s-ok" data-q>clear view</span></div>`;
+    box.appendChild(div); feeds[c] = { canvas: div.querySelector("canvas"), pill: div.querySelector("[data-q]") };
+  }
+}
+function drawFeed(s, c, t) {
+  const { canvas, pill } = feeds[c], ctx = canvas.getContext("2d");
+  const [lo, hi] = W.cameras[c];
+  ctx.fillStyle = "#cbb796"; ctx.fillRect(0, 0, FW, FH);
+  ctx.fillStyle = "rgba(120,100,70,0.35)";
+  for (let i = 0; i < 46; i++) { const x = (i * 97 + c.length * 31) % FW, y = (i * 53) % 95 + (i % 2 ? 180 : 0); ctx.beginPath(); ctx.arc(x, y, 2 + (i % 4), 0, 7); ctx.fill(); }
+  const y0 = FH / 2 - 4.6 * PXM, y1 = FH / 2 + 4.6 * PXM;
+  ctx.fillStyle = "#626466"; ctx.fillRect(0, y0, FW, y1 - y0);
+  ctx.strokeStyle = "#d2d6da"; ctx.lineWidth = 1; ctx.setLineDash([12, 14]); ctx.beginPath(); ctx.moveTo(0, FH / 2); ctx.lineTo(FW, FH / 2); ctx.stroke(); ctx.setLineDash([]);
+  for (const v of s.vehicles) {
+    const vs = vehicleState(v, t); if (!vs || vs.where !== "route" || vs.s < lo - 6 || vs.s > hi + 6) continue;
+    const u = vs.s - lo, L = v.length * PXM, Wd = v.width * PXM, cx = u * PXM, cy = FH / 2 + 2 * PXM;
+    ctx.fillStyle = "rgba(60,66,72,0.8)"; ctx.fillRect(cx - L / 2 + 3, cy - Wd / 2 + 3, L, Wd);
+    ctx.fillStyle = rgb(v.bgr); ctx.fillRect(cx - L / 2, cy - Wd / 2, L, Wd);
+    ctx.fillStyle = "rgba(40,46,52,0.9)"; ctx.fillRect(cx + L / 2 - 0.22 * L, cy - Wd / 2 + 1, 0.1 * L, Wd - 2);
+    if (v.vtype === "truck") { ctx.fillStyle = "rgba(0,0,0,0.14)"; ctx.fillRect(cx + L / 2 - 0.26 * L, cy - Wd / 2, 0.26 * L, Wd); }
+  }
+  const dg = s.degraded[c], dusty = dg && t >= dg[0] && t <= dg[1];
+  if (dusty) { const a = 0.86 * Math.min(1, (t - dg[0]) / 6, (dg[1] - t) / 6); ctx.fillStyle = `rgba(205,190,170,${a})`; ctx.fillRect(0, 0, FW, FH); }
+  // perception output (computed in Python from rendered pixels)
+  for (const tr of s.tracks[c] || []) {
+    let j = -1, best = 0.6;
+    tr.t.forEach((tt, k) => { const d = Math.abs(tt - t); if (d < best) { best = d; j = k; } });
+    if (j < 0) continue;
+    const x = tr.u[j] * PXM, h = tr.box_h[j];
+    ctx.strokeStyle = tokens.accent || "#11605e"; ctx.lineWidth = 2;
+    ctx.strokeRect(x - 16, FH / 2 + 2 * PXM - h / 2 - 5, 32, h + 10);
+    ctx.fillStyle = "rgba(10,20,20,0.75)"; ctx.fillRect(x - 16, FH / 2 + 2 * PXM - h / 2 - 22, 34, 15);
+    ctx.fillStyle = "#ffffff"; ctx.font = "11px ui-monospace, monospace"; ctx.textAlign = "left"; ctx.fillText(tr.tid, x - 13, FH / 2 + 2 * PXM - h / 2 - 11);
+  }
+  ctx.fillStyle = "rgba(255,255,255,0.92)"; ctx.font = "12px ui-monospace, monospace"; ctx.textAlign = "left";
+  ctx.fillText(`${c}  T+${t.toFixed(1).padStart(6, "0")}s`, 8, FH - 10);
+  pill.textContent = dusty ? "degraded: dust" : "clear view"; pill.className = "pill " + (dusty ? "s-unv" : "s-ok");
+}
+
+// ---------- side panel
+function statusClass(st) { return st === "ALERT" ? "s-alert" : st === "UNVERIFIED" ? "s-unv" : st === "ALL ACCOUNTED" ? "s-ok" : "s-pend"; }
+function drawSide(s, t) {
+  const st = linkStatusAt(s, t), box = $("links"); box.innerHTML = "";
+  for (const l of W.links) {
+    const key = `${l.a}->${l.b}`, cur = st[key];
+    const tipped = s.events.filter((e) => e.type === "tipoff" && e.link === key && e.t <= t).length;
+    let detail = `${tipped} tipped off`;
+    if (cur.ev && cur.status === "ALERT") {
+      const parts = [];
+      if (cur.ev.certified_missing) parts.push(`${cur.ev.certified_missing} certified missing, could be any of ${cur.ev.candidates.join(", ")}`);
+      if (cur.ev.unexplained.length) parts.push(`unexplained arrival ${cur.ev.unexplained.join(", ")}`);
+      detail = parts.join("; ");
+    } else if (cur.ev && cur.status === "UNVERIFIED") detail = `${cur.ev.unverified} handoff(s) cannot be checked: camera degraded`;
+    else if (cur.status === "ALL ACCOUNTED") detail = `${tipped} tipped off, all accounted for`;
+    const d = document.createElement("div"); d.className = "link";
+    d.innerHTML = `<span class="name">${l.a} → ${l.b} <span style="color:var(--muted)">via ${l.gray}</span></span><span class="pill ${statusClass(cur.status)}">${cur.status}</span><span class="detail">${detail}</span>`;
+    box.appendChild(d);
+  }
+  const log = $("log"), evs = s.events.filter((e) => e.t <= t && e.type !== "pending").slice().reverse();
+  if (!evs.length) { log.innerHTML = `<div class="empty">Waiting for the first vehicle to leave a camera.</div>`; return; }
+  log.innerHTML = evs.slice(0, 60).map((e) => {
+    const cls = e.type === "tipoff" ? "tip" : e.type === "alert" ? "alert" : e.type === "unverified" ? "unv" : "ok";
+    const kind = e.type === "tipoff" ? "Tip-off" : e.type === "alert" ? "Alert" : e.type === "unverified" ? "Unverified" : "Accounted";
+    let body = e.type === "tipoff" ? e.text : e.type === "all_accounted" ? `${e.link}: every tipped-off vehicle arrived` : "";
+    if (e.type === "alert") {
+      const bits = [];
+      if (e.certified_missing) bits.push(`${e.link}: ${e.certified_missing} vehicle(s) never arrived. Candidates ${e.candidates.join(", ")}; identity not needed for the proof.`);
+      if (e.unexplained.length) bits.push(`${e.link}: ${e.unexplained.join(", ")} matches no departure.`);
+      body = bits.join(" ");
+    }
+    if (e.type === "unverified") body = `${e.link}: camera view degraded, so ${e.unverified} handoff(s) are not confirmed. No all-clear is issued.`;
+    const acts = (e.actions || []).length ? `<ul>${e.actions.map((a) => `<li>${a}</li>`).join("")}</ul>` : "";
+    return `<div class="ev ${cls}"><span class="t">T+${Math.round(e.t)}s</span><div><span class="k">${kind}</span> ${body}${acts}</div></div>`;
+  }).join("");
+}
+
+// ---------- comparison
+function verdictOf(status) { return status === "ALERT" ? "alert" : status === "UNVERIFIED" ? "unverified" : "all clear"; }
+const ids = (a) => a.length > 4 ? `${a.length} detections` : a.join(", ");
+function buildComparison() {
+  const s = sc(), key = "CAM-W->CAM-N", fin = s.final[key], com = s.committed[key], cnt = s.counts[key];
+  const truthWord = { none: "all clear", stop: "alert", divert: "alert", swap: "alert", degraded: "unverified" }[s.kind];
+  const truthText = {
+    none: "Every vehicle arrived.",
+    stop: `${s.truth.missing.join(", ")} stopped inside G2 and never reached CAM-N.`,
+    divert: `${s.truth.missing.join(", ")} left the road on the NW side track.`,
+    swap: `${s.truth.missing.join(", ")} left on the side track and a different vehicle, ${s.truth.decoy}, joined the road in its place.`,
+    degraded: "Every vehicle arrived, but dust blinded CAM-N, so no camera could confirm it."
+  }[s.kind];
+  const mark = (ok) => `<span class="mark ${ok ? "s-ok" : "s-alert"}">${ok ? "correct" : "wrong"}</span>`;
+  const misT = s.tracks["CAM-W"].filter((x) => s.truth.missing.includes(x.truth)).map((x) => x.tid);
+  const rows = [];
+  rows.push([`Ground truth (evaluator only)`, truthText, ""]);
+  rows.push([`Count-only handoff`, cnt.status === "ALERT" ? `Fewer arrivals than departures (${cnt.arrivals} vs ${cnt.departures}).` : `Counts match. Reports all clear.`, mark(verdictOf(cnt.status) === truthWord)]);
+  let comText = com.status === "ALERT" ? [com.named_missing.length ? `Names ${ids(com.named_missing)} as missing.` : "", com.named_unknown.length ? `Flags ${ids(com.named_unknown)} as unknown vehicles.` : ""].join(" ") : "Every departure matched. Reports all clear.";
+  let comOk = verdictOf(com.status) === truthWord;
+  if (comOk && misT.length && com.named_missing.length && com.named_missing.join() !== misT.join()) { comOk = false; comText += ` The missing vehicle was ${misT.join(", ")}, so the named identity is wrong.`; }
+  rows.push([`Tracker that commits to one re-ID match`, comText, mark(comOk)]);
+  if (s.vlm) {
+    const p = s.vlm.parsed || {};
+    const vw = { all_arrived: "all clear", vehicle_missing: "alert", unexpected_vehicle: "alert", cannot_confirm: "unverified" }[s.vlm.verdict] || "no answer";
+    rows.push([`Qwen3-VL-4B, ${s.vlm.images} frames`, `Verdict “${s.vlm.verdict}”. Counted ${p.w_count ?? "?"} at CAM-W and ${p.n_count ?? "?"} at CAM-N. ${p.missing_or_unexpected && p.missing_or_unexpected !== "none" ? "Says: “" + p.missing_or_unexpected.replace(/[.\s]+$/, "") + "”." : ""} ${s.vlm.seconds} s per query.${s.vlm.verdict === "cannot_confirm" && EVAL && EVAL.vlm_default ? ` This is its default answer: it said it in ${EVAL.vlm_default} of ${EVAL.vlm_n} test episodes.` : ""}`, mark(vw === truthWord)]);
+  }
+  const ourText = fin.status === "ALERT"
+    ? [fin.certified_missing ? `Certifies ${fin.certified_missing} missing; candidates ${fin.missing_candidates.join(", ")}.` : "", fin.unexplained_arrivals.length ? `Arrival ${ids(fin.unexplained_arrivals)} matches no departure.` : ""].join(" ") + " Dispatches a search of G2."
+    : fin.status === "UNVERIFIED" ? "Reports a coverage gap and requests another sensor. No all-clear." : "Every departure has a distinct, time- and appearance-compatible arrival.";
+  const ourOk = verdictOf(fin.status) === truthWord && (!misT.length || misT.every((x) => fin.missing_candidates.includes(x)));
+  rows.push([`This monitor`, ourText, mark(ourOk)]);
+  $("cmp").innerHTML = `<thead><tr><th>Approach</th><th>What it concludes</th><th>Result</th></tr></thead><tbody>` +
+    rows.map((r, i) => `<tr class="${i === rows.length - 1 ? "ours" : ""}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + `</tbody>`;
+  const crops = [];
+  for (const c of ["CAM-W", "CAM-N"]) for (const tr of s.tracks[c]) if (tr.crop) crops.push(`<figure><img src="${tr.crop}" alt="${tr.tid} crop"><figcaption>${tr.tid} · ${tr.desc}</figcaption></figure>`);
+  $("crops").innerHTML = crops.join("");
+}
+
+// ---------- evaluation tables
+function buildEval() {
+  if (!EVAL) return;
+  const r = EVAL.rows.map((x) => `<tr><td>${x.name}</td><td class="num">${x.acc}</td><td class="num">${x.false_clear}</td><td class="num">${x.false_alarm}</td><td class="num">${x.compute}</td></tr>`).join("");
+  $("evalTable").innerHTML = `<thead><tr><th>Approach</th><th>Correct verdicts</th><th>False all-clear</th><th>False alarm</th><th>Compute</th></tr></thead><tbody>${r}</tbody>`;
+  $("evalNote").textContent = EVAL.note;
+  $("calNote").textContent = EVAL.cal;
+}
+
+function draw() {
+  const s = sc(); fitCanvas(map);
+  $("clock").textContent = "T+" + String(Math.round(state.t)).padStart(4, "0") + " s";
+  drawMap(s, state.t);
+  for (const c of W.cam_order) drawFeed(s, c, state.t);
+  drawSide(s, state.t);
+}
+addEventListener("resize", () => draw());
+selectScenario(0); buildEval();
+// Open paused on the scenario's first alert or coverage gap, so the page reads at rest.
+const firstFlag = sc().events.find((e) => e.type === "alert" || e.type === "unverified");
+state.t = Math.min(sc().duration, firstFlag ? firstFlag.t + 25 : sc().duration * 0.6);
+$("scrub").value = state.t; draw();
+</script>

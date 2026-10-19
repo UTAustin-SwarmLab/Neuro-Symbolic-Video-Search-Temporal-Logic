@@ -1,0 +1,102 @@
+{
+  "ours": {
+    "accuracy": 0.9933333333333333,
+    "by_expected": {
+      "ALL ACCOUNTED": [
+        398,
+        400
+      ],
+      "ALERT": [
+        118,
+        120
+      ],
+      "UNVERIFIED": [
+        80,
+        80
+      ]
+    },
+    "false_all_clear": [
+      2,
+      200
+    ],
+    "false_alarm": [
+      2,
+      480
+    ]
+  },
+  "committed": {
+    "accuracy": 0.86,
+    "by_expected": {
+      "ALL ACCOUNTED": [
+        398,
+        400
+      ],
+      "ALERT": [
+        118,
+        120
+      ],
+      "UNVERIFIED": [
+        0,
+        80
+      ]
+    },
+    "false_all_clear": [
+      2,
+      200
+    ],
+    "false_alarm": [
+      82,
+      480
+    ]
+  },
+  "count": {
+    "accuracy": 0.8016666666666666,
+    "by_expected": {
+      "ALL ACCOUNTED": [
+        400,
+        400
+      ],
+      "ALERT": [
+        81,
+        120
+      ],
+      "UNVERIFIED": [
+        0,
+        80
+      ]
+    },
+    "false_all_clear": [
+      119,
+      200
+    ],
+    "false_alarm": [
+      0,
+      480
+    ]
+  },
+  "identity": {
+    "episodes": 80,
+    "ours_candidate_set_contains_truth": 80,
+    "ours_mean_candidates": 1.3375,
+    "ours_singleton": 55,
+    "committed_named_correct": 75,
+    "committed_named_any": 80
+  },
+  "timing": {
+    "frames": 1622544,
+    "perceive_s": 7187.333345228806,
+    "render_s": 2118.6384568735957
+  },
+  "config": {
+    "n_cal": 24,
+    "n_eval_per_kind": 40,
+    "start": 30000,
+    "kinds": [
+      "none",
+      "stop",
+      "divert",
+      "swap",
+      "degraded"
+    ]
+  }
+}
